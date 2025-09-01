@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数学クイズ — Vanilla JS + MathJax</title>
+  <style>
+    :root { --fg:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f8fafc; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; color:var(--fg); background:linear-gradient(#fff, var(--bg)); }
+    .container { max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:.5rem; margin-bottom:1rem; }
+    h1 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin:0; }
+    .card { background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .card-header { display:flex; align-items:center; justify-content:space-between; padding: .9rem 1rem; border-bottom:1px solid var(--border); }
+    .card-title { font-weight:700; }
+    .badge { padding:.15rem .5rem; border-radius:999px; font-size:.8rem; background:#f1f5f9; color:#475569; margin-right:.5rem; }
+    .card-content { padding: 1rem; }
+    .q { font-weight:700; font-size: clamp(1.1rem, 2.5vw, 1.6rem); }
+    .a { margin-top: .75rem; padding: .75rem; background:#f8fafc; border:1px solid var(--border); border-radius:10px; }
+    .row { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.9rem; }
+    button { appearance:none; border:1px solid var(--border); background:#fff; padding:.55rem .9rem; border-radius:10px; cursor:pointer; font-weight:600; }
+    button:hover { background:#f8fafc; }
+    button.secondary { background:#f1f5f9; }
+    button:disabled { opacity:.6; cursor:not-allowed; }
+    footer { color:var(--muted); text-align:center; font-size:.8rem; margin-top:1.2rem; }
+    .muted { color:var(--muted); font-size:.85rem; }
+  </style>
+  <!-- MathJax v3 設定（デリミタ） -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"], ["$", "$"]],
+        displayMath: [["\\[", "\\]"], ["$$", "$$"]],
+        processEscapes: true,
+      },
+      chtml: { scale: 1.0 },
+      options: { skipHtmlTags: ["script","noscript","style","textarea","pre","code"] }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>数学クイズ — MathJax（Reactなし）</h1>
+      <div class="row" style="margin:0">
+        <button id="shuffleBtn" class="secondary" title="問題順をランダムに">ランダム出題</button>
+      </div>
+    </header>
+
+    <section class="card" aria-live="polite">
+      <div class="card-header">
+        <div class="card-title"><span id="tag" class="badge" style="display:none"></span>今日の問題</div>
+        <div class="muted" id="counter"></div>
+      </div>
+      <div class="card-content">
+        <div id="question" class="q"></div>
+        <div id="answer" class="a" style="display:none"></div>
+        <div class="row">
+          <button id="showBtn">答えを表示</button>
+          <button id="hideBtn" class="secondary" style="display:none">答えを隠す</button>
+          <button id="nextBtn">次の問題</button>
+        </div>
+        <div id="loading" class="muted" style="display:none; margin-top:.5rem">MathJax 読み込み中…</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+  // ————————————————————————————————————————
+  // データ（必要に応じて差し替え）
+  const PROBLEMS = [
+    { tag: "三角関数", q: "加法定理: \\sin(\\alpha+\\beta) を式で。", a: "\\[\\sin\\alpha\\cos\\beta + \\cos\\alpha\\sin\\beta\\]" },
+    { tag: "三角関数", q: "2倍角: \\cos 2x を3通りで。", a: "\\[1-2\\sin^2x = 2\\cos^2x-1 = \\cos^2x-\\sin^2x\\]" },
+    { tag: "微分", q: "\\((x^n)'\\) を答えよ。", a: "\\[\\frac{d}{dx}x^n = n x^{n-1}\\]" },
+    { tag: "微分", q: "\\((e^x)'\\) を答えよ。", a: "\\[\\frac{d}{dx}e^x = e^x\\]" },
+    { tag: "積分", q: "\\(\\int x^2 \\mathrm{d}x\\) を求めよ。", a: "\\[\\int x^2 \\mathrm{d}x = x^3/3 + C\\]" },
+    { tag: "積分", q: "\\(\\int \\cos x \\mathrm{d}x\\) を求めよ。", a: "\\[\\int \\cos x \\mathrm{d}x = \\sin x + C\\]" },
+    { tag: "数列", q: "等比数列の和 \\((a,r\\ne1)\\) の \\; S_n \\; を答えよ。", a: "\\[S_n = a \\frac{1-r^n}{1-r}\\]" },
+    { tag: "確率", q: "コイン2回投げて表が1回の確率は？", a: "\\[\\binom{2}{1}(1/2)^2 = 1/2\\]" },
+    { tag: "ベクトル", q: "\\(|\\vec a+\\vec b|^2\\) を \\(|a|,|b|, a\\cdot b\\) で表せ。", a: "\\[|a|^2 + |b|^2 + 2\\, a\\cdot b\\]" },
+    { tag: "複素数", q: "\\(z=\\cos\\theta+i\\sin\\theta\\) の \\; z^n \\; は？", a: "\\[\\cos(n\\theta)+i\\sin(n\\theta)\\; (\\text{ド・モアブル})\\]" },
+  ];
+
+  // ————————————————————————————————————————
+  // ユーティリティ
+  const qs = (sel) => document.querySelector(sel);
+  const questionEl = qs('#question');
+  const answerEl   = qs('#answer');
+  const showBtn    = qs('#showBtn');
+  const hideBtn    = qs('#hideBtn');
+  const nextBtn    = qs('#nextBtn');
+  const shuffleBtn = qs('#shuffleBtn');
+  const tagEl      = qs('#tag');
+  const counterEl  = qs('#counter');
+  const loadingEl  = qs('#loading');
+
+  let order = [...Array(PROBLEMS.length)].map((_, i) => i);
+  let pos = 0;
+
+  function shuffle() {
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    pos = 0;
+  }
+
+  function current() { return PROBLEMS[order[pos]]; }
+
+  async function typesetNode(node) {
+    if (!window.MathJax) { loadingEl.style.display = 'block'; await new Promise(r=>setTimeout(r, 200)); return; }
+    loadingEl.style.display = 'none';
+    const mj = window.MathJax;
+    if (mj.typesetPromise) { await mj.typesetPromise([node]); }
+    else if (mj.typeset) { mj.typeset([node]); }
+  }
+
+  async function render(showAnswer=false) {
+    const qa = current();
+    questionEl.textContent = ''; answerEl.textContent = '';
+    questionEl.innerHTML = qa.q; // TeX文字列
+    answerEl.innerHTML   = qa.a;
+    tagEl.style.display = qa.tag ? 'inline-block' : 'none';
+    if (qa.tag) tagEl.textContent = qa.tag;
+    counterEl.textContent = `${pos+1} / ${PROBLEMS.length}`;
+
+    answerEl.style.display = showAnswer ? 'block' : 'none';
+    hideBtn.style.display  = showAnswer ? 'inline-block' : 'none';
+    showBtn.style.display  = showAnswer ? 'none' : 'inline-block';
+
+    await typesetNode(questionEl);
+    if (showAnswer) await typesetNode(answerEl);
+  }
+
+  // ————————————————————————————————————————
+  // イベント
+  showBtn.addEventListener('click', () => render(true));
+  hideBtn.addEventListener('click', () => render(false));
+  nextBtn.addEventListener('click', () => { pos = (pos + 1) % PROBLEMS.length; render(false); });
+  shuffleBtn.addEventListener('click', () => { shuffle(); render(false); });
+
+  // 初期化
+  document.getElementById('year').textContent = new Date().getFullYear();
+  shuffle();
+  render(false);
+  </script>
+</body>
+</html>
