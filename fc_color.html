@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>英単語フラッシュカード—最小版</title>
+<style>
+  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;background:#0b0f14;color:#e8f0f7}
+  .wrap{height:100%;display:grid;place-items:center;padding:16px}
+  .card{width:min(480px,92vw);aspect-ratio:3/2;border:1px solid #223247;border-radius:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;background:#121821;cursor:pointer}
+  .en{font-size:clamp(28px,8vw,56px);font-weight:800}
+  .jp{font-size:clamp(18px,5vw,32px);opacity:.95}
+  .hint{margin-top:8px;font-size:12px;color:#9db2c8}
+  .progress{position:fixed;inset:auto 12px 12px auto;color:#9db2c8;font-size:12px}
+</style>
+<body>
+<div class="wrap">
+  <div class="card" id="card">
+    <div class="en" id="en">—</div>
+    <div class="jp" id="jp" style="display:none">—</div>
+    <div class="hint">英単語 → タップで日本語 → もう一度で次へ</div>
+  </div>
+  <div class="progress" id="pg">0/0</div>
+</div>
+<script>
+  const data=[['red','赤い'],['blue','青い'],['yellow','黄色い'],['green','緑'],['orange','オレンジ色'],['purple','紫'],['pink','ピンク'],['brown','茶色'],['black','黒'],['white','白'],['gray','灰色']]
+  let i=0, back=false
+  const en=document.getElementById('en'), jp=document.getElementById('jp'), pg=document.getElementById('pg')
+  function show(){
+    const [e,j]=data[i]
+    en.textContent=e
+    jp.textContent=j
+    jp.style.display= back?'' : 'none'
+    pg.textContent=`${i+1}/${data.length}`
+  }
+  function tap(){
+    if(!back){ back=true } else { i=(i+1)%data.length; back=false }
+    show()
+  }
+  document.getElementById('card').addEventListener('click',tap)
+  document.addEventListener('keydown',e=>{ if(e.code==='Space'||e.code==='Enter') { e.preventDefault(); tap() } })
+  show()
+</script>
+</body>
+</html>
