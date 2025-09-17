@@ -3,15 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>大学受験フラッシュカード集 – サイトマップ</title>
-  <meta name="description" content="大学受験用フラッシュカード集のランディングページ（サイトマップ）。" />
+  <title>大学受験フラッシュカード集</title>
   <style>
-    :root {
-      --fg: #222;
-      --muted: #666;
-      --line: #e6e6e6;
-      --bg: #fff;
-    }
+    :root { --fg: #222; --muted: #666; --line: #e6e6e6; --bg: #fff; }
     html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", sans-serif; color: var(--fg); background: var(--bg); }
     .wrap { min-height: 100%; display: grid; place-items: start center; padding: 32px 20px; }
     header { width: 100%; max-width: 680px; margin-bottom: 16px; }
@@ -29,27 +23,16 @@
 <body>
   <main class="wrap" role="main">
     <header>
-      <h1>大学受験フラッシュカード集 – サイトマップ</h1>
-      <p class="lead">この <code>exam/</code> フォルダの <code>index.html</code> は、各フラッシュカードページへの入口のみをまとめたランディングページです。</p>
+      <h1>大学受験フラッシュカード集</h1>
     </header>
-
     <nav class="sitemap" aria-label="サイトマップ">
+      <h2>英単語 フラッシュカード集</h2>
       <ul>
         <li><a href="fc_color.html">色カード</a></li>
         <li><a href="fc_shape.html">図形カード</a></li>
         <li><a href="fc_emotion.html">感情カード</a></li>
       </ul>
     </nav>
-
-    <footer>
-      <span>直接ブックマークする場合は、各カードの URL（例：<code>fc_color.html</code>）を保存してください。</span>
-      <div id="lm">最終更新: <time id="lm-t"></time></div>
-    </footer>
   </main>
-
-  <script>
-    const t = document.getElementById('lm-t');
-    if (t) t.textContent = document.lastModified;
-  </script>
 </body>
 </html>
