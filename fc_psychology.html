@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Psychology Cards – 大学受験英単語</title>
+  <meta name="description" content="心理(Psychology)をテーマにした大学受験英単語フラッシュカード。最小コード・ノンフレームワーク。" />
+  <style>
+    :root { --fg:#222; --muted:#666; --line:#e6e6e6; --bg:#fff; --accent:#0a84ff; --q-h:72px; --a-h:160px; }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;color:var(--fg);background:var(--bg)}
+    main{min-height:100%;display:grid;place-items:start center;padding:20px}
+    header{width:100%;max-width:720px;margin-bottom:12px}
+    h1{font-size:20px;margin:0 0 6px}
+    p.lead{margin:0;color:var(--muted)}
+    .card{width:100%;max-width:720px;border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:10px;cursor:pointer}
+    .grid{display:grid;grid-template-rows:var(--q-h) var(--a-h);gap:8px}
+    .box{border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;place-items:center;text-align:center}
+    .q{font-size:28px;letter-spacing:.5px}
+    .meta{font-size:12px;color:var(--muted)}
+    .a{font-size:16px}
+    .a .inner{visibility:hidden}
+    .a.revealed .inner{visibility:visible}
+    .links{margin-top:6px;font-size:12px}
+    a{color:inherit}
+    /* スクリーンが広い場合に左右配置へ自動適応（質問=左 / 解答=右） */
+    @media (min-width: 880px){
+      .grid{grid-template-rows:unset; grid-template-columns:1fr 1fr; min-height:var(--a-h)}
+      .box{height:100%}
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Psychology Cards – 大学受験英単語</h1>
+      <p class="lead">「心理学」をテーマにした英単語を文脈付きで暗記。<span class="meta">（クリックで意味→再クリックで次の単語。レイアウトはAの表示/非表示でズレません）</span></p>
+    </header>
+
+    <section class="card" aria-label="フラッシュカード">
+      <div class="grid">
+        <div class="box" id="qBox">
+          <div>
+            <div class="q" id="q">—</div>
+            <div class="meta" id="pos">&nbsp;</div>
+          </div>
+        </div>
+        <div class="box a" id="aBox">
+          <div class="inner">
+            <div id="meaning">—</div>
+            <div class="meta" id="syn">&nbsp;</div>
+            <div class="meta" id="ex">&nbsp;</div>
+          </div>
+        </div>
+      </div>
+      <div class="links">
+        <a href="./index.html" rel="up">← サイトマップへ</a>
+        <span>・</span>
+        <a href="./fc_emotion.html" rel="contents">fc_emotion.html</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // 心理学系 基礎〜頻出語（大学受験向け、簡潔な訳・近義語・例文付き）
+    const data = [
+      {w:"cognition", pos:"n.", ja:"認知", syn:"knowing, awareness", ex:"Language is closely related to cognition."},
+      {w:"perception", pos:"n.", ja:"知覚、認知", syn:"sensation, recognition", ex:"Perception can be influenced by context."},
+      {w:"attention", pos:"n.", ja:"注意", syn:"focus, concentration", ex:"Divided attention lowers performance."},
+      {w:"memory", pos:"n.", ja:"記憶", syn:"recollection", ex:"Short-term memory has limited capacity."},
+      {w:"learning", pos:"n.", ja:"学習", syn:"acquisition", ex:"Repetition helps learning."},
+      {w:"reinforcement", pos:"n.", ja:"強化（学習理論）", syn:"reward", ex:"Positive reinforcement increases a behavior."},
+      {w:"conditioning", pos:"n.", ja:"条件づけ", syn:"training", ex:"Classical conditioning pairs a stimulus with a response."},
+      {w:"motivation", pos:"n.", ja:"動機づけ", syn:"drive, incentive", ex:"Intrinsic motivation lasts longer."},
+      {w:"personality", pos:"n.", ja:"人格、性格", syn:"character, temperament", ex:"Personality is relatively stable over time."},
+      {w:"trait", pos:"n.", ja:"特性、特質", syn:"characteristic", ex:"Honesty is considered a personality trait."},
+      {w:"intelligence", pos:"n.", ja:"知能", syn:"IQ (概念)", ex:"Intelligence tests attempt to measure reasoning ability."},
+      {w:"bias", pos:"n.", ja:"偏り、先入観", syn:"prejudice, distortion", ex:"Confirmation bias leads us to seek supporting evidence."},
+      {w:"heuristic", pos:"n./adj.", ja:"発見的手続き、経験則", syn:"rule of thumb", ex:"We often use heuristics to make quick decisions."},
+      {w:"stereotype", pos:"n.", ja:"固定観念、偏見", syn:"preconception", ex:"Stereotypes can lead to unfair judgments."},
+      {w:"prejudice", pos:"n.", ja:"偏見", syn:"bias", ex:"Education may reduce prejudice."},
+      {w:"development", pos:"n.", ja:"発達", syn:"growth, maturation", ex:"Cognitive development continues through adolescence."},
+      {w:"adolescence", pos:"n.", ja:"思春期", syn:"teenage years", ex:"Adolescence is marked by rapid change."},
+      {w:"attachment", pos:"n.", ja:"愛着（関係）", syn:"bond", ex:"Secure attachment supports later relationships."},
+      {w:"stress", pos:"n.", ja:"ストレス", syn:"strain, pressure", ex:"Chronic stress harms health."},
+      {w:"coping", pos:"n.", ja:"対処（法）", syn:"handling, dealing", ex:"Problem-focused coping can be effective."},
+      {w:"resilience", pos:"n.", ja:"回復力、しなやかさ", syn:"toughness, flexibility", ex:"Social support promotes resilience."},
+      {w:"disorder", pos:"n.", ja:"（精神）障害", syn:"illness", ex:"Anxiety disorder is common."},
+      {w:"depression", pos:"n.", ja:"うつ病、抑うつ", syn:"low mood", ex:"Depression affects daily life."},
+      {w:"anxiety", pos:"n.", ja:"不安", syn:"worry", ex:"Anxiety can cause physical symptoms."},
+      {w:"schizophrenia", pos:"n.", ja:"統合失調症", syn:"—", ex:"Schizophrenia involves disturbed thinking."},
+      {w:"therapy", pos:"n.", ja:"治療、療法", syn:"treatment", ex:"Cognitive therapy changes thought patterns."},
+      {w:"counseling", pos:"n.", ja:"カウンセリング", syn:"guidance", ex:"School counseling supports students."},
+      {w:"placebo", pos:"n.", ja:"プラセボ、偽薬", syn:"—", ex:"The placebo effect can be powerful."},
+      {w:"experiment", pos:"n./v.", ja:"実験／実験する", syn:"test, trial", ex:"The experiment tested the hypothesis."},
+      {w:"hypothesis", pos:"n.", ja:"仮説", syn:"assumption", ex:"We formed a clear hypothesis."},
+      {w:"validity", pos:"n.", ja:"妥当性", syn:"soundness", ex:"Construct validity matters in testing."},
+      {w:"reliability", pos:"n.", ja:"信頼性（一貫性）", syn:"consistency", ex:"High reliability means stable results."},
+      {w:"sample", pos:"n.", ja:"標本、被験者集団", syn:"participants", ex:"The sample included 200 students."},
+      {w:"population", pos:"n.", ja:"母集団", syn:"—", ex:"We generalized from sample to population."},
+      {w:"correlation", pos:"n.", ja:"相関", syn:"association", ex:"Correlation does not prove causation."},
+      {w:"causation", pos:"n.", ja:"因果関係", syn:"cause and effect", ex:"Only controlled studies show causation."},
+      {w:"variable", pos:"n.", ja:"変数", syn:"factor", ex:"We measured three variables."},
+      {w:"independent variable", pos:"n.", ja:"独立変数", syn:"IV", ex:"The independent variable was temperature."},
+      {w:"dependent variable", pos:"n.", ja:"従属変数", syn:"DV", ex:"The dependent variable was accuracy."},
+      {w:"control group", pos:"n.", ja:"統制群", syn:"comparison group", ex:"A control group received no treatment."},
+      {w:"randomized", pos:"adj.", ja:"無作為化の", syn:"random", ex:"Participants were randomized into two groups."},
+      {w:"ethics", pos:"n.", ja:"倫理", syn:"moral principles", ex:"Research ethics protect participants."},
+      {w:"consent", pos:"n./v.", ja:"同意／同意する", syn:"approval", ex:"Informed consent is required."},
+      {w:"neuron", pos:"n.", ja:"ニューロン、神経細胞", syn:"nerve cell", ex:"Neurons transmit signals."},
+      {w:"synapse", pos:"n.", ja:"シナプス（接合部）", syn:"junction", ex:"Signals cross the synapse chemically."},
+      {w:"neurotransmitter", pos:"n.", ja:"神経伝達物質", syn:"chemical messenger", ex:"Dopamine is a neurotransmitter."},
+      {w:"dopamine", pos:"n.", ja:"ドーパミン", syn:"—", ex:"Dopamine relates to reward."},
+      {w:"serotonin", pos:"n.", ja:"セロトニン", syn:"—", ex:"Low serotonin is linked to mood."}
+    ];
+
+    let i = 0, revealed = false;
+    const q = document.getElementById('q');
+    const pos = document.getElementById('pos');
+    const meaning = document.getElementById('meaning');
+    const syn = document.getElementById('syn');
+    const ex = document.getElementById('ex');
+    const aBox = document.getElementById('aBox');
+    const card = document.querySelector('.card');
+
+    function render(){
+      const d = data[i];
+      q.textContent = d.w; pos.textContent = d.pos || '';
+      meaning.textContent = d.ja || '';
+      syn.textContent = d.syn ? `syn: ${d.syn}` : '';
+      ex.textContent = d.ex ? `ex: ${d.ex}` : '';
+      aBox.classList.toggle('revealed', revealed);
+    }
+
+    function nextRandom(){
+      if (data.length === 0) return;
+      let j; do { j = (Math.random()*data.length)|0; } while (j===i && data.length>1);
+      i = j; revealed = false; render();
+    }
+
+    card.addEventListener('click', () => {
+      if (!revealed) { revealed = true; render(); }
+      else { nextRandom(); }
+    });
+
+    // 初期表示
+    nextRandom();
+  </script>
+</body>
+</html>
