@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flashcards: Food & Drinks (fc_food)</title>
+  <style>
+    :root{ --bg:#0f172a; --card:#111827; --fg:#e5e7eb; --muted:#9ca3af; --accent:#22d3ee; }
+    html,body{height:100%; margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; background: radial-gradient(60rem 60rem at 50% -10%, #0b1220 0%, var(--bg) 40%, #070b14 100%); color:var(--fg);}    
+    .wrap{max-width:880px; margin:0 auto; padding:24px 16px 100px; text-align:center;}
+    h1{font-size:1.6rem; margin:0 0 12px;}
+    p.lead{color:var(--muted); margin:0 0 18px;}
+
+    .card{background:var(--card); border:1px solid #1f2937; border-radius:16px; padding:28px 20px; margin:20px 0; cursor:pointer;}
+    .pair{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:baseline; text-align:left}
+    .en{font-size:1.6rem; font-weight:800; letter-spacing:.2px;}
+    .ja{font-size:1.35rem; opacity:.98}
+    .hidden{visibility:hidden}
+
+    .examples{margin-top:16px; text-align:left}
+    .examples li{display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:6px 0; border-top:1px dashed #273244}
+    .examples li:first-child{border-top:none}
+    .ex-en{font-size:1rem}
+    .ex-ja{font-size:1rem}
+
+    .meta{margin-top:12px; color:var(--muted); font-size:.9rem}
+
+    .controls{display:flex; justify-content:center; gap:12px; margin-top:16px; flex-wrap:wrap;}
+    .btn{background:transparent; border:1px solid #334155; color:var(--fg); border-radius:10px; padding:8px 14px; cursor:pointer}
+    .btn:hover{border-color:var(--accent);}    
+    .controls label{display:none} /* 余計な手動トグルは隠す */
+
+    footer{position:fixed; inset:auto 0 0 0; border-top:1px solid #1f2937; background:rgba(11,18,32,.9); backdrop-filter: blur(6px);}    
+    footer .inner{max-width:880px; margin:0 auto; padding:10px 16px; display:flex; gap:10px; align-items:center;}
+    footer a{color:var(--accent); text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>英単語フラッシュカード：食べ物・飲み物（Food & Drinks）</h1>
+    <p class="lead">カードをタップ/クリック：<strong>問題 → 答え → 次の問題</strong>。訳は<strong>右側</strong>に表示されます。</p>
+
+    <div id="cardContainer"></div>
+
+    <div class="controls">
+      <button id="prevBtn" class="btn">← 前へ</button>
+      <button id="nextBtn" class="btn">次へ →</button>
+      <button id="shuffleBtn" class="btn">シャッフル</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="inner">
+      <a href="index.html">← index.html に戻る</a>
+      <span style="color:var(--muted)">/ exam フォルダ</span>
+    </div>
+  </footer>
+
+  <script>
+    // 単語データ（必要に応じて拡張）
+    const DATA = [
+      {en:"apple", ja:"りんご", cat:"fruits", ex:[{en:"a fresh apple", ja:"新鮮なりんご"},{en:"apple pie", ja:"アップルパイ"}]},
+      {en:"banana", ja:"バナナ", cat:"fruits", ex:[{en:"a ripe banana", ja:"熟したバナナ"},{en:"peel a banana", ja:"バナナの皮をむく"}]},
+      {en:"orange", ja:"オレンジ", cat:"fruits", ex:[{en:"orange juice", ja:"オレンジジュース"},{en:"peel an orange", ja:"オレンジの皮をむく"}]},
+      {en:"grape", ja:"ぶどう", cat:"fruits", ex:[{en:"a bunch of grapes", ja:"一房のぶどう"}]},
+      {en:"strawberry", ja:"いちご", cat:"fruits", ex:[{en:"strawberry jam", ja:"いちごジャム"}]},
+      {en:"peach", ja:"もも", cat:"fruits"},
+      {en:"pear", ja:"なし", cat:"fruits"},
+      {en:"cherry", ja:"さくらんぼ", cat:"fruits"},
+      {en:"pineapple", ja:"パイナップル", cat:"fruits"},
+      {en:"watermelon", ja:"すいか", cat:"fruits"},
+      {en:"blueberry", ja:"ブルーベリー", cat:"fruits"},
+      {en:"lemon", ja:"レモン", cat:"fruits", ex:[{en:"a slice of lemon", ja:"レモンのスライス"}]},
+      {en:"mango", ja:"マンゴー", cat:"fruits"},
+      {en:"kiwi", ja:"キウイ", cat:"fruits"},
+      {en:"carrot", ja:"にんじん", cat:"vegetables", ex:[{en:"grated carrot", ja:"すりおろしにんじん"}]},
+      {en:"potato", ja:"じゃがいも", cat:"vegetables", ex:[{en:"mashed potatoes", ja:"マッシュポテト"}]},
+      {en:"onion", ja:"たまねぎ", cat:"vegetables", ex:[{en:"chopped onion", ja:"みじん切りの玉ねぎ"}]},
+      {en:"tomato", ja:"トマト", cat:"vegetables", ex:[{en:"tomato soup", ja:"トマトスープ"}]},
+      {en:"cucumber", ja:"きゅうり", cat:"vegetables"},
+      {en:"eggplant", ja:"なす", cat:"vegetables"},
+      {en:"spinach", ja:"ほうれん草", cat:"vegetables"},
+      {en:"cabbage", ja:"キャベツ", cat:"vegetables"},
+      {en:"broccoli", ja:"ブロッコリー", cat:"vegetables"},
+      {en:"cauliflower", ja:"カリフラワー", cat:"vegetables"},
+      {en:"lettuce", ja:"レタス", cat:"vegetables"},
+      {en:"mushroom", ja:"きのこ", cat:"vegetables"},
+      {en:"sweet potato", ja:"さつまいも", cat:"vegetables"},
+      {en:"green pepper", ja:"ピーマン", cat:"vegetables"},
+      {en:"water", ja:"水", cat:"drinks", ex:[{en:"a glass of water", ja:"一杯の水"}]},
+      {en:"tea", ja:"お茶", cat:"drinks", ex:[{en:"green tea", ja:"緑茶"},{en:"iced tea", ja:"アイスティー"}]},
+      {en:"coffee", ja:"コーヒー", cat:"drinks", ex:[{en:"black coffee", ja:"ブラックコーヒー"}]},
+      {en:"milk", ja:"牛乳", cat:"drinks", ex:[{en:"soy milk", ja:"豆乳"}]},
+      {en:"juice", ja:"ジュース", cat:"drinks"},
+      {en:"soda", ja:"炭酸飲料", cat:"drinks"},
+      {en:"sports drink", ja:"スポーツドリンク", cat:"drinks"},
+      {en:"green tea", ja:"緑茶", cat:"drinks"},
+      {en:"black tea", ja:"紅茶", cat:"drinks"},
+      {en:"smoothie", ja:"スムージー", cat:"drinks"},
+      {en:"breakfast", ja:"朝食", cat:"meals", ex:[{en:"skip breakfast", ja:"朝食を抜く"}]},
+      {en:"lunch", ja:"昼食", cat:"meals", ex:[{en:"have lunch", ja:"昼食をとる"}]},
+      {en:"dinner", ja:"夕食", cat:"meals", ex:[{en:"make dinner", ja:"夕食を作る"}]},
+      {en:"salad", ja:"サラダ", cat:"meals", ex:[{en:"a fresh salad", ja:"新鮮なサラダ"}]},
+      {en:"sandwich", ja:"サンドイッチ", cat:"meals", ex:[{en:"a ham sandwich", ja:"ハムサンド"}]},
+      {en:"soup", ja:"スープ", cat:"meals", ex:[{en:"hot soup", ja:"温かいスープ"}]},
+      {en:"rice", ja:"ご飯", cat:"meals", ex:[{en:"steamed rice", ja:"白ご飯"}]},
+      {en:"noodles", ja:"麺類", cat:"meals", ex:[{en:"cold noodles", ja:"冷やし麺"}]},
+      {en:"curry", ja:"カレー", cat:"meals", ex:[{en:"chicken curry", ja:"チキンカレー"}]},
+      {en:"grilled fish", ja:"焼き魚", cat:"meals"},
+      {en:"fried chicken", ja:"から揚げ", cat:"meals"},
+      {en:"tofu", ja:"豆腐", cat:"meals"},
+      {en:"omelet", ja:"オムレツ", cat:"meals"}
+    ];
+
+    let index = 0, revealed = false;
+    const cardContainer = document.getElementById('cardContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+
+    function buildExamples(item){
+      if(item.ex && Array.isArray(item.ex) && item.ex.length){ return item.ex; }
+      // デフォルト短文（2つ）
+      return [
+        { en:`I like ${item.en}.`, ja:`私は${item.ja}が好きです。` },
+        { en:`Have some ${item.en}.`, ja:`${item.ja}をどうぞ。` }
+      ];
+    }
+
+    function render(){
+      const x = DATA[index];
+      const examples = buildExamples(x);
+      const hide = !revealed;
+      cardContainer.innerHTML = `<div class="card" id="quizCard" role="group" aria-label="${x.en}">
+        <div class="pair">
+          <div class="en">${x.en}</div>
+          <div class="ja ${hide ? 'hidden' : ''}">${x.ja}</div>
+        </div>
+        <ul class="examples">
+          ${examples.map(ex=>`<li><span class=\"ex-en\">${ex.en}</span><span class=\"ex-ja ${hide ? 'hidden' : ''}\">${ex.ja}</span></li>`).join('')}
+        </ul>
+        <div class="meta">${x.cat}</div>
+      </div>`;
+      document.getElementById('quizCard').addEventListener('click', onCardTap);
+    }
+
+    function onCardTap(){
+      if(!revealed){
+        revealed = true; // 問題 → 答え
+        render();
+      } else {
+        // 答え → 次の問題
+        index = (index+1) % DATA.length;
+        revealed = false;
+        render();
+      }
+    }
+
+    prevBtn.addEventListener('click', ()=>{ index=(index-1+DATA.length)%DATA.length; revealed=false; render(); });
+    nextBtn.addEventListener('click', ()=>{ index=(index+1)%DATA.length; revealed=false; render(); });
+    shuffleBtn.addEventListener('click', ()=>{ shuffle(DATA); index=0; revealed=false; render(); });
+
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+    }
+
+    // 初期表示
+    render();
+  </script>
+</body>
+</html>
