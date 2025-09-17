@@ -2,44 +2,101 @@
 <html lang="ja">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>英単語フラッシュカード—最小版</title>
+<title>英単語フラッシュカード—最小版（左に答え＋用例）</title>
 <style>
   html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;background:#0b0f14;color:#e8f0f7}
   .wrap{height:100%;display:grid;place-items:center;padding:16px}
-  .card{width:min(480px,92vw);aspect-ratio:3/2;border:1px solid #223247;border-radius:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;background:#121821;cursor:pointer}
+  .card{width:min(560px,92vw);aspect-ratio:3/2;border:1px solid #223247;border-radius:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;background:#121821;cursor:pointer;padding:8px 14px}
+  .row{display:flex;align-items:baseline;gap:10px}
+  .jp-left{min-width:5em;text-align:right;font-size:clamp(18px,5vw,28px);opacity:.95}
   .en{font-size:clamp(28px,8vw,56px);font-weight:800}
-  .jp{font-size:clamp(18px,5vw,32px);opacity:.95}
-  .hint{margin-top:8px;font-size:12px;color:#9db2c8}
+  .examples{width:100%;max-width:520px;margin-top:4px}
+  .ex{font-size:clamp(14px,3.8vw,18px);line-height:1.5;border-top:1px dashed #223247;padding:6px 0}
+  .ex .tr{opacity:.9;margin-top:2px}
+  .hint{margin-top:4px;font-size:12px;color:#9db2c8}
   .progress{position:fixed;inset:auto 12px 12px auto;color:#9db2c8;font-size:12px}
+  a.back{position:fixed;left:12px;bottom:12px;color:#9db2c8}
 </style>
 <body>
 <div class="wrap">
-  <div class="card" id="card">
-    <div class="en" id="en">—</div>
-    <div class="jp" id="jp" style="display:none">—</div>
-    <div class="hint">英単語 → タップで日本語 → もう一度で次へ</div>
+  <div class="card" id="card" aria-label="カードをタップまたはスペース/Enterで表裏切替">
+    <div class="row">
+      <div class="en" id="en">—</div>
+      <div class="jp-left" id="jp">　</div>
+    </div>
+    <div class="examples" id="examples"></div>
+    <div class="hint">英単語 → タップで日本語と用例訳 → もう一度で次へ</div>
   </div>
   <div class="progress" id="pg">0/0</div>
 </div>
-<a href="index.html">戻る</a>
+<a class="back" href="index.html">戻る</a>
 <script>
-  const data=[['red','赤い'],['blue','青い'],['yellow','黄色い'],['green','緑'],['orange','オレンジ色'],['purple','紫'],['pink','ピンク'],['brown','茶色'],['black','黒'],['white','白'],['gray','灰色']]
-  let i=0, back=false
-  const en=document.getElementById('en'), jp=document.getElementById('jp'), pg=document.getElementById('pg')
+  // [英語, 日本語, 用例(英/日)の配列]
+  const data = [
+    ['red','赤い',      [['a red apple','赤いリンゴ'],['red dress','赤いドレス']]],
+    ['blue','青い',     [['blue sky','青い空'],['feel blue','憂うつだ']]],
+    ['yellow','黄色い', [['yellow flower','黄色い花'],['a yellow bird','黄色い鳥']]],
+    ['green','緑',      [['green leaf','緑の葉'],['go green','環境に優しい選択をする']]],
+    ['orange','オレンジ色',[['orange juice','オレンジジュース'],['orange sunset','オレンジ色の夕日']]],
+    ['purple','紫',     [['purple shirt','紫のシャツ'],['purple light','紫の光']]],
+    ['pink','ピンク',   [['pink cheeks','ピンク色のほお'],['pink paint','ピンクの塗料']]],
+    ['brown','茶色',    [['brown bag','茶色のかばん'],['brown shoes','茶色の靴']]],
+    ['black','黒',      [['black cat','黒猫'],['black coffee','ブラックコーヒー']]],
+    ['white','白',      [['white snow','白い雪'],['white shirt','白いシャツ']]],
+    ['gray','灰色',     [['gray cloud','灰色の雲'],['gray hair','白髪/灰色の髪']]]
+  ];
+
+  let i = 0, back = false; // back=false: 問い、true: 答え
+  const en = document.getElementById('en');
+  const jp = document.getElementById('jp');
+  const pg = document.getElementById('pg');
+  const examples = document.getElementById('examples');
+
+  function renderExamples(exList, showTrans){
+    // 用例を列挙。訳は showTrans=true のときだけ表示
+    examples.innerHTML = exList.map(([e,j])=>{
+      return `<div class="ex">
+        <div class="src">${e}</div>
+        ${showTrans ? `<div class="tr">— ${j}</div>` : ``}
+      </div>`;
+    }).join('');
+  }
+
   function show(){
-    const [e,j]=data[i]
-    en.textContent=e
-    jp.textContent=j
-    jp.style.display= back?'' : 'none'
-    pg.textContent=`${i+1}/${data.length}`
+    const [e, j, ex] = data[i];
+    en.textContent = e;
+    jp.textContent = back ? j : '　'; // 左に答え。非表示時は全角スペースでレイアウト保持
+    renderExamples(ex || [], back);
+    pg.textContent = `${i+1}/${data.length}`;
   }
+
   function tap(){
-    if(!back){ back=true } else { i=(i+1)%data.length; back=false }
-    show()
+    if(!back){
+      back = true;           // 答えと用例訳を表示
+    }else{
+      i = (i + 1) % data.length; // 次のカードへ
+      back = false;
+    }
+    show();
   }
-  document.getElementById('card').addEventListener('click',tap)
-  document.addEventListener('keydown',e=>{ if(e.code==='Space'||e.code==='Enter') { e.preventDefault(); tap() } })
-  show()
+
+  document.getElementById('card').addEventListener('click', tap);
+  document.addEventListener('keydown', e=>{
+    if(e.code==='Space' || e.code==='Enter'){
+      e.preventDefault();
+      tap();
+    }
+    if(e.code==='ArrowRight'){
+      e.preventDefault();
+      i = (i + 1) % data.length; back = false; show();
+    }
+    if(e.code==='ArrowLeft'){
+      e.preventDefault();
+      i = (i - 1 + data.length) % data.length; back = false; show();
+    }
+  });
+
+  show();
 </script>
 </body>
 </html>
