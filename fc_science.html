@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flashcards: Science Vocabulary</title>
+  <style>
+    :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; }
+    html,body{height:100%; margin:0; background: radial-gradient(70rem 60rem at 50% -10%, #0b1220 0%, var(--bg) 40%, #070b14 100%); font-family: system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;}
+    .container{max-width:960px; margin:0 auto; padding:16px 16px 56px;}
+    header{display:flex; gap:12px; align-items:center; justify-content:space-between; color:var(--fg); margin-top:12px}
+    header .title{font-weight:800; letter-spacing:.3px}
+    header .right{display:flex; gap:8px; align-items:center}
+    .btn{background:linear-gradient(180deg,#0e1626,#0a0f1a); border:1px solid var(--border); color:var(--fg); padding:10px 14px; border-radius:12px; cursor:pointer; user-select:none}
+    .btn[disabled]{opacity:.55; cursor:not-allowed}
+    .btn.small{padding:6px 10px; font-size:13px}
+    .badge{font-size:12px; color:var(--muted)}
+    .card{margin-top:14px; background:linear-gradient(180deg,#0a1322,#0a0f1a); border:1px solid var(--border); border-radius:20px; padding:24px; display:grid; grid-template-columns:1fr; gap:16px; align-items:start; box-shadow:0 10px 30px rgba(0,0,0,.35);}
+    .term-mean{display:flex; align-items:baseline; gap:12px;}
+    .term{font-size:36px; line-height:1.2; color:var(--fg); font-weight:800;}
+    .mean{font-size:24px; color:var(--acc);}
+    .phrases{display:flex; flex-direction:column; gap:8px}
+    .phrase-line{display:flex; gap:10px; align-items:baseline}
+    .phrase-en{color:var(--fg); font-size:16px}
+    .phrase-ja{color:var(--muted); font-size:16px}
+    .foot{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title">Science Flashcards</div>
+      <div class="right">
+        <button class="btn small" id="btnReveal">Reveal</button>
+        <button class="btn small" id="btnPrev">Prev</button>
+        <button class="btn small" id="btnNext">Next</button>
+      </div>
+    </header>
+
+    <section class="card" aria-live="polite" id="card">
+      <div class="term-mean">
+        <div class="term" id="term">...</div>
+        <div class="mean" id="meaning"></div>
+      </div>
+      <div class="phrases" id="phrases"></div>
+      <div class="foot">
+        <div id="progress">0 / 0</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+  const dataset = [
+    { en:'atom', ja:'原子', phrases:[{en:'An atom is the smallest unit of matter.', ja:'原子は物質の最小単位です。'}] },
+    { en:'molecule', ja:'分子', phrases:[{en:'Water is made up of molecules.', ja:'水は分子からできている。'}] },
+    { en:'gravity', ja:'重力', phrases:[{en:'Gravity pulls objects toward Earth.', ja:'重力は物体を地球に引き寄せる。'}] },
+    { en:'energy', ja:'エネルギー', phrases:[{en:'Solar panels convert sunlight into energy.', ja:'ソーラーパネルは太陽光をエネルギーに変換する。'}] },
+    { en:'experiment', ja:'実験', phrases:[{en:'The students conducted an experiment.', ja:'学生たちは実験を行った。'}] },
+    { en:'hypothesis', ja:'仮説', phrases:[{en:'The scientist proposed a new hypothesis.', ja:'科学者は新しい仮説を提案した。'}] },
+    { en:'reaction', ja:'反応', phrases:[{en:'The chemical reaction produced heat.', ja:'化学反応で熱が発生した。'}] },
+    { en:'observation', ja:'観察', phrases:[{en:'Careful observation is important.', ja:'注意深い観察が重要です。'}] },
+    { en:'theory', ja:'理論', phrases:[{en:'The theory of evolution explains change.', ja:'進化論は変化を説明する。'}] },
+    { en:'variable', ja:'変数', phrases:[{en:'Temperature was the independent variable.', ja:'温度が独立変数であった。'}] }
+  ];
+
+  let idx = 0;
+  let revealed = false;
+
+  const els = {
+    term: document.getElementById('term'),
+    meaning: document.getElementById('meaning'),
+    phrases: document.getElementById('phrases'),
+    progress: document.getElementById('progress'),
+    btnReveal: document.getElementById('btnReveal'),
+    btnPrev: document.getElementById('btnPrev'),
+    btnNext: document.getElementById('btnNext')
+  };
+
+  function render(){
+    const item = dataset[idx];
+    els.term.textContent = item.en;
+    els.meaning.textContent = revealed ? item.ja : '';
+    els.phrases.innerHTML = '';
+    item.phrases.forEach(p=>{
+      const line = document.createElement('div'); line.className='phrase-line';
+      const en = document.createElement('div'); en.className='phrase-en'; en.textContent = p.en;
+      line.appendChild(en);
+      if(revealed){ const ja = document.createElement('div'); ja.className='phrase-ja'; ja.textContent = p.ja; line.appendChild(ja);} 
+      els.phrases.appendChild(line);
+    });
+    els.progress.textContent = `${idx+1} / ${dataset.length}`;
+    els.btnReveal.textContent = revealed? 'Hide' : 'Reveal';
+  }
+
+  function next(){ if(!revealed){ revealed=true; render(); } else { revealed=false; idx=(idx+1)%dataset.length; render(); } }
+  function prev(){ if(revealed){ revealed=false; render(); } else { idx=(idx-1+dataset.length)%dataset.length; render(); } }
+
+  els.btnReveal.addEventListener('click', ()=>{ revealed=!revealed; render(); });
+  els.btnNext.addEventListener('click', next);
+  els.btnPrev.addEventListener('click', prev);
+  document.getElementById('card').addEventListener('click', next);
+
+  window.addEventListener('keydown', e=>{
+    if(['Space','Enter','ArrowRight','ArrowLeft'].includes(e.code)) e.preventDefault();
+    if(e.code==='Space' || e.code==='Enter') revealed=!revealed, render();
+    else if(e.code==='ArrowRight') next();
+    else if(e.code==='ArrowLeft') prev();
+  }, {passive:false});
+
+  render();
+  </script>
+</body>
+</html>
