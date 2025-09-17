@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flashcards: Shapes (fc_shape)</title>
+  <style>
+    :root{ --bg:#0f172a; --card:#111827; --fg:#e5e7eb; --muted:#9ca3af; }
+    html,body{height:100%; margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; background: radial-gradient(60rem 60rem at 50% -10%, #0b1220 0%, var(--bg) 40%, #070b14 100%);}    
+    .container{max-width:960px; margin:0 auto; padding:16px 16px 40px;}
+    .card{margin-top:14px; background:linear-gradient(180deg,#0a1322,#0a0f1a); border:1px solid #1f2937; border-radius:20px; padding:28px; display:grid; grid-template-columns:1.1fr 1fr; gap:16px; align-items:flex-start; box-shadow:0 10px 30px rgba(0,0,0,.35); cursor:pointer; user-select:none}
+    .left{display:flex; flex-direction:column; gap:20px;}
+    .term{font-size:36px; line-height:1.2; color:var(--fg); font-weight:800;}
+    .phrases{display:flex; flex-direction:column; gap:8px;}
+    .phrase-line{display:flex; gap:12px; align-items:baseline;}
+    .phrase-en{color:var(--fg); font-size:16px;}
+    .phrase-ja{color:var(--muted); font-size:16px;}
+    .shape{display:flex; justify-content:center; align-items:center; background:#0b1220; border:1px dashed #243043; border-radius:16px; padding:12px;}
+    .shape svg{ width: clamp(160px, 42vw, 320px); height: auto; overflow: visible; }
+    @media (max-width:720px){
+      .card{grid-template-columns:1fr; padding:20px}
+      .term{font-size:28px}
+      .shape svg{ width: clamp(160px, 72vw, 320px); height:auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="card" aria-live="polite" id="card">
+      <div class="left">
+        <div class="term" id="term">circle</div>
+        <div class="phrases" id="phrases"></div>
+      </div>
+      <div class="shape" id="shape"></div>
+    </section>
+  </div>
+
+  <script>
+  // Wrap everything to ensure DOM is ready before accessing elements
+  document.addEventListener('DOMContentLoaded', () => {
+    // ===== Dataset =====
+    const data = [
+      { en:'circle',   ja:'円',       phrases:[
+          {en:'draw a circle',      ja:'円を描く'},
+          {en:'a perfect circle',   ja:'完全な円'},
+          {en:'inside the circle',  ja:'円の内側'}
+        ], draw: svg=>{el(svg,'circle',{cx:110,cy:110,r:80,fill:'none',stroke:'#22d3ee','stroke-width':10})}},
+      { en:'square',   ja:'正方形',   phrases:[
+          {en:'a square table',     ja:'正方形のテーブル'},
+          {en:'four equal sides',   ja:'4辺が等しい'},
+          {en:'square grid',        ja:'正方格子'}
+        ], draw: svg=>{el(svg,'rect',{x:40,y:40,width:140,height:140,fill:'none',stroke:'#60a5fa','stroke-width':10,rx:8,ry:8})}},
+      { en:'triangle', ja:'三角形',   phrases:[
+          {en:'an equilateral triangle', ja:'正三角形'},
+          {en:'triangle pattern',        ja:'三角模様'},
+          {en:'two triangles overlap',   ja:'2つの三角形が重なる'}
+        ], draw: svg=>{poly(svg,[[110,30],[190,190],[30,190]], '#f472b6')}}
+    ];
+
+    // ===== State & Elements =====
+    let idx = 0;           // which card
+    let revealed = false;  // false: show only English, true: show translations
+
+    const termEl    = document.getElementById('term');
+    const phrasesEl = document.getElementById('phrases');
+    const shapeEl   = document.getElementById('shape');
+    const cardEl    = document.getElementById('card');
+
+    // ===== SVG helpers =====
+    function el(svg, name, attrs){ const n = document.createElementNS('http://www.w3.org/2000/svg', name); for(const k in attrs) n.setAttribute(k, attrs[k]); svg.appendChild(n); return n; }
+    function poly(svg, pts, stroke){ return el(svg,'polygon',{points: pts.map(([x,y])=>`${x},${y}`).join(' '), fill:'none', stroke, 'stroke-width':10, 'stroke-linejoin':'round'}); }
+
+    // ===== Render & interaction =====
+    function render(){
+      const item = data[idx];
+      termEl.textContent = revealed ? `${item.en} : ${item.ja}` : item.en;
+
+      // phrases
+      phrasesEl.innerHTML = '';
+      item.phrases.forEach(p=>{
+        const line = document.createElement('div');
+        line.className = 'phrase-line';
+        const en = document.createElement('div'); en.className='phrase-en'; en.textContent = p.en;
+        line.appendChild(en);
+        if(revealed){
+          const ja = document.createElement('div'); ja.className='phrase-ja'; ja.textContent = p.ja; line.appendChild(ja);
+        }
+        phrasesEl.appendChild(line);
+      });
+
+      // shape
+      shapeEl.innerHTML='';
+      const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('viewBox','-6 -6 232 232');
+      svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+      shapeEl.appendChild(svg);
+      item.draw(svg);
+    }
+
+    function advance(){
+      if(!revealed){ revealed = true; render(); }
+      else{ revealed = false; idx = (idx+1)%data.length; render(); }
+    }
+
+    cardEl.addEventListener('click', advance, {passive:true});
+    window.addEventListener('keydown', (e)=>{ if(e.key===' '|| e.key==='Enter' || e.key==='ArrowRight'){ e.preventDefault(); advance(); } });
+
+    // Initial paint
+    render();
+
+    // ===== Simple Tests (console) =====
+    (function runTests(){
+      console.groupCollapsed('%cfc_shape tests','color:#22d3ee');
+      try{
+        // 1) Initial state: not revealed
+        console.assert(revealed===false, 'initial revealed=false');
+        console.assert(!/—/.test(termEl.textContent), 'initial term has no Japanese');
+        const initialLines = Array.from(phrasesEl.querySelectorAll('.phrase-line'));
+        console.assert(initialLines.length===data[idx].phrases.length, 'phrase lines count matches dataset');
+        console.assert(!initialLines[0].querySelector('.phrase-ja'), 'initial phrases show no Japanese');
+
+        // 2) Reveal once
+        advance();
+        console.assert(revealed===true, 'after 1st advance revealed=true');
+        console.assert(/—/.test(termEl.textContent), 'term shows Japanese when revealed');
+        const revealedLines = Array.from(phrasesEl.querySelectorAll('.phrase-line'));
+        console.assert(revealedLines[0].querySelector('.phrase-ja'), 'phrases show Japanese when revealed');
+
+        // 3) Advance to next card
+        const prevIdx = idx; advance();
+        console.assert(idx === (prevIdx+1)%data.length, 'moved to next card after second advance');
+        console.assert(revealed===false, 'revealed resets to false for next card');
+
+        // 4) Shape renders some child elements
+        console.assert(shapeEl.querySelector('svg') && shapeEl.querySelector('svg').childElementCount>0, 'shape rendered');
+
+        console.log('All tests passed.');
+      }catch(err){ console.error('Test failure:', err); }
+      finally{ console.groupEnd(); }
+    })();
+  });
+  </script>
+</body>
+</html>
