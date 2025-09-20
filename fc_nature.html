@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flashcards: Animals & Plants (fc_nature)</title>
+  <style>
+    :root{ --bg:#0b1220; --card:#101826; --fg:#e6edf3; --muted:#9aa4b2; --line:#223046; --accent:#7dd3fc; }
+    html,body{height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif; background:radial-gradient(60rem 60rem at 50% -10%, #0b1220 0%, #0b1220 40%, #070b14 100%); color:var(--fg)}
+    main{min-height:100%; display:grid; place-items:start center; padding:24px 16px}
+    header{width:100%; max-width:760px}
+    h1{margin:0 0 8px; font-size:1.6rem}
+    p.lead{margin:0 0 18px; color:var(--muted)}
+
+    .card{width:100%; max-width:760px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px 18px; cursor:pointer; box-shadow:0 3px 12px rgba(0,0,0,.4)}
+    .pair{display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:baseline}
+    .en{font-size:1.7rem; font-weight:800; letter-spacing:.2px}
+    .ja{font-size:1.4rem}
+    .hidden{visibility:hidden}
+    .meta{margin-top:10px; color:var(--muted); font-size:.95rem}
+
+    .controls{display:flex; gap:10px; margin-top:14px}
+    .btn{background:transparent; border:1px solid var(--line); color:var(--fg); border-radius:10px; padding:8px 12px; cursor:pointer}
+    .btn:hover{border-color:var(--accent)}
+
+    footer{margin-top:14px; color:var(--muted); font-size:.9rem}
+    a{color:var(--accent); text-decoration:none}
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>英単語フラッシュカード：動植物（Animals & Plants）</h1>
+      <p class="lead">カードをタップ/クリック：<strong>問題 → 答え → 次の問題</strong>。とてもシンプルな挙動です。</p>
+    </header>
+
+    <div class="card" id="quizCard" role="group" aria-label="flashcard">
+      <div class="pair">
+        <div class="en" id="en">—</div>
+        <div class="ja hidden" id="ja">—</div>
+      </div>
+      <div class="meta" id="meta">animals / plants</div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="prevBtn">← 前へ</button>
+      <button class="btn" id="nextBtn">次へ →</button>
+      <button class="btn" id="shuffleBtn">シャッフル</button>
+    </div>
+
+    <footer>
+      <span>操作説明：1回目のタップで訳を表示、もう1回で次の単語に進みます。</span>
+    </footer>
+  </main>
+
+  <script>
+    // 動植物の基本〜入試頻出語を中心に（必要に応じて拡張してください）
+    const DATA = [
+      // animals
+      { en:"mammal", ja:"哺乳類", cat:"animals" },
+      { en:"amphibian", ja:"両生類", cat:"animals" },
+      { en:"reptile", ja:"爬虫類", cat:"animals" },
+      { en:"insect", ja:"昆虫", cat:"animals" },
+      { en:"predator", ja:"捕食者", cat:"animals" },
+      { en:"prey", ja:"獲物／被食者", cat:"animals" },
+      { en:"herbivore", ja:"草食動物", cat:"animals" },
+      { en:"carnivore", ja:"肉食動物", cat:"animals" },
+      { en:"omnivore", ja:"雑食動物", cat:"animals" },
+      { en:"habitat", ja:"生息地", cat:"animals" },
+      { en:"migration", ja:"（動物の）移動・渡り", cat:"animals" },
+      { en:"hive", ja:"（ハチの）巣", cat:"animals" },
+      { en:"nest", ja:"巣", cat:"animals" },
+      { en:"flock", ja:"（鳥・羊などの）群れ", cat:"animals" },
+      { en:"herd", ja:"（ウシなどの）群れ", cat:"animals" },
+      { en:"pack", ja:"（オオカミなどの）一群", cat:"animals" },
+      { en:"nocturnal", ja:"夜行性の", cat:"animals" },
+      { en:"endangered", ja:"絶滅危惧の", cat:"animals" },
+      { en:"biodiversity", ja:"生物多様性", cat:"animals" },
+
+      // plants
+      { en:"seed", ja:"種子", cat:"plants" },
+      { en:"sprout", ja:"芽／芽を出す", cat:"plants" },
+      { en:"bud", ja:"つぼみ", cat:"plants" },
+      { en:"leaf", ja:"葉", cat:"plants" },
+      { en:"root", ja:"根", cat:"plants" },
+      { en:"stem", ja:"茎", cat:"plants" },
+      { en:"bark", ja:"樹皮", cat:"plants" },
+      { en:"blossom", ja:"花／開花する", cat:"plants" },
+      { en:"pollen", ja:"花粉", cat:"plants" },
+      { en:"petal", ja:"花びら", cat:"plants" },
+      { en:"photosynthesis", ja:"光合成", cat:"plants" },
+      { en:"evergreen", ja:"常緑の／常緑樹", cat:"plants" },
+      { en:"deciduous", ja:"落葉性の", cat:"plants" },
+      { en:"fern", ja:"シダ", cat:"plants" },
+      { en:"moss", ja:"コケ", cat:"plants" },
+      { en:"fungus", ja:"菌類（カビ・キノコなど）", cat:"plants" },
+      { en:"algae", ja:"藻類", cat:"plants" },
+      { en:"orchid", ja:"ラン", cat:"plants" },
+      { en:"oak", ja:"オーク（カシ）", cat:"plants" },
+      { en:"cedar", ja:"スギ／ヒマラヤスギなど", cat:"plants" },
+
+      // ecology cross-over
+      { en:"ecosystem", ja:"生態系", cat:"ecology" },
+      { en:"pollination", ja:"受粉", cat:"ecology" },
+      { en:"seed dispersal", ja:"種子散布", cat:"ecology" },
+      { en:"conservation", ja:"保全・保護", cat:"ecology" },
+      { en:"invasive species", ja:"外来種", cat:"ecology" },
+      { en:"endemic", ja:"固有の", cat:"ecology" }
+    ];
+
+    let index = 0; let revealed = false;
+    const $en = document.getElementById('en');
+    const $ja = document.getElementById('ja');
+    const $meta = document.getElementById('meta');
+    const $card = document.getElementById('quizCard');
+    const $prev = document.getElementById('prevBtn');
+    const $next = document.getElementById('nextBtn');
+    const $shuffle = document.getElementById('shuffleBtn');
+
+    function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [arr[i],arr[j]]=[arr[j],arr[i]]; } }
+
+    function render(){
+      const x = DATA[index];
+      $en.textContent = x.en;
+      $ja.textContent = x.ja;
+      $ja.classList.toggle('hidden', !revealed);
+      $meta.textContent = x.cat || '';
+    }
+
+    function next(){ index = (index + 1) % DATA.length; revealed = false; render(); }
+    function prev(){ index = (index - 1 + DATA.length) % DATA.length; revealed = false; render(); }
+
+    function onCardTap(){
+      if(!revealed){ revealed = true; render(); }
+      else { next(); }
+    }
+
+    $card.addEventListener('click', onCardTap);
+    $next.addEventListener('click', next);
+    $prev.addEventListener('click', prev);
+    $shuffle.addEventListener('click', ()=>{ shuffle(DATA); index=0; revealed=false; render(); });
+
+    // 初期化
+    shuffle(DATA);
+    render();
+  </script>
+</body>
+</html>
