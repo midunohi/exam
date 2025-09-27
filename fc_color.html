@@ -2,35 +2,53 @@
 <html lang="ja">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>英単語フラッシュカード—最小版（左に答え＋用例）</title>
+<title>英単語フラッシュカード—横並び＆無揺れ</title>
 <style>
   html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;background:#0b0f14;color:#e8f0f7}
   .wrap{height:100%;display:grid;place-items:center;padding:16px}
   .card{width:min(560px,92vw);aspect-ratio:3/2;border:1px solid #223247;border-radius:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;background:#121821;cursor:pointer;padding:8px 14px}
-  .row{display:flex;align-items:baseline;gap:10px}
-  .jp-left{min-width:5em;text-align:right;font-size:clamp(18px,5vw,28px);opacity:.95}
-  .en{font-size:clamp(28px,8vw,56px);font-weight:800}
-  .examples{width:100%;max-width:520px;margin-top:4px}
+  .row{display:flex;align-items:baseline;gap:12px;justify-content:center}
+  .en{font-size:clamp(28px,8vw,56px);font-weight:800;white-space:nowrap}
+  .jp-left{margin-left:0;text-align:left;font-size:clamp(18px,5vw,28px);opacity:.95;white-space:nowrap}
+  .hidden{visibility:hidden}
+  .examples{width:100%;max-width:520px;margin-top:4px;display:flex;flex-direction:column;gap:6px}
   .ex{font-size:clamp(14px,3.8vw,18px);line-height:1.5;border-top:1px dashed #223247;padding:6px 0}
-  .ex .tr{opacity:.9;margin-top:2px}
+  .src{display:flex;gap:6px;align-items:baseline}
+  .src .tr{opacity:.9;font-size:.9em}
   .hint{margin-top:4px;font-size:12px;color:#9db2c8}
   .progress{position:fixed;inset:auto 12px 12px auto;color:#9db2c8;font-size:12px}
   a.back{position:fixed;left:12px;bottom:12px;color:#9db2c8}
+  /* 計測用（画面外に置いて幅だけ測る）*/
+  .measure{position:absolute;left:-9999px;top:-9999px;visibility:hidden;white-space:nowrap;font-size:clamp(18px,5vw,28px)}
+  /* ゲージ */
+  .gauge{position:fixed;left:12px;right:12px;top:12px;display:flex;align-items:center;gap:10px;z-index:10}
+  .bar{flex:1;height:8px;background:#0e1520;border:1px solid #223247;border-radius:999px;overflow:hidden}
+  .fill{height:100%;width:0%;background:#2aa6ff;transition:width .3s ease}
+  .count{font-size:12px;color:#9db2c8;min-width:60px;text-align:right}
+  /* テスト結果トースト */
+  .toast{position:fixed;right:12px;top:44px;background:#16202c;border:1px solid #223247;border-radius:10px;padding:10px 12px;font-size:12px;color:#cbe2f7;box-shadow:0 6px 24px rgba(0,0,0,.3);opacity:.98}
+  .toast.ok{border-color:#2aa6ff}
+  .toast.err{border-color:#ff6b6b}
 </style>
 <body>
 <div class="wrap">
   <div class="card" id="card" aria-label="カードをタップまたはスペース/Enterで表裏切替">
     <div class="row">
       <div class="en" id="en">—</div>
-      <div class="jp-left" id="jp">　</div>
+      <div class="jp-left" id="jp">&nbsp;</div>
     </div>
     <div class="examples" id="examples"></div>
-    <div class="hint">英単語 → タップで日本語と用例訳 → もう一度で次へ</div>
+    <div class="hint">英単語 → タップで日本語と用例訳 → もう一度で次へ（※位置は固定で揺れません）</div>
   </div>
   <div class="progress" id="pg">0/0</div>
+  <div class="gauge" aria-label="解答ゲージ（答えを表示すると増えます）">
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="count"><span id="count">0</span>/<span id="total">0</span></div>
+  </div>
 </div>
-<a class="back" href="index.html">戻る</a>
+<a class="back" href="#" onclick="history.back();return false;">戻る</a>
 <script>
+  'use strict';
   // [英語, 日本語, 用例(英/日)の配列]
   const data = [
     ['red','赤い',      [['a red apple','赤いリンゴ'],['red dress','赤いドレス']]],
@@ -51,13 +69,40 @@
   const jp = document.getElementById('jp');
   const pg = document.getElementById('pg');
   const examples = document.getElementById('examples');
+  // ゲージ用DOM
+  const fillEl = document.getElementById('fill');
+  const countEl = document.getElementById('count');
+  const totalEl = document.getElementById('total');
+  // ゲージ状態
+  let revealed = new Array(data.length).fill(false);
+  let solved = 0;
+  function updateGauge(){
+    totalEl.textContent = data.length;
+    countEl.textContent = solved;
+    const pct = (solved / data.length) * 100;
+    fillEl.style.width = pct + '%';
+  }
+
+  // 1) 日本語訳の最大幅を事前に計測して min-width を固定 → 英語の位置が一切動かない
+  function fixJPMinWidth(){
+    const meas = document.createElement('span');
+    meas.className = 'measure';
+    document.body.appendChild(meas);
+    let max = 0;
+    for(const [,ja] of data){
+      meas.textContent = ja;
+      const w = meas.getBoundingClientRect().width;
+      if(w > max) max = w;
+    }
+    document.body.removeChild(meas);
+    jp.style.minWidth = Math.ceil(max) + 'px';
+  }
 
   function renderExamples(exList, showTrans){
-    // 用例を列挙。訳は showTrans=true のときだけ表示
+    // 訳は常にDOMに置き、非表示時は visibility:hidden で幅を確保（無揺れ）
     examples.innerHTML = exList.map(([e,j])=>{
       return `<div class="ex">
-        <div class="src">${e}</div>
-        ${showTrans ? `<div class="tr">— ${j}</div>` : ``}
+        <div class="src">${e}<span class="tr ${showTrans ? '' : 'hidden'}"> — ${j}</span></div>
       </div>`;
     }).join('');
   }
@@ -65,15 +110,19 @@
   function show(){
     const [e, j, ex] = data[i];
     en.textContent = e;
-    jp.textContent = back ? j : '　'; // 左に答え。非表示時は全角スペースでレイアウト保持
+    jp.textContent = j;                  // 常に文字を入れて幅を固定
+    jp.classList.toggle('hidden', !back);// 非表示時は不可視（幅は維持）
     renderExamples(ex || [], back);
     pg.textContent = `${i+1}/${data.length}`;
   }
 
+  // ★ 修正済み: 余分な else/波括弧を削除し正しい if/else 構造に
   function tap(){
     if(!back){
-      back = true;           // 答えと用例訳を表示
-    }else{
+      back = true; // 答えと用例訳を表示
+      // 初めてこの問題の答えを見たらカウント
+      if(!revealed[i]){ revealed[i] = true; solved++; updateGauge(); }
+    } else {
       i = (i + 1) % data.length; // 次のカードへ
       back = false;
     }
@@ -94,8 +143,71 @@
       e.preventDefault();
       i = (i - 1 + data.length) % data.length; back = false; show();
     }
+    // T でテストを実行
+    if(e.code==='KeyT'){
+      e.preventDefault();
+      runFlashcardTests();
+    }
   });
 
+  // ====== 簡易テスト（既存テストが無いため追加） ======
+  // 実行方法: キーボードで T を押すか、コンソールで runFlashcardTests() を呼ぶ
+  function assert(name, cond){
+    if(!cond) throw new Error('Test failed: '+name);
+  }
+  function toast(msg, ok=true){
+    const t = document.createElement('div');
+    t.className = 'toast ' + (ok ? 'ok':'err');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(()=>{ t.remove(); }, 2500);
+  }
+  function snapshot(){
+    return { i, back, revealed: [...revealed], solved };
+  }
+  function restore(s){
+    i = s.i; back = s.back; revealed = [...s.revealed]; solved = s.solved;
+    updateGauge(); show();
+  }
+  function runFlashcardTests(){
+    const s0 = snapshot();
+    try{
+      // Test 1: 初期状態
+      updateGauge(); show();
+      assert('Solved starts at 0', solved === 0);
+      assert('Gauge countEl is 0', Number(countEl.textContent) === 0);
+
+      // Test 2: 初回 tap で解答表示 & カウント +1
+      tap();
+      assert('back becomes true after first tap', back === true);
+      assert('solved increments to 1', solved === 1);
+
+      // Test 3: 2回目 tap で次カードへ（カウントは据え置き）
+      const iBefore = i;
+      tap();
+      assert('moves to next card', i === (iBefore + 1) % data.length);
+      assert('back resets to false', back === false);
+      assert('solved remains 1', solved === 1);
+
+      // Test 4: 既に解答済みのカードを再表示してもカウント増えない
+      i = 0; back = false; show();
+      const solvedBefore = solved;
+      tap();
+      assert('solved not increment again', solved === solvedBefore);
+
+      toast('✅ Tests passed');
+    }catch(err){
+      console.error(err);
+      toast('❌ '+err.message, false);
+    }finally{
+      restore(s0);
+    }
+  }
+  // ====== 簡易テストここまで ======
+
+  // 初期化
+  fixJPMinWidth();
+  updateGauge();
   show();
 </script>
 </body>

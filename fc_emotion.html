@@ -4,83 +4,67 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Emotion Cards – 大学受験英単語</title>
-  <meta name="description" content="感情(Emotion)をテーマにした大学受験英単語フラッシュカード。最小コード・ノンフレームワーク。" />
+  <meta name="description" content="感情(Emotion)フラッシュカード。英語(問題)を左、答えの日本語を右に横並び。類義語と例文も翻訳付きで表示。フラットレイアウト。" />
   <style>
-    :root {
-      --fg:#eee;
-      --muted:#aaa;
-      --line:#444;
-      --bg:#121212;
-      --accent:#0a84ff;
-      --q-h:72px;
-      --a-h:150px;
-    }
+    :root{--fg:#eee;--muted:#aaa;--bg:#121212;--accent:#0a84ff}
     *{box-sizing:border-box}
-    html,body{
-      height:100%;
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;
-      color:var(--fg);
-      background:var(--bg);
-    }
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;color:var(--fg);background:var(--bg)}
     main{min-height:100%;display:grid;place-items:start center;padding:20px}
-    header{width:100%;max-width:720px;margin-bottom:12px}
+    header{width:100%;max-width:900px;margin-bottom:12px}
     h1{font-size:20px;margin:0 0 6px}
     p.lead{margin:0;color:var(--muted)}
-    .card{
-      width:100%;
-      max-width:720px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px;
-      display:grid;
-      gap:10px;
-      cursor:pointer;
-      background:#1e1e1e;
-      box-shadow:0 2px 6px rgba(0,0,0,.6);
-    }
-    .grid{display:grid;grid-template-rows:var(--q-h) var(--a-h);gap:8px}
-    .box{
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px;
-      display:grid;
-      place-items:center;
-      text-align:center;
-      background:#1a1a1a;
-    }
-    .q{font-size:28px;letter-spacing:.5px}
-    .meta{font-size:12px;color:var(--muted)}
-    .a{font-size:16px}
-    .a .inner{visibility:hidden}
-    .a.revealed .inner{visibility:visible}
-    .links{margin-top:6px;font-size:12px}
+
+    .card{width:100%;max-width:900px;padding:8px 0;display:grid;gap:6px;cursor:pointer;background:transparent;border:none;box-shadow:none}
+
+    .row{display:grid;grid-template-columns:1fr minmax(30%, 360px);gap:8px;align-items:center;padding:4px 0;background:transparent}
+    .left{min-width:0}
+    .right{min-width:0;text-align:left;vertical-align:middle}
+
+    .word{font-size:28px;letter-spacing:.5px;white-space:nowrap}
+    .pos{font-size:12px;color:var(--muted);margin-left:8px}
+    .jp.hidden{visibility:hidden}
+
+    .section{font-size:12px;color:var(--muted);margin:0}
+
+    .links{margin-top:2px;font-size:12px}
     a{color:var(--accent)}
+  .gauge{box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
   </style>
 </head>
 <body>
   <main>
     <header>
       <h1>Emotion Cards – 大学受験英単語</h1>
-      <p class="lead">「感情」をテーマにした英単語を文脈付きで暗記。<span class="meta">（QとAの表示位置は固定で、Aの表示/非表示でもレイアウトがズレません）</span></p>
+      <p class="lead">英単語・<strong>類義語(英語)</strong>・<strong>例文(英語)</strong>を左列に、<strong>日本語訳</strong>を右列に表示。クリックで日本語訳をまとめて表示→もう一度クリックで次のカード。</p>
+
+      <!-- 進捗ステータス -->
+      <div id="status" style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-top:8px">
+        <div class="gauge" aria-label="学習進捗" style="height:10px;background:#2a2a2a;border-radius:999px;overflow:hidden">
+          <div id="gaugeFill" style="height:100%;width:0%;background:var(--accent);"></div>
+        </div>
+        <div style="font-variant-numeric:tabular-nums">
+          <span id="count">0</span>/<span id="goal">0</span>
+          <button id="resetBtn" style="margin-left:8px;background:transparent;border:1px solid #444;color:var(--fg);border-radius:8px;padding:2px 8px;cursor:pointer">リセット</button>
+        </div>
+      </div>
     </header>
 
     <section class="card" aria-label="フラッシュカード">
-      <div class="grid">
-        <div class="box" id="qBox">
-          <div>
-            <div class="q" id="q">—</div>
-            <div class="meta" id="pos">&nbsp;</div>
-          </div>
-        </div>
-        <div class="box a" id="aBox">
-          <div class="inner">
-            <div id="meaning">—</div>
-            <div class="meta" id="syn">&nbsp;</div>
-            <div class="meta" id="ex">&nbsp;</div>
-          </div>
-        </div>
+      <div class="row" id="row-word">
+        <div class="left"><span class="word" id="w">—</span><span class="pos" id="pos">&nbsp;</span></div>
+        <div class="right jp hidden" id="w_ja">—</div>
       </div>
+
+      <div class="row" id="row-syn">
+        <div class="left"><div class="section">類義語</div><div id="syn_en">—</div></div>
+        <div class="right jp hidden" id="syn_ja">—</div>
+      </div>
+
+      <div class="row" id="row-ex">
+        <div class="left"><div class="section">例文</div><div id="exs_en">—</div></div>
+        <div class="right jp hidden" id="exs_ja">—</div>
+      </div>
+
       <div class="links">
         <a href="./index.html" rel="up">← サイトマップへ</a>
         <span>・</span>
@@ -88,51 +72,69 @@
       </div>
     </section>
   </main>
-<a href="index.html">戻る</a>
+  <a href="index.html">戻る</a>
+
   <script>
     const data = [
-      {w:"delight", pos:"n./v.", ja:"大きな喜び／喜ばせる", syn:"pleasure, joy", ex:"Her letter filled me with delight."},
-      {w:"relief", pos:"n.", ja:"安堵、軽減", syn:"ease, alleviation", ex:"I felt relief after the exam."},
-      {w:"excitement", pos:"n.", ja:"興奮、わくわく", syn:"thrill, enthusiasm", ex:"The news caused great excitement."},
-      {w:"sorrow", pos:"n.", ja:"深い悲しみ", syn:"grief, sadness", ex:"He spoke with genuine sorrow."},
-      {w:"grief", pos:"n.", ja:"深い悲嘆", syn:"sorrow, anguish", ex:"She was overcome with grief."},
-      {w:"loneliness", pos:"n.", ja:"孤独", syn:"solitude (ニュアンス注意)", ex:"He struggled with loneliness in the city."},
-      {w:"anger", pos:"n.", ja:"怒り", syn:"rage, fury", ex:"She couldn't hide her anger."},
-      {w:"frustration", pos:"n.", ja:"欲求不満、失望混じりの苛立ち", syn:"irritation, disappointment", ex:"Delays lead to frustration."},
-      {w:"resentment", pos:"n.", ja:"憤り、恨み", syn:"bitterness", ex:"He felt resentment toward the decision."},
-      {w:"anxiety", pos:"n.", ja:"不安、心配", syn:"worry, uneasiness", ex:"I have anxiety about the results."},
-      {w:"fear", pos:"n./v.", ja:"恐れ／恐れる", syn:"terror (強), fright", ex:"She felt fear in the dark."},
-      {w:"nervousness", pos:"n.", ja:"緊張", syn:"tension", ex:"He showed signs of nervousness."},
-      {w:"envy", pos:"n./v.", ja:"うらやみ／うらやむ", syn:"jealousy(区別要)", ex:"I don't envy his job."},
-      {w:"pride", pos:"n.", ja:"誇り、自尊心", syn:"dignity, self-respect", ex:"She takes pride in her work."},
-      {w:"sympathy", pos:"n.", ja:"同情、共感(感情の共有)", syn:"compassion", ex:"You have my deepest sympathy."},
-      {w:"empathy", pos:"n.", ja:"共感(相手の立場に立つ)", syn:"understanding", ex:"Empathy is crucial in counseling."},
-      {w:"shame", pos:"n./v.", ja:"恥／恥をかかせる", syn:"disgrace", ex:"He felt shame for his actions."},
-      {w:"guilt", pos:"n.", ja:"罪悪感", syn:"remorse", ex:"Guilt kept him awake."},
-      {w:"remorse", pos:"n.", ja:"深い後悔", syn:"compunction", ex:"He showed true remorse."},
-      {w:"gratitude", pos:"n.", ja:"感謝", syn:"thankfulness", ex:"I expressed my gratitude."},
-      {w:"affection", pos:"n.", ja:"愛情", syn:"fondness", ex:"She showed affection for the child."},
-      {w:"indifference", pos:"n.", ja:"無関心", syn:"apathy", ex:"He treated the issue with indifference."},
-      {w:"disgust", pos:"n./v.", ja:"嫌悪／嫌悪させる", syn:"revulsion", ex:"The smell filled me with disgust."},
-      {w:"curiosity", pos:"n.", ja:"好奇心", syn:"inquisitiveness", ex:"Curiosity leads to discovery."}
+      {w:"delight", pos:"n./v.", ja:"大きな喜び／喜ばせる", syn:"pleasure, joy", syn_ja:"喜び、楽しさ", exs:["Her letter filled me with delight."], exs_ja:["彼女の手紙は私を喜びで満たした。"]},
+      {w:"relief", pos:"n.", ja:"安堵、軽減", syn:"ease, alleviation", syn_ja:"安心、軽減", exs:["I felt relief after the exam."], exs_ja:["試験後に安堵を感じた。"]},
+      {w:"excitement", pos:"n.", ja:"興奮、わくわく", syn:"thrill, enthusiasm", syn_ja:"興奮、熱意", exs:["The news caused great excitement."], exs_ja:["そのニュースは大きな興奮を引き起こした。"]},
+      {w:"sorrow", pos:"n.", ja:"深い悲しみ", syn:"grief, sadness", syn_ja:"悲しみ、哀しみ", exs:["He spoke with genuine sorrow."], exs_ja:["彼は心からの悲しみを語った。"]},
+      {w:"grief", pos:"n.", ja:"深い悲嘆", syn:"sorrow, anguish", syn_ja:"悲嘆、苦悩", exs:["She was overcome with grief."], exs_ja:["彼女は悲嘆に打ちひしがれた。"]},
+      {w:"loneliness", pos:"n.", ja:"孤独", syn:"solitude", syn_ja:"孤独、独り", exs:["He struggled with loneliness in the city."], exs_ja:["彼は都会で孤独と闘った。"]},
+      {w:"anger", pos:"n.", ja:"怒り", syn:"rage, fury", syn_ja:"激怒、憤怒", exs:["She couldn't hide her anger."], exs_ja:["彼女は怒りを隠せなかった。"]},
+      {w:"frustration", pos:"n.", ja:"欲求不満、失望混じりの苛立ち", syn:"irritation, disappointment", syn_ja:"苛立ち、失望", exs:["Delays lead to frustration."], exs_ja:["遅れは苛立ちを招く。"]},
+      {w:"resentment", pos:"n.", ja:"憤り、恨み", syn:"bitterness", syn_ja:"苦々しさ、憤り", exs:["He felt resentment toward the decision."], exs_ja:["彼はその決定に憤りを感じた。"]},
+      {w:"anxiety", pos:"n.", ja:"不安、心配", syn:"worry, uneasiness", syn_ja:"心配、不安", exs:["I have anxiety about the results."], exs_ja:["私は結果について不安を抱えている。"]},
+      {w:"fear", pos:"n./v.", ja:"恐れ／恐れる", syn:"terror, fright", syn_ja:"恐怖、驚き", exs:["She felt fear in the dark."], exs_ja:["彼女は暗闇で恐怖を感じた。"]},
+      {w:"nervousness", pos:"n.", ja:"緊張", syn:"tension", syn_ja:"緊張", exs:["He showed signs of nervousness."], exs_ja:["彼は緊張の兆候を示した。"]},
+      {w:"envy", pos:"n./v.", ja:"うらやみ／うらやむ", syn:"jealousy", syn_ja:"嫉妬", exs:["I don't envy his job."], exs_ja:["私は彼の仕事をうらやまない。"]},
+      {w:"pride", pos:"n.", ja:"誇り、自尊心", syn:"dignity, self-respect", syn_ja:"尊厳、自尊心", exs:["She takes pride in her work."], exs_ja:["彼女は自分の仕事に誇りを持っている。"]},
+      {w:"sympathy", pos:"n.", ja:"同情、共感", syn:"compassion", syn_ja:"思いやり", exs:["You have my deepest sympathy."], exs_ja:["心からお悔やみ申し上げます。"]},
+      {w:"empathy", pos:"n.", ja:"共感", syn:"understanding", syn_ja:"理解、共感", exs:["Empathy is crucial in counseling."], exs_ja:["カウンセリングでは共感が重要である。"]},
+      {w:"shame", pos:"n./v.", ja:"恥／恥をかかせる", syn:"disgrace", syn_ja:"不名誉", exs:["He felt shame for his actions."], exs_ja:["彼は自分の行為を恥じた。"]},
+      {w:"guilt", pos:"n.", ja:"罪悪感", syn:"remorse", syn_ja:"後悔、罪悪感", exs:["Guilt kept him awake."], exs_ja:["罪悪感が彼を眠らせなかった。"]},
+      {w:"remorse", pos:"n.", ja:"深い後悔", syn:"compunction", syn_ja:"良心の呵責", exs:["He showed true remorse."], exs_ja:["彼は真の後悔を示した。"]},
+      {w:"gratitude", pos:"n.", ja:"感謝", syn:"thankfulness", syn_ja:"感謝", exs:["I expressed my gratitude."], exs_ja:["私は感謝の意を表した。"]},
+      {w:"affection", pos:"n.", ja:"愛情", syn:"fondness", syn_ja:"好意", exs:["She showed affection for the child."], exs_ja:["彼女はその子に愛情を示した。"]},
+      {w:"indifference", pos:"n.", ja:"無関心", syn:"apathy", syn_ja:"無関心", exs:["He treated the issue with indifference."], exs_ja:["彼はその問題を無関心に扱った。"]},
+      {w:"disgust", pos:"n./v.", ja:"嫌悪／嫌悪させる", syn:"revulsion", syn_ja:"嫌悪感", exs:["The smell filled me with disgust."], exs_ja:["その臭いで私は嫌悪感に満たされた。"]},
+      {w:"curiosity", pos:"n.", ja:"好奇心", syn:"inquisitiveness", syn_ja:"探究心", exs:["Curiosity leads to discovery."], exs_ja:["好奇心は発見につながる。"]}
     ];
 
     let i = 0, revealed = false;
-    const q = document.getElementById('q');
+    let solved = Number(localStorage.getItem('fc_emotion_solved')||0);
+    const GOAL = data.length; // 目標: データ件数（必要なら変更可）
+    const w = document.getElementById('w');
     const pos = document.getElementById('pos');
-    const meaning = document.getElementById('meaning');
-    const syn = document.getElementById('syn');
-    const ex = document.getElementById('ex');
-    const aBox = document.getElementById('aBox');
+    const w_ja = document.getElementById('w_ja');
+    const syn_en = document.getElementById('syn_en');
+    const syn_ja = document.getElementById('syn_ja');
+    const exs_en = document.getElementById('exs_en');
+    const exs_ja = document.getElementById('exs_ja');
     const card = document.querySelector('.card');
+    const gaugeFill = document.getElementById('gaugeFill');
+    const countEl = document.getElementById('count');
+    const goalEl = document.getElementById('goal');
+    const resetBtn = document.getElementById('resetBtn');
 
     function render(){
       const d = data[i];
-      q.textContent = d.w; pos.textContent = d.pos;
-      meaning.textContent = d.ja;
-      syn.textContent = d.syn ? `syn: ${d.syn}` : '';
-      ex.textContent = d.ex ? `ex: ${d.ex}` : '';
-      aBox.classList.toggle('revealed', revealed);
+      w.textContent = d.w || '';
+      pos.textContent = d.pos ? ` ${d.pos}` : '';
+      syn_en.textContent = d.syn || '—';
+      exs_en.textContent = (Array.isArray(d.exs) && d.exs.length)
+        ? d.exs.map((s,idx)=>`${idx+1}. ${s}`).join('  ')
+        : '—';
+
+      w_ja.textContent = d.ja || '—';
+      syn_ja.textContent = d.syn_ja || '—';
+      exs_ja.textContent = (Array.isArray(d.exs_ja) && d.exs_ja.length)
+        ? d.exs_ja.map((s,idx)=>`${idx+1}. ${s}`).join('  ')
+        : '—';
+
+      document.querySelectorAll('.jp').forEach(el=>el.classList.toggle('hidden', !revealed));
+      updateGauge();
     }
 
     function nextRandom(){
@@ -141,8 +143,30 @@
     }
 
     card.addEventListener('click', () => {
-      if (!revealed) { revealed = true; render(); }
-      else { nextRandom(); }
+      if (!revealed) {
+        revealed = true;
+        solved += 1;
+        localStorage.setItem('fc_emotion_solved', String(solved));
+        render();
+      } else {
+        nextRandom();
+      }
+    });
+
+    // 進捗ゲージ更新
+    function updateGauge(){
+      const pct = Math.min(100, Math.round((Math.min(solved, GOAL) / GOAL) * 100));
+      gaugeFill.style.width = pct + '%';
+      countEl.textContent = solved;
+      goalEl.textContent = GOAL;
+    }
+
+    // リセット
+    resetBtn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      solved = 0;
+      localStorage.setItem('fc_emotion_solved', '0');
+      updateGauge();
     });
 
     nextRandom();

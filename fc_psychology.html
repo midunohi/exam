@@ -3,86 +3,86 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Psychology Cards – 大学受験英単語</title>
-  <meta name="description" content="心理(Psychology)をテーマにした大学受験英単語フラッシュカード。最小コード・ノンフレームワーク。" />
+  <title>Psychology Cards – 大学受験英単語（サイド表示＋ゲージ）</title>
+  <meta name="description" content="心理(Psychology)をテーマにした英単語カード。初期は英語のみ表示、タップで日本語（意味・類義語訳・例文訳）を開示。答えを開いた枚数でゲージが増える。" />
   <style>
-    :root { 
-      --fg:#eee; 
-      --muted:#aaa; 
-      --line:#444; 
-      --bg:#121212; 
-      --accent:#0a84ff; 
-      --q-h:72px; 
-      --a-h:160px; 
-    }
-    *{box-sizing:border-box}
-    html,body{
-      height:100%;margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;
-      color:var(--fg);background:var(--bg)
-    }
-    main{min-height:100%;display:grid;place-items:start center;padding:20px}
-    header{width:100%;max-width:720px;margin-bottom:12px}
-    h1{font-size:20px;margin:0 0 6px}
-    p.lead{margin:0;color:var(--muted)}
-    .card{
-      width:100%;max-width:720px;border:1px solid var(--line);
-      border-radius:16px;padding:12px;display:grid;gap:10px;cursor:pointer;
-      background:#1e1e1e;box-shadow:0 2px 6px rgba(0,0,0,.6)
-    }
-    .grid{display:grid;grid-template-rows:var(--q-h) var(--a-h);gap:8px}
-    .box{
-      border:1px solid var(--line);border-radius:12px;padding:10px;
-      display:grid;place-items:center;text-align:center;background:#1a1a1a
-    }
-    .q{font-size:28px;letter-spacing:.5px}
-    .meta{font-size:12px;color:var(--muted)}
-    .a{font-size:16px}
-    .a .inner{visibility:hidden}
-    .a.revealed .inner{visibility:visible}
-    .links{margin-top:6px;font-size:12px}
-    a{color:var(--accent)}
-    /* 広い画面では 質問=左 / 解答=右 の左右配置 */
-    @media (min-width: 880px){
-      .grid{grid-template-rows:unset; grid-template-columns:1fr 1fr; min-height:var(--a-h)}
-      .box{height:100%}
-    }
+    :root{ --fg:#eee; --muted:#aaa; --line:#444; --bg:#121212; --accent:#0a84ff; --fill:#22c55e; }
+    *{ box-sizing:border-box }
+    html,body{ height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif; color:var(--fg); background:var(--bg) }
+    main{ min-height:100%; display:grid; place-items:start center; padding:20px }
+    header{ width:100%; max-width:860px; margin-bottom:10px }
+    h1{ font-size:20px; margin:0 0 6px }
+    p.lead{ margin:0; color:var(--muted) }
+
+    /* 進捗ゲージ */
+    .gauge{ width:100%; max-width:860px; display:grid; gap:6px; margin:10px 0 16px }
+    .gauge-top{ display:flex; align-items:baseline; justify-content:space-between }
+    .gauge-label{ font-size:12px; color:var(--muted) }
+    .gauge-num{ font-variant-numeric:tabular-nums }
+    .gbar{ width:100%; height:10px; border:1px solid var(--line); border-radius:999px; overflow:hidden; background:#1c1c1c }
+    .gfill{ height:100%; width:0%; background:var(--fill); transition:width .25s ease }
+
+    /* カード（入れ子の枠なし）*/
+    .card{ width:100%; max-width:860px; border:1px solid var(--line); border-radius:16px; padding:16px; display:grid; gap:12px; cursor:pointer; background:#1e1e1e; box-shadow:0 2px 6px rgba(0,0,0,.6) }
+    .row{ display:grid; grid-template-columns:140px 1fr 1fr; gap:10px; align-items:center }
+    .label{ color:var(--muted); font-size:12px }
+    .en{ font-size:18px }
+    .ja{ font-size:18px; display:none }
+    .card.revealed .ja{ display:block }
+    .word{ font-size:28px; font-weight:700; letter-spacing:.3px }
+    .pos{ font-size:12px; color:var(--muted) }
+    .hint{ font-size:12px; color:var(--muted) }
   </style>
 </head>
 <body>
   <main>
     <header>
       <h1>Psychology Cards – 大学受験英単語</h1>
-      <p class="lead">「心理学」をテーマにした英単語を文脈付きで暗記。<span class="meta">（クリックで意味→再クリックで次の単語。レイアウトはAの表示/非表示でズレません）</span></p>
+      <p class="lead">最初は <b>英語のみ</b>。タップ/クリックで <b>日本語の答え</b> を英語の右に表示（意味・類義語訳・例文訳）。<br>同じカードを初めて開示したときだけゲージが増えます。1回目=答え表示、2回目=次へ。Space/Enter=表示切替、→=次、←=前。</p>
     </header>
 
-    <section class="card" aria-label="フラッシュカード">
-      <div class="grid">
-        <div class="box" id="qBox">
-          <div>
-            <div class="q" id="q">—</div>
-            <div class="meta" id="pos">&nbsp;</div>
-          </div>
-        </div>
-        <div class="box a" id="aBox">
-          <div class="inner">
-            <div id="meaning">—</div>
-            <div class="meta" id="syn">&nbsp;</div>
-            <div class="meta" id="ex">&nbsp;</div>
-          </div>
-        </div>
+    <!-- 進捗ゲージ -->
+    <section class="gauge" aria-label="進捗ゲージ">
+      <div class="gauge-top">
+        <div class="gauge-label">Progress (answered)</div>
+        <div class="gauge-num" id="gnum">0 / 0</div>
       </div>
-      <div class="links">
-        <a href="./index.html" rel="up">← サイトマップへ</a>
-        <span>・</span>
-        <a href="./fc_emotion.html" rel="contents">fc_emotion.html</a>
+      <div class="gbar"><div class="gfill" id="gfill" style="width:0%"></div></div>
+    </section>
+
+    <section class="card" id="card" aria-label="フラッシュカード" title="タップで答え、もう一度で次へ">
+      <div class="row">
+        <div class="label">Word</div>
+        <div class="en word" id="w">—</div>
+        <div class="ja" id="jaW">—</div>
       </div>
+      <div class="row">
+        <div class="label">POS</div>
+        <div class="en pos" id="pos">—</div>
+        <div class="ja">&nbsp;</div>
+      </div>
+      <div class="row">
+        <div class="label">Meaning</div>
+        <div class="en" id="enMeaning">—</div>
+        <div class="ja" id="jaMeaning">—</div>
+      </div>
+      <div class="row">
+        <div class="label">Synonyms</div>
+        <div class="en" id="enSyn">—</div>
+        <div class="ja" id="jaSyn">—</div>
+      </div>
+      <div class="row">
+        <div class="label">Example</div>
+        <div class="en" id="enEx">—</div>
+        <div class="ja" id="jaEx">—</div>
+      </div>
+      <div class="hint">タップ/クリック: 1回目で答え表示（初回のみゲージ+1）、2回目で次へ。→ 次 / ← 前。Space/Enter でも表示切替。</div>
     </section>
   </main>
 
   <script>
-    // 心理学系 基礎〜頻出語（大学受験向け、簡潔な訳・近義語・例文付き）
-    const data = [
+    // 元データ（英語: word,pos,syn,ex / 日本語: ja）に、訳（jaSyn, jaEx）を付与
+    const base = [
       {w:"cognition", pos:"n.", ja:"認知", syn:"knowing, awareness", ex:"Language is closely related to cognition."},
       {w:"perception", pos:"n.", ja:"知覚、認知", syn:"sensation, recognition", ex:"Perception can be influenced by context."},
       {w:"attention", pos:"n.", ja:"注意", syn:"focus, concentration", ex:"Divided attention lowers performance."},
@@ -93,7 +93,7 @@
       {w:"motivation", pos:"n.", ja:"動機づけ", syn:"drive, incentive", ex:"Intrinsic motivation lasts longer."},
       {w:"personality", pos:"n.", ja:"人格、性格", syn:"character, temperament", ex:"Personality is relatively stable over time."},
       {w:"trait", pos:"n.", ja:"特性、特質", syn:"characteristic", ex:"Honesty is considered a personality trait."},
-      {w:"intelligence", pos:"n.", ja:"知能", syn:"IQ (概念)", ex:"Intelligence tests attempt to measure reasoning ability."},
+      {w:"intelligence", pos:"n.", ja:"知能", syn:"IQ (concept)", ex:"Intelligence tests attempt to measure reasoning ability."},
       {w:"bias", pos:"n.", ja:"偏り、先入観", syn:"prejudice, distortion", ex:"Confirmation bias leads us to seek supporting evidence."},
       {w:"heuristic", pos:"n./adj.", ja:"発見的手続き、経験則", syn:"rule of thumb", ex:"We often use heuristics to make quick decisions."},
       {w:"stereotype", pos:"n.", ja:"固定観念、偏見", syn:"preconception", ex:"Stereotypes can lead to unfair judgments."},
@@ -133,37 +133,192 @@
       {w:"serotonin", pos:"n.", ja:"セロトニン", syn:"—", ex:"Low serotonin is linked to mood."}
     ];
 
-    let i = 0, revealed = false;
-    const q = document.getElementById('q');
+    // 簡易訳生成（synとexの日本語）
+    function jpSyn(s){ if(!s||s==='—') return '—'; return s
+      .replace('knowing','知ること')
+      .replace('awareness','気づき')
+      .replace('sensation','感覚')
+      .replace('recognition','認識')
+      .replace('focus','集中')
+      .replace('concentration','専心')
+      .replace('recollection','想起')
+      .replace('acquisition','習得')
+      .replace('reward','報酬')
+      .replace('training','訓練')
+      .replace('drive','動機')
+      .replace('incentive','誘因')
+      .replace('character','性格')
+      .replace('temperament','気質')
+      .replace('characteristic','特性')
+      .replace('IQ (concept)','知能指数（概念）')
+      .replace('prejudice','偏見')
+      .replace('distortion','歪み')
+      .replace('rule of thumb','経験則')
+      .replace('preconception','先入観')
+      .replace('growth','成長')
+      .replace('maturation','成熟')
+      .replace('bond','絆')
+      .replace('strain','緊張')
+      .replace('pressure','圧力')
+      .replace('handling','対処')
+      .replace('dealing','取り扱い')
+      .replace('toughness','強靭さ')
+      .replace('flexibility','柔軟性')
+      .replace('illness','疾病')
+      .replace('low mood','抑うつ気分')
+      .replace('worry','心配')
+      .replace('treatment','治療')
+      .replace('guidance','指導')
+      .replace('test','試験')
+      .replace('trial','試行')
+      .replace('assumption','仮定')
+      .replace('soundness','妥当性')
+      .replace('consistency','一貫性')
+      .replace('participants','参加者')
+      .replace('association','関連')
+      .replace('cause and effect','因果')
+      .replace('factor','要因')
+      .replace('IV','独立変数')
+      .replace('DV','従属変数')
+      .replace('comparison group','比較群')
+      .replace('random','無作為')
+      .replace('moral principles','道徳原理')
+      .replace('approval','同意')
+      .replace('nerve cell','神経細胞')
+      .replace('junction','接合部')
+      .replace('chemical messenger','化学伝達物質'); }
+
+    function jpEx(e){ if(!e) return '—'; return e
+      .replace('Language is closely related to cognition.','言語は認知と密接に関連している。')
+      .replace('Perception can be influenced by context.','知覚は文脈の影響を受けることがある。')
+      .replace('Divided attention lowers performance.','注意を分割すると成績が低下する。')
+      .replace('Short-term memory has limited capacity.','短期記憶には限られた容量がある。')
+      .replace('Repetition helps learning.','反復は学習に役立つ。')
+      .replace('Positive reinforcement increases a behavior.','正の強化は行動を増やす。')
+      .replace('Classical conditioning pairs a stimulus with a response.','古典的条件づけは刺激と反応を結び付ける。')
+      .replace('Intrinsic motivation lasts longer.','内発的動機づけは長続きする。')
+      .replace('Personality is relatively stable over time.','人格は時間とともに比較的安定している。')
+      .replace('Honesty is considered a personality trait.','正直さは性格特性とみなされる。')
+      .replace('Intelligence tests attempt to measure reasoning ability.','知能検査は推論能力の測定を試みる。')
+      .replace('Confirmation bias leads us to seek supporting evidence.','確証バイアスは自説を支持する証拠を探させる。')
+      .replace('We often use heuristics to make quick decisions.','私たちは素早い判断のためにしばしばヒューリスティックを用いる。')
+      .replace('Stereotypes can lead to unfair judgments.','ステレオタイプは不公平な判断を招くことがある。')
+      .replace('Education may reduce prejudice.','教育は偏見を減らし得る。')
+      .replace('Cognitive development continues through adolescence.','認知的発達は思春期を通じて続く。')
+      .replace('Adolescence is marked by rapid change.','思春期は急速な変化に特徴づけられる。')
+      .replace('Secure attachment supports later relationships.','安定した愛着はその後の人間関係を支える。')
+      .replace('Chronic stress harms health.','慢性的ストレスは健康を損なう。')
+      .replace('Problem-focused coping can be effective.','問題焦点型コーピングは有効な場合がある。')
+      .replace('Social support promotes resilience.','社会的支援はレジリエンスを高める。')
+      .replace('Anxiety disorder is common.','不安障害は一般的である。')
+      .replace('Depression affects daily life.','うつ病は日常生活に影響する。')
+      .replace('Anxiety can cause physical symptoms.','不安は身体症状を引き起こすことがある。')
+      .replace('Schizophrenia involves disturbed thinking.','統合失調症は思考の障害を伴う。')
+      .replace('Cognitive therapy changes thought patterns.','認知療法は思考パターンを変える。')
+      .replace('School counseling supports students.','スクールカウンセリングは生徒を支援する。')
+      .replace('The placebo effect can be powerful.','プラセボ効果は強力な場合がある。')
+      .replace('The experiment tested the hypothesis.','その実験は仮説を検証した。')
+      .replace('We formed a clear hypothesis.','私たちは明確な仮説を立てた。')
+      .replace('Construct validity matters in testing.','テストでは構成概念妥当性が重要である。')
+      .replace('High reliability means stable results.','高い信頼性は安定した結果を意味する。')
+      .replace('The sample included 200 students.','標本には200人の学生が含まれていた。')
+      .replace('We generalized from sample to population.','私たちは標本から母集団へ一般化した。')
+      .replace('Correlation does not prove causation.','相関は因果を証明しない。')
+      .replace('Only controlled studies show causation.','因果は統制された研究でのみ示される。')
+      .replace('We measured three variables.','私たちは3つの変数を測定した。')
+      .replace('The independent variable was temperature.','独立変数は温度だった。')
+      .replace('The dependent variable was accuracy.','従属変数は正確さだった。')
+      .replace('A control group received no treatment.','統制群は処置を受けなかった。')
+      .replace('Participants were randomized into two groups.','参加者は2群に無作為に割り付けられた。')
+      .replace('Research ethics protect participants.','研究倫理は参加者を保護する。')
+      .replace('Informed consent is required.','インフォームドコンセントが必要である。')
+      .replace('Neurons transmit signals.','ニューロンは信号を伝達する。')
+      .replace('Signals cross the synapse chemically.','信号は化学的にシナプスを越える。')
+      .replace('Dopamine is a neurotransmitter.','ドーパミンは神経伝達物質である。')
+      .replace('Dopamine relates to reward.','ドーパミンは報酬と関係がある。')
+      .replace('Low serotonin is linked to mood.','低いセロトニンは気分に関連している。'); }
+
+    const data = base.map(d=>({
+      w:d.w, pos:d.pos,
+      enMeaning:'—',             // 英語の定義は未提供なのでダッシュ表示
+      jaMeaning:d.ja || '—',     // 日本語の意味（答え）
+      enSyn:d.syn || '—',        // 類義語（英）
+      jaSyn:jpSyn(d.syn || '—'), // 類義語の訳
+      enEx:d.ex || '—',          // 例文（英）
+      jaEx:jpEx(d.ex || '—')     // 例文の訳
+    }));
+
+    // 進捗（ユニークに答えを見た枚数）
+    const total = data.length;
+    const seen = new Set();
+    const history = []; // 戻る用の履歴（インデックス）
+
+    let i = 0;
+    let revealed = false;
+
+    const card = document.getElementById('card');
+    const w = document.getElementById('w');
+    const jaW = document.getElementById('jaW');
     const pos = document.getElementById('pos');
-    const meaning = document.getElementById('meaning');
-    const syn = document.getElementById('syn');
-    const ex = document.getElementById('ex');
-    const aBox = document.getElementById('aBox');
-    const card = document.querySelector('.card');
+    const enMeaning = document.getElementById('enMeaning');
+    const jaMeaning = document.getElementById('jaMeaning');
+    const enSyn = document.getElementById('enSyn');
+    const jaSyn = document.getElementById('jaSyn');
+    const enEx = document.getElementById('enEx');
+    const jaEx = document.getElementById('jaEx');
+
+    const gnum = document.getElementById('gnum');
+    const gfill = document.getElementById('gfill');
+
+    function renderGauge(){
+      const done = seen.size;
+      gnum.textContent = `${done} / ${total}`;
+      const pct = total ? Math.round(done/total*100) : 0;
+      gfill.style.width = pct + '%';
+      gfill.title = pct + '%';
+    }
 
     function render(){
       const d = data[i];
-      q.textContent = d.w; pos.textContent = d.pos || '';
-      meaning.textContent = d.ja || '';
-      syn.textContent = d.syn ? `syn: ${d.syn}` : '';
-      ex.textContent = d.ex ? `ex: ${d.ex}` : '';
-      aBox.classList.toggle('revealed', revealed);
+      w.textContent = d.w;
+      jaW.textContent = d.jaMeaning || '—';
+      pos.textContent = d.pos || '';
+      enMeaning.textContent = d.enMeaning;
+      jaMeaning.textContent = d.jaMeaning;
+      enSyn.textContent = d.enSyn;
+      jaSyn.textContent = d.jaSyn;
+      enEx.textContent = d.enEx;
+      jaEx.textContent = d.jaEx;
+      card.classList.toggle('revealed', revealed);
+      renderGauge();
+    }
+
+    function toggleReveal(){
+      if(!revealed && !seen.has(i)) seen.add(i); // 初回開示時のみ加算
+      revealed = !revealed;
+      render();
     }
 
     function nextRandom(){
-      if (data.length === 0) return;
-      let j; do { j = (Math.random()*data.length)|0; } while (j===i && data.length>1);
+      if(total===0) return;
+      history.push(i);
+      let j; do{ j = (Math.random()*total)|0; } while(j===i && total>1);
       i = j; revealed = false; render();
     }
+    function prev(){
+      if(history.length===0) return;
+      i = history.pop(); revealed = false; render();
+    }
 
-    card.addEventListener('click', () => {
-      if (!revealed) { revealed = true; render(); }
-      else { nextRandom(); }
+    card.addEventListener('click', ()=>{ if(!revealed){ toggleReveal(); } else { nextRandom(); } });
+    window.addEventListener('keydown', e=>{
+      if(e.code==='Space'||e.code==='Enter'){ e.preventDefault(); toggleReveal(); }
+      else if(e.code==='ArrowRight'){ e.preventDefault(); nextRandom(); }
+      else if(e.code==='ArrowLeft'){ e.preventDefault(); prev(); }
     });
 
     // 初期表示
-    nextRandom();
+    i = (Math.random()*total)|0; revealed = false; render();
   </script>
 </body>
 </html>
