@@ -1,0 +1,111 @@
+{
+"categories": [
+{
+"id": "importance",
+"name_ja": "重要性",
+"name_en": "Importance",
+"words": [
+{
+"headword": "crucial",
+"pos": "adjective",
+"meaning_ja": "極めて重要な",
+"examples": [
+{"en": "Your help was crucial to our success.", "ja": "あなたの助けは私たちの成功に極めて重要だった。"}
+],
+"phrases": ["crucial role", "crucial factor"],
+"notes": "very important; often used in academic and formal writing"
+},
+{
+"headword": "essential",
+"pos": "adjective",
+"meaning_ja": "不可欠な",
+"examples": [
+{"en": "Honesty is essential in any relationship.", "ja": "どんな人間関係でも正直さは不可欠だ。"}
+],
+"phrases": ["essential part", "essential for"],
+"notes": "describes something absolutely necessary"
+},
+{
+"headword": "vital",
+"pos": "adjective",
+"meaning_ja": "極めて重要な",
+"examples": [
+{"en": "Sleep plays a vital role in maintaining health.", "ja": "睡眠は健康維持に極めて重要な役割を果たす。"}
+],
+"phrases": ["vital role", "vital importance"],
+"notes": "strong synonym of 'essential' in many contexts"
+},
+{
+"headword": "significant",
+"pos": "adjective",
+"meaning_ja": "重要な、意味のある",
+"examples": [
+{"en": "There was a significant improvement in her test scores.", "ja": "彼女のテスト成績には大きな改善が見られた。"}
+],
+"phrases": ["significant change", "statistically significant"],
+"notes": "commonly used in academic writing"
+},
+{
+"headword": "indispensable",
+"pos": "adjective",
+"meaning_ja": "欠かせない、なくてはならない",
+"examples": [
+{"en": "Internet access is indispensable for modern students.", "ja": "インターネット接続は現代の学生にとって欠かせない。"}
+],
+"phrases": ["indispensable tool"],
+"notes": "very strong meaning: cannot be replaced"
+},
+{
+"headword": "fundamental",
+"pos": "adjective",
+"meaning_ja": "基本的な、重要な",
+"examples": [
+{"en": "Reading is a fundamental skill in education.", "ja": "読解は教育における基本的かつ重要なスキルだ。"}
+],
+"phrases": ["fundamental principle", "fundamental concept"],
+"notes": "used for basic but essential ideas"
+},
+{
+"headword": "paramount",
+"pos": "adjective",
+"meaning_ja": "最も重要な",
+"examples": [
+{"en": "Safety is of paramount importance in this job.", "ja": "この仕事では安全が最も重要だ。"}
+],
+"phrases": ["of paramount importance"],
+"notes": "formal; stronger than 'important'"
+},
+{
+"headword": "substantial",
+"pos": "adjective",
+"meaning_ja": "かなりの、重要な量の",
+"examples": [
+{"en": "The company made a substantial investment in new technology.", "ja": "会社は新技術にかなりの重要な投資を行った。"}
+],
+"phrases": ["substantial amount", "substantial evidence"],
+"notes": "focuses on large impact or quantity"
+},
+{
+"headword": "noteworthy",
+"pos": "adjective",
+"meaning_ja": "注目すべき、重要な",
+"examples": [
+{"en": "Her performance was noteworthy for its originality.", "ja": "彼女のパフォーマンスはその独創性で注目に値した。"}
+],
+"phrases": ["noteworthy achievement"],
+"notes": "mild but academic tone"
+},
+{
+"headword": "considerable",
+"pos": "adjective",
+"meaning_ja": "かなり重要な、無視できない",
+"examples": [
+{"en": "This issue has a considerable impact on the community.", "ja": "この問題は地域社会にかなりの影響を与える。"}
+],
+"phrases": ["considerable impact", "considerable effort"],
+"notes": "emphasizes extent or degree of importance"
+}
+]
+}
+]
+}
