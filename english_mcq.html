@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>英語4択クイズ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      padding: 16px;
+    }
+    h1 {
+      font-size: 1.3rem;
+      margin: 0 0 8px;
+    }
+    .meta {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 12px;
+    }
+    .question {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      white-space: pre-wrap; /* "\n" をそのまま表示 */
+    }
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .choice-btn {
+      text-align: left;
+      padding: 8px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .choice-btn.correct {
+      background: #e6ffe6;
+      border-color: #55aa55;
+    }
+    .choice-btn.wrong {
+      background: #ffe6e6;
+      border-color: #cc5555;
+    }
+    .choice-btn.disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+    .feedback {
+      min-height: 1.5em;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .score {
+      font-size: 0.9rem;
+    }
+    #nextBtn {
+      padding: 6px 12px;
+      border: none;
+      background: #007aff;
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    #nextBtn:disabled {
+      background: #aaa;
+      cursor: default;
+    }
+    #result {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      border-top: 1px solid #ddd;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>英語4択クイズ</h1>
+    <div class="meta" id="status"></div>
+    <div class="question" id="question"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="controls">
+      <div class="score" id="score"></div>
+      <button id="nextBtn" disabled>次へ</button>
+    </div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // --- 問題データ（テストも兼ねる） ---
+    const questions = [
+      {
+        text: "He finally managed to ______ his fear of speaking in public.",
+        choices: ["overcome", "occupy", "obtain", "overlook"],
+        correctIndex: 0,
+        explanation: "『恐怖を克服する』は overcome one's fear と言う。"
+      },
+      {
+        text: "If he ______ earlier, he wouldn’t have missed the train.",
+        choices: ["leaves", "left", "had left", "would leave"],
+        correctIndex: 2,
+        explanation: "仮定法過去完了: If + 過去完了, would have + 過去分詞。"
+      },
+      {
+        text: "I couldn’t make ______ what he was saying because of the noise.",
+        choices: ["out", "up", "for", "off"],
+        correctIndex: 0,
+        explanation: "make out A = Aを理解する。"
+      },
+      {
+        text: "The book is worth ______.",
+        choices: ["to read", "reading", "to be read", "read"],
+        correctIndex: 1,
+        explanation: "be worth ~ing = 〜する価値がある。"
+      },
+      {
+        text: "A: Could you give me a hand with this box?\nB: ______",
+        choices: ["Yes, here you are.", "Sure, no problem.", "I’d rather not say so.", "Help yourself."],
+        correctIndex: 1,
+        explanation: "手伝いを頼まれて自然なのは “Sure, no problem.”。"
+      },
+      {
+        text: "He insisted ______ paying for the meal.",
+        choices: ["on", "for", "at", "about"],
+        correctIndex: 0,
+        explanation: "insist on ~ で on + 動名詞。"
+      },
+      {
+        text: "The experiment was a success, ______ the initial concerns about safety.",
+        choices: ["despite", "because", "except", "along with"],
+        correctIndex: 0,
+        explanation: "despite ~ = 〜にもかかわらず。"
+      },
+      {
+        text: "\"vital\" is closest in meaning to ______.",
+        choices: ["ordinary", "essential", "temporary", "pleasant"],
+        correctIndex: 1,
+        explanation: "vital = essential（不可欠な）。"
+      },
+      {
+        text: "I would rather you ______ here tomorrow.",
+        choices: ["come", "came", "will come", "had come"],
+        correctIndex: 1,
+        explanation: "would rather S + 過去形 = Sに〜してほしい。"
+      },
+      {
+        text: "The shop is closed ______ Sundays.",
+        choices: ["at", "for", "in", "on"],
+        correctIndex: 3,
+        explanation: "曜日の前には on: on Sundays。"
+      }
+    ];
+
+    // --- 簡単なバリデーション（テスト） ---
+    (function validateQuestions() {
+      questions.forEach((q, idx) => {
+        if (!Array.isArray(q.choices) || q.choices.length !== 4) {
+          console.warn("[validateQuestions] choices が4つではありません", idx, q);
+        }
+        if (typeof q.correctIndex !== "number" || q.correctIndex < 0 || q.correctIndex >= q.choices.length) {
+          console.warn("[validateQuestions] correctIndex が不正です", idx, q);
+        }
+      });
+    })();
+
+    const statusEl = document.getElementById("status");
+    const questionEl = document.getElementById("question");
+    const choicesEl = document.getElementById("choices");
+    const feedbackEl = document.getElementById("feedback");
+    const scoreEl = document.getElementById("score");
+    const nextBtn = document.getElementById("nextBtn");
+    const resultEl = document.getElementById("result");
+
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      answered = false;
+      feedbackEl.textContent = "";
+      resultEl.textContent = "";
+      nextBtn.disabled = true;
+
+      statusEl.textContent = `問題 ${currentIndex + 1} / ${questions.length}`;
+      questionEl.textContent = q.text;
+      scoreEl.textContent = `スコア: ${score}`;
+
+      choicesEl.innerHTML = "";
+      q.choices.forEach((choice, i) => {
+        const btn = document.createElement("button");
+        btn.className = "choice-btn";
+        btn.textContent = `${String.fromCharCode(65 + i)}. ${choice}`;
+        btn.addEventListener("click", () => handleChoice(i));
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function handleChoice(index) {
+      if (answered) return;
+      answered = true;
+      const q = questions[currentIndex];
+      const buttons = choicesEl.querySelectorAll(".choice-btn");
+
+      buttons.forEach((btn, i) => {
+        btn.classList.add("disabled");
+        if (i === q.correctIndex) btn.classList.add("correct");
+        if (i === index && i !== q.correctIndex) btn.classList.add("wrong");
+      });
+
+      if (index === q.correctIndex) {
+        score++;
+        feedbackEl.textContent = "正解！";
+      } else {
+        feedbackEl.textContent = `不正解… 正解は ${String.fromCharCode(65 + q.correctIndex)}. ${q.choices[q.correctIndex]}。`;
+      }
+
+      scoreEl.textContent = `スコア: ${score}`;
+      nextBtn.disabled = false;
+      nextBtn.textContent = currentIndex === questions.length - 1 ? "結果" : "次へ";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (!answered) return;
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    function showResult() {
+      const total = questions.length;
+      const percent = Math.round((score / total) * 100);
+      resultEl.textContent = `お疲れさまでした。${total}問中${score}問正解（${percent}%）でした。`;
+    }
+
+    // 初期表示
+    renderQuestion();
+  </script>
+</body>
+</html>
