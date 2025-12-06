@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>シンプル汎用フラッシュカード</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #111; color: #f5f5f5; }
+    #card {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 2rem;
+      box-sizing: border-box;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+    }
+    #counter { font-size: 0.8rem; opacity: 0.7; margin-bottom: 0.75rem; }
+    #question { font-size: 1.1rem; line-height: 1.6; }
+    #answer { margin-top: 0.75rem; font-size: 1rem; line-height: 1.6; visibility: hidden; }
+    #hint { margin-top: 1.5rem; font-size: 0.8rem; opacity: 0.6; }
+  </style>
+</head>
+<body>
+  <div id="card">
+    <div id="counter"></div>
+    <div id="question"></div>
+    <div id="answer"></div>
+    <div id="hint">タップ：答え表示 → 次のカード</div>
+  </div>
+
+  <script>
+    const cardEl = document.getElementById("card");
+    const counterEl = document.getElementById("counter");
+    const qEl = document.getElementById("question");
+    const aEl = document.getElementById("answer");
+
+    let cards = [];   // qa/ 以下の JSON から読み込む
+    let index = 0;
+    let shown = false;
+
+    function showCard(n) {
+      const len = cards.length;
+      if (!len) {
+        qEl.textContent = "(カードが読み込まれていません)";
+        aEl.textContent = "";
+        aEl.style.visibility = "hidden";
+        counterEl.textContent = "0 / 0";
+        return;
+      }
+      index = (n + len) % len;
+      const c = cards[index];
+      qEl.textContent = c.question || "(question がありません)";
+      aEl.textContent = c.answer || "(answer がありません)";
+      aEl.style.visibility = "hidden";
+      shown = false;
+      counterEl.textContent = `${index + 1} / ${len}`;
+    }
+
+    cardEl.addEventListener("click", () => {
+      if (!cards.length) return;
+      if (!shown) {
+        aEl.style.visibility = "visible";
+        shown = true;
+      } else {
+        showCard(index + 1);
+      }
+    });
+
+    async function loadCategory(name) {
+      const res = await fetch(`qa/${name}.json`);
+      if (!res.ok) throw new Error(`qa/${name}.json を読み込めませんでした`);
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error(`qa/${name}.json の形式が配列ではありません`);
+      cards = data;
+      showCard(0);
+    }
+
+    async function init() {
+      try {
+        const res = await fetch("qa/categories.json");
+        if (!res.ok) throw new Error("categories.json を読み込めませんでした");
+        const cat = await res.json();
+        const files = Array.isArray(cat.files) ? cat.files : [];
+        const first = files.length ? files[0] : "daily";
+        await loadCategory(first);
+      } catch (e) {
+        console.error(e);
+        qEl.textContent = "カード一覧の読み込みに失敗しました";
+        aEl.textContent = "qa/categories.json と qa/*.json を確認してください";
+        aEl.style.visibility = "visible";
+        counterEl.textContent = "0 / 0";
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

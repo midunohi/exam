@@ -1,0 +1,12 @@
+[
+  { "question": "hello → 日本語の意味は？", "answer": "こんにちは" },
+  { "question": "thank you → 日本語の意味は？", "answer": "ありがとう" },
+  { "question": "sorry → 日本語の意味は？", "answer": "ごめんなさい" },
+  { "question": "excuse me → 日本語の意味は？", "answer": "すみません（呼びかけ・軽い謝罪）" },
+  { "question": "how are you? → 日本語の意味は？", "answer": "元気ですか？" },
+  { "question": "I'm fine. → 日本語の意味は？", "answer": "元気です。" },
+  { "question": "what's your name? → 日本語の意味は？", "answer": "あなたの名前は何ですか？" },
+  { "question": "nice to meet you → 日本語の意味は？", "answer": "はじめまして" },
+  { "question": "see you later → 日本語の意味は？", "answer": "また後でね" },
+  { "question": "good night → 日本語の意味は？", "answer": "おやすみなさい" }
+]
