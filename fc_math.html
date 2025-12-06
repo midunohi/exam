@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数学 フラッシュカード</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin: 0 0 0.25rem;
+    }
+
+    .meta {
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-top: 0.9rem;
+    }
+
+    .flashcard {
+      background: #020617;
+      border-radius: 0.9rem;
+      padding: 1.2rem 1.4rem;
+      border: 1px solid #111827;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-header {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 0.5rem;
+    }
+
+    /* タイトルは不要なので非表示にする */
+    .card-title {
+      display: none;
+    }
+
+    .card-body {
+      min-height: 120px; /* 解答部分も含めてあらかじめ高さを確保しておく */
+      border-radius: 0.75rem;
+      background: #020617;
+      border: 1px solid #1f2937;
+      padding: 0.9rem 1rem;
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+    }
+
+    .card-face {
+      width: 100%;
+    }
+
+    .card-answer {
+      margin-top: 0.75rem;
+      padding-top: 0.6rem;
+      border-top: 1px dashed #1f2937;
+      color: #d1d5db;
+      transition: opacity 0.15s ease;
+    }
+
+    /* 解答非表示状態でもスペースは維持してレイアウトを変えない */
+    .card-answer.is-hidden {
+      color: transparent;
+      border-color: transparent;
+    }
+
+    @media (min-width: 768px) {
+      h1 {
+        font-size: 1.9rem;
+      }
+      .page {
+        padding: 2rem 1.25rem 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>数学 フラッシュカード</h1>
+    </header>
+
+    <main>
+      <section class="flashcard" id="flashcard">
+        <div class="card-header">
+          <span id="problemIndex">1</span> / <span id="problemTotal">3</span>
+        </div>
+        <!-- タイトルは UI には出さないが、要素自体は残しておく -->
+        <div class="card-title" id="problemTitle">第1問</div>
+        <div class="card-body">
+          <div class="card-face" id="problemQuestion">
+            2 + 3 = ?
+          </div>
+          <div class="card-face card-answer is-hidden" id="problemAnswer">
+            5
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <p class="hint">カードをタップ（クリック）すると「解答表示 → 次の問題」と進みます。</p>
+  </div>
+
+  <script>
+    // フラッシュカードのデータ（暗算しやすい短い問題・大学受験範囲）
+    const problems = [
+      { title: "第1問（微分）", question: "y = x^3 の導関数は？", answer: "3x^2" },
+      { title: "第2問（積分）", question: "∫ 2x dx = ?", answer: "x^2 + C" },
+      { title: "第3問（三角）", question: "sin 90° = ?", answer: "1" },
+      { title: "第4問（指数）", question: "2^0 = ?", answer: "1" },
+      { title: "第5問（対数）", question: "log10 100 = ?", answer: "2" },
+      { title: "第6問（ベクトル）", question: "(1,2)・(3,4) = ?", answer: "11" },
+      { title: "第7問（一次方程式）", question: "2x + 3 = 7 の解は？", answer: "x = 2" },
+      { title: "第8問（平方完成）", question: "x^2 + 2x + 1 = (x + ?)²", answer: "1" },
+      { title: "第9問（確率）", question: "コイン1枚で表が出る確率は？", answer: "1/2" },
+      { title: "第10問（数列）", question: "等差数列 a1=1, d=2 の a2 は？", answer: "3" }
+    ];
+
+    const problemIndexEl = document.getElementById("problemIndex");
+    const problemTotalEl = document.getElementById("problemTotal");
+    const problemTitleEl = document.getElementById("problemTitle");
+    const problemQuestionEl = document.getElementById("problemQuestion");
+    const problemAnswerEl = document.getElementById("problemAnswer");
+    const flashcardEl = document.getElementById("flashcard");
+
+    let currentIndex = 0;
+    let showingAnswer = false;
+
+    function renderProblem() {
+      const p = problems[currentIndex];
+      // タイトルは UI では非表示だが、念のため更新だけはしておく
+      problemTitleEl.textContent = p.title;
+      problemQuestionEl.textContent = p.question;
+      problemAnswerEl.textContent = p.answer;
+      problemIndexEl.textContent = String(currentIndex + 1);
+      problemTotalEl.textContent = String(problems.length);
+      problemAnswerEl.classList.add("is-hidden");
+      showingAnswer = false;
+    }
+
+    // 簡単な自己テスト（既存テスト + 追加テスト）
+    function runSelfTests() {
+      console.assert(Array.isArray(problems), "problems は配列である必要があります");
+      console.assert(problems.length >= 1, "少なくとも 1 問は登録してください");
+      console.assert(typeof problems[0].title === "string", "第1問に title が必要です");
+      console.assert(typeof problems[0].question === "string", "第1問に question が必要です");
+      console.assert(typeof problems[0].answer === "string", "第1問に answer が必要です");
+      // 追加テスト: すべての問題が title / question / answer を持つか
+      problems.forEach((p, i) => {
+        console.assert(typeof p.title === "string" && p.title.length > 0, `問題${i + 1} に title が必要です`);
+        console.assert(typeof p.question === "string" && p.question.length > 0, `問題${i + 1} に question が必要です`);
+        console.assert(typeof p.answer === "string" && p.answer.length > 0, `問題${i + 1} に answer が必要です`);
+      });
+    }
+
+    // タップ（クリック）で「解答表示 → 次の問題」
+    flashcardEl.addEventListener("click", () => {
+      if (!showingAnswer) {
+        // まだ解答を見ていない状態 → 解答を表示（高さは変えずに表示だけ切り替える）
+        problemAnswerEl.classList.remove("is-hidden");
+        showingAnswer = true;
+      } else {
+        // 解答表示中 → 次の問題へ
+        currentIndex = (currentIndex + 1) % problems.length;
+        renderProblem();
+      }
+    });
+
+    // 初期表示 & テスト実行
+    runSelfTests();
+    renderProblem();
+  </script>
+</body>
+</html>
