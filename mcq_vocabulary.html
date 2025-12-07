@@ -149,16 +149,13 @@
 
     <section class="panel">
       <div class="question-area">
-        <div class="question-subtext" id="instruction">日本語の意味を選んでください。『次の単語』ボタンで次の問題に進みます。</div>
+        <div class="question-subtext" id="instruction">日本語の意味を選んでください。『次の単語』ボタンで次の問題に進みます。｜ 解いた問題数: <span id="hud-total-count-top">0</span></div>
         <div class="question-word" id="question-word">-</div>
 
         <div class="choices" id="choice-container"></div>
 
         <div class="question-footer">
-          <div>
-            解いた問題数: <span id="hud-total-count">0</span>
-            ／ EXP: <span id="hud-exp">0</span>
-          </div>
+          <div>EXP: <span id="hud-exp-bottom">0</span></div>
           <div class="small-btn-row">
             <button class="small-btn" id="btn-next">次の単語</button>
           </div>
@@ -207,15 +204,20 @@
     }
 
     // DOM 参照
-    const hudTotalCountEl = document.getElementById("hud-total-count");
-    const hudExpEl = document.getElementById("hud-exp");
+    const hudTotalCountEl = document.getElementById("hud-total-count-top");
+    
+    const hudExpElBottom = document.getElementById("hud-exp-bottom");
     const questionWordEl = document.getElementById("question-word");
     const choiceContainerEl = document.getElementById("choice-container");
     const btnNext = document.getElementById("btn-next");
 
     function updateHud() {
-      hudTotalCountEl.textContent = totalCount;
-      hudExpEl.textContent = exp;
+      if (hudTotalCountEl) {
+        hudTotalCountEl.textContent = totalCount;
+      }
+      if (hudExpElBottom) {
+        hudExpElBottom.textContent = exp;
+      }
     }
 
     // 問題生成
