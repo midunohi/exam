@@ -167,19 +167,27 @@
   </div>
 
   <script>
-    // 単語データ（サンプル）
-    const WORD_POOL = [
-      { headword: "existence", meaning_ja: "存在" },
-      { headword: "entity", meaning_ja: "実体、存在" },
-      { headword: "essence", meaning_ja: "本質、真髄" },
-      { headword: "realm", meaning_ja: "領域、王国" },
-      { headword: "ritual", meaning_ja: "儀式、習慣的行為" },
-      { headword: "omen", meaning_ja: "前兆、兆し" },
-      { headword: "mystic", meaning_ja: "神秘的な、神秘家" },
-      { headword: "ancient", meaning_ja: "古代の、古くからの" },
-      { headword: "blessing", meaning_ja: "祝福、恩恵" },
-      { headword: "curse", meaning_ja: "呪い" }
-    ];
+    // 単語データ（en_ja/words.json から読み込み）
+    let WORD_POOL = [];
+
+    async function loadWords() {
+      try {
+        const res = await fetch("./en_ja/words.json");
+        if (!res.ok) throw new Error("fetch failed");
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error("invalid json");
+        WORD_POOL = data; // [{ en, ja }, ...]
+      } catch (e) {
+        console.warn("words.json の読み込みに失敗しました。フォールバックを使用します。", e);
+        // フォールバック（最低限）
+        WORD_POOL = [
+          { en: "existence", ja: "存在" },
+          { en: "entity", ja: "実体" },
+          { en: "essence", ja: "本質" },
+          { en: "realm", ja: "領域" }
+        ];
+      }
+    }
 
     // シンプルなカウンタ＋EXP（WebStorageで保存）
     const EXP_KEY = "midunohi.exam.exp";
@@ -226,6 +234,7 @@
     let questionAnswered = false;
 
     function pickRandomWord() {
+      if (!WORD_POOL.length) return null;
       return WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
     }
 
@@ -246,13 +255,13 @@
 
     function renderQuestion() {
       if (!currentWord) return;
-      questionWordEl.textContent = currentWord.headword;
+      questionWordEl.textContent = currentWord.en;
 
       choiceContainerEl.innerHTML = "";
       currentChoices.forEach(word => {
         const btn = document.createElement("button");
         btn.className = "choice-btn";
-        btn.textContent = word.meaning_ja;
+        btn.textContent = word.ja;
         btn.addEventListener("click", () => handleAnswer(word));
         choiceContainerEl.appendChild(btn);
       });
@@ -272,15 +281,15 @@
       if (questionAnswered || !currentWord) return;
       questionAnswered = true;
 
-      const isCorrect = selectedWord === currentWord;
+      const isCorrect = selectedWord === currentWord; // en/ja オブジェクトの同一参照で判定
       const buttons = choiceContainerEl.querySelectorAll(".choice-btn");
 
       buttons.forEach(btn => {
         const text = btn.textContent;
-        if (text === currentWord.meaning_ja) {
+        if (text === currentWord.ja) {
           btn.classList.add("correct");
         }
-        if (text === selectedWord.meaning_ja && !isCorrect) {
+        if (text === selectedWord.ja && !isCorrect) {
           btn.classList.add("wrong");
         }
       });
@@ -302,8 +311,9 @@
     });
 
     // 初期化
-    function init() {
+    async function init() {
       updateHud();
+      await loadWords();
       pickNextWord();
       
     }
