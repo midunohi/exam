@@ -149,7 +149,7 @@
 
     <section class="panel">
       <div class="question-area">
-        <div class="question-subtext">日本語の意味を選んでください。（1問ごとにEXP +1）</div>
+        <div class="question-subtext" id="instruction">日本語の意味を選んでください。『次の単語』ボタンで次の問題に進みます。</div>
         <div class="question-word" id="question-word">-</div>
 
         <div class="choices" id="choice-container"></div>
@@ -164,7 +164,7 @@
           </div>
         </div>
 
-        <div class="feedback" id="feedback"></div>
+        
       </div>
     </section>
   </div>
@@ -184,16 +184,33 @@
       { headword: "curse", meaning_ja: "呪い" }
     ];
 
-    // シンプルなカウンタ＋EXP（ローカル保存なし）
+    // シンプルなカウンタ＋EXP（WebStorageで保存）
+    const EXP_KEY = "midunohi.exam.exp";
+
     let totalCount = 0;
-    let exp = 0; // 1問ごとに+1
+    let exp = loadExp(); // 保存されていなければ 0
+
+    function loadExp() {
+      try {
+        const raw = localStorage.getItem(EXP_KEY);
+        const n = raw == null ? 0 : parseInt(raw, 10);
+        return Number.isFinite(n) ? n : 0;
+      } catch (_) {
+        return 0;
+      }
+    }
+
+    function saveExp() {
+      try {
+        localStorage.setItem(EXP_KEY, String(exp));
+      } catch (_) {}
+    }
 
     // DOM 参照
     const hudTotalCountEl = document.getElementById("hud-total-count");
     const hudExpEl = document.getElementById("hud-exp");
     const questionWordEl = document.getElementById("question-word");
     const choiceContainerEl = document.getElementById("choice-container");
-    const feedbackEl = document.getElementById("feedback");
     const btnNext = document.getElementById("btn-next");
 
     function updateHud() {
@@ -238,7 +255,7 @@
         choiceContainerEl.appendChild(btn);
       });
 
-      setFeedback("", "");
+      // setFeedback("", "");
       questionAnswered = false;
     }
 
@@ -249,11 +266,6 @@
     }
 
     // 回答処理（正解:+2 / 不正解:+1）
-    function setFeedback(text, type) {
-      feedbackEl.textContent = text;
-      feedbackEl.className = "feedback" + (type ? ` ${type}` : "");
-    }
-
     function handleAnswer(selectedWord) {
       if (questionAnswered || !currentWord) return;
       questionAnswered = true;
@@ -273,19 +285,15 @@
 
       totalCount += 1;
 
-      // ★ 正解なら +2、不正解なら +1
+      // 正解なら +2、不正解なら +1
       const gainExp = isCorrect ? 2 : 1;
       exp += gainExp;
+      saveExp();
       updateHud();
-
-      if (isCorrect) {
-        setFeedback(`正解！ ${currentWord.headword} = ${currentWord.meaning_ja} (+${gainExp} EXP)`, "good");
-      } else {
-        setFeedback(`不正解… 正しくは「${currentWord.headword} = ${currentWord.meaning_ja}」 (+${gainExp} EXP)`, "bad");
-      }
     }
 
     // ボタンイベント
+
 
     btnNext.addEventListener("click", () => {
       pickNextWord();
@@ -295,7 +303,7 @@
     function init() {
       updateHud();
       pickNextWord();
-      setFeedback("選択肢から意味を選んでください。", "");
+      
     }
 
     init();
