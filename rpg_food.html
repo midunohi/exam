@@ -90,7 +90,8 @@
   'use strict';
   // ===== 変数宣言（TDZ回避） =====
   let Q = null; // 現在の問題
-  const S = { world:1, local:1, lv:1, exp:0, nextExp:20, atk:5, hp:30, maxHP:30, enemy:null, pool:[], used:new Set() };
+  const S = { world:1, local:1, lv:1, exp:0, totalExp:0, nextExp:20, atk:5, hp:30, maxHP:30, enemy:null, pool:[], used:new Set() };
+  const EXP_KEY = 'midunohi.exam.exp';
 
   // ===== データ：食べ物テーマ =====
   const WORDS=[
@@ -124,17 +125,62 @@
   const log=html=>{const el=document.getElementById('log'); el.insertAdjacentHTML('beforeend',`<p>${html}</p>`); el.scrollTop=el.scrollHeight;}
   const shuffle=a=>{ for(let i=a.length-1;i>0;i--){ const j=rand(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; };
 
+  // プレイヤーの基礎ステータスを初期値に戻す
+  function resetStatsBase(){
+    S.lv = 1;
+    S.exp = 0;
+    S.nextExp = 20;
+    S.atk = 5;
+    S.maxHP = 30;
+    S.hp = S.maxHP;
+  }
+
+  // 合計 EXP からレベル・現在 EXP を再構築する
+  function applyTotalExp(total){
+    resetStatsBase();
+    S.totalExp = total;
+    let remain = total;
+    while(remain > 0){
+      const need = S.nextExp - S.exp;
+      if(remain >= need){
+        S.exp += need;
+        remain -= need;
+        levelUp();
+        S.exp = 0; // レベルアップ後の余りは 0 から再スタート
+      }else{
+        S.exp += remain;
+        remain = 0;
+      }
+    }
+  }
+
   // ===== 初期化 =====
   window.addEventListener('DOMContentLoaded', init, {once:true});
   function init(){
-    // === EXP を localStorage から復元 ===
-    const savedExp = Number(localStorage.getItem('midunohi.exam.exp'));
-    if(!Number.isNaN(savedExp) && savedExp >= 0){
-      S.exp = savedExp;
+    // === 合計 EXP を localStorage から復元 ===
+    try{
+      const raw = localStorage.getItem(EXP_KEY);
+      if(raw !== null){
+        const total = parseInt(raw, 10);
+        if(Number.isFinite(total) && total >= 0){
+          applyTotalExp(total);
+        }else{
+          resetStatsBase();
+          S.totalExp = 0;
+        }
+      }else{
+        resetStatsBase();
+        S.totalExp = 0;
+      }
+    }catch(e){
+      console.warn('localStorage 読み込み失敗', e);
+      resetStatsBase();
+      S.totalExp = 0;
     }
+
     S.pool=[...WORDS];
     spawnEnemy();
-    renderHUD();
+    renderHUD(); // ← 復元した EXP / レベル を反映
     nextQuestion();
     document.getElementById('nextBtn').addEventListener('click', nextStage);
     document.getElementById('retryBtn').addEventListener('click', function(){ S.hp=S.maxHP; renderHUD(); spawnEnemy(); this.style.display='none'; });
@@ -229,15 +275,31 @@
     }
   }
   function addExp(x){ 
-    S.exp+=x; 
-    while(S.exp>=S.nextExp){ 
-      S.exp-=S.nextExp; 
-      levelUp(); 
+    if(x <= 0) return;
+
+    // 合計 EXP を先に加算
+    S.totalExp += x;
+
+    // 現在レベル用の EXP ゲージに反映
+    let remain = x;
+    while(remain > 0){
+      const need = S.nextExp - S.exp;
+      if(remain >= need){
+        S.exp += need;
+        remain -= need;
+        levelUp();
+        S.exp = 0; // 次のレベルのために余りは 0 から
+      }else{
+        S.exp += remain;
+        remain = 0;
+      }
     }
-    // === EXP を localStorage に保存 ===
+
+    // === 合計 EXP を localStorage に保存 ===
     try{
-      localStorage.setItem('midunohi.exam.exp', String(S.exp));
+      localStorage.setItem(EXP_KEY, String(S.totalExp));
     }catch(e){ console.warn('localStorage 保存失敗', e); }
+
     renderHUD(); 
   }
   function levelUp(){ S.lv++; const hpG=8+Math.floor(S.lv*1.5); const atkG=2; S.maxHP+=hpG; S.hp=S.maxHP; S.atk+=atkG; S.nextExp=Math.round(S.nextExp*1.35); log(`✨ <span class=ok>レベルアップ！</span> Lv${S.lv} / HP+${hpG} / ATK+${atkG}`); }
@@ -255,6 +317,9 @@
         console.assert(document.getElementById('question').textContent.startsWith('【食べ物】'), '問題に【食べ物】ラベルが無い');
         console.assert(S.enemy && S.enemy.hp>0, '敵HPが正しく初期化されていません');
         console.assert(document.getElementById('nextBtn') && document.getElementById('retryBtn'), 'ボタンが存在しません');
+        // EXP 表示のチェック（数値が一致しているか）
+        const expText = document.getElementById('expText').textContent;
+        console.assert(expText.startsWith(String(S.exp)), `EXP 表示が状態と一致しません: ${expText} vs ${S.exp}`);
         console.log('[SmokeTests] OK');
       }, 0);
     }catch(e){ console.warn('[SmokeTests] 失敗:', e); }
