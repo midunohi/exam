@@ -100,6 +100,19 @@
       }
     }
   </style>
+
+  <!-- MathJax 設定（インライン数式: $...$ や \( ... \) を利用可能に） -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]]
+      },
+      svg: {
+        fontCache: "global"
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
   <div class="page">
@@ -129,18 +142,18 @@
   </div>
 
   <script>
-    // フラッシュカードのデータ（暗算しやすい短い問題・大学受験範囲）
+    // フラッシュカードのデータ（MathJax でレンダリングされるように LaTeX 形式を使用）
     const problems = [
-      { title: "第1問（微分）", question: "y = x^3 の導関数は？", answer: "3x^2" },
-      { title: "第2問（積分）", question: "∫ 2x dx = ?", answer: "x^2 + C" },
-      { title: "第3問（三角）", question: "sin 90° = ?", answer: "1" },
-      { title: "第4問（指数）", question: "2^0 = ?", answer: "1" },
-      { title: "第5問（対数）", question: "log10 100 = ?", answer: "2" },
-      { title: "第6問（ベクトル）", question: "(1,2)・(3,4) = ?", answer: "11" },
-      { title: "第7問（一次方程式）", question: "2x + 3 = 7 の解は？", answer: "x = 2" },
-      { title: "第8問（平方完成）", question: "x^2 + 2x + 1 = (x + ?)²", answer: "1" },
-      { title: "第9問（確率）", question: "コイン1枚で表が出る確率は？", answer: "1/2" },
-      { title: "第10問（数列）", question: "等差数列 a1=1, d=2 の a2 は？", answer: "3" }
+      { title: "第1問（微分）", question: "関数 $y = x^3$ の導関数は？", answer: "$\\dfrac{dy}{dx} = 3x^2$" },
+      { title: "第2問（積分）", question: "$\\displaystyle \\int 2x\\,dx$ を求めよ。", answer: "$x^2 + C$" },
+      { title: "第3問（三角）", question: "$\\sin 90^{\\circ}$ の値は？", answer: "$1$" },
+      { title: "第4問（指数）", question: "$2^0$ の値は？", answer: "$1$" },
+      { title: "第5問（対数）", question: "$\\log_{10} 100$ の値は？", answer: "$2$" },
+      { title: "第6問（ベクトル）", question: "ベクトル $\\langle 1, 2 \\rangle$ と $\\langle 3, 4 \\rangle$ の内積は？", answer: "$1 \\cdot 3 + 2 \\cdot 4 = 11$" },
+      { title: "第7問（一次方程式）", question: "一次方程式 $2x + 3 = 7$ の解は？", answer: "$x = 2$" },
+      { title: "第8問（平方完成）", question: "$x^2 + 2x + 1$ を平方完成せよ。", answer: "$(x + 1)^2$" },
+      { title: "第9問（確率）", question: "コイン1枚を1回投げるとき、表が出る確率は？", answer: "$\\dfrac{1}{2}$" },
+      { title: "第10問（数列）", question: "等差数列 $a_1 = 1,\\ d = 2$ の第2項 $a_2$ を求めよ。", answer: "$a_2 = 1 + 2 = 3$" }
     ];
 
     const problemIndexEl = document.getElementById("problemIndex");
@@ -153,26 +166,35 @@
     let currentIndex = 0;
     let showingAnswer = false;
 
+    function typesetCurrentCard() {
+      // MathJax 読み込み後であれば、現在の問題・解答を再度タイプセット
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([problemQuestionEl, problemAnswerEl]).catch(err => console.error(err.message));
+      }
+    }
+
     function renderProblem() {
       const p = problems[currentIndex];
       // タイトルは UI では非表示だが、念のため更新だけはしておく
       problemTitleEl.textContent = p.title;
-      problemQuestionEl.textContent = p.question;
-      problemAnswerEl.textContent = p.answer;
+      // LaTeX を含むので innerHTML を使う
+      problemQuestionEl.innerHTML = p.question;
+      problemAnswerEl.innerHTML = p.answer;
       problemIndexEl.textContent = String(currentIndex + 1);
       problemTotalEl.textContent = String(problems.length);
       problemAnswerEl.classList.add("is-hidden");
       showingAnswer = false;
+
+      typesetCurrentCard();
     }
 
-    // 簡単な自己テスト（既存テスト + 追加テスト）
+    // 簡単な自己テスト
     function runSelfTests() {
       console.assert(Array.isArray(problems), "problems は配列である必要があります");
       console.assert(problems.length >= 1, "少なくとも 1 問は登録してください");
       console.assert(typeof problems[0].title === "string", "第1問に title が必要です");
       console.assert(typeof problems[0].question === "string", "第1問に question が必要です");
       console.assert(typeof problems[0].answer === "string", "第1問に answer が必要です");
-      // 追加テスト: すべての問題が title / question / answer を持つか
       problems.forEach((p, i) => {
         console.assert(typeof p.title === "string" && p.title.length > 0, `問題${i + 1} に title が必要です`);
         console.assert(typeof p.question === "string" && p.question.length > 0, `問題${i + 1} に question が必要です`);
@@ -183,9 +205,10 @@
     // タップ（クリック）で「解答表示 → 次の問題」
     flashcardEl.addEventListener("click", () => {
       if (!showingAnswer) {
-        // まだ解答を見ていない状態 → 解答を表示（高さは変えずに表示だけ切り替える）
+        // まだ解答を見ていない状態 → 解答を表示
         problemAnswerEl.classList.remove("is-hidden");
         showingAnswer = true;
+        typesetCurrentCard();
       } else {
         // 解答表示中 → 次の問題へ
         currentIndex = (currentIndex + 1) % problems.length;
