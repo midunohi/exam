@@ -71,6 +71,11 @@
       padding: 0.9rem 1rem;
       white-space: pre-wrap;
       font-size: 0.95rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;      /* 左右中央揃え */
+      justify-content: center;  /* 上下中央寄せ */
+      text-align: center;       /* テキストも中央揃え */
     }
 
     .card-face {
@@ -118,6 +123,7 @@
   <div class="page">
     <header>
       <h1>数学 フラッシュカード</h1>
+      <div class="meta">EXP: <span id="expDisplay">0</span> ｜ カードをタップで「解答表示 → 次の問題」。解答表示時に 20% の確率で EXP +1</div>
     </header>
 
     <main>
@@ -137,23 +143,55 @@
         </div>
       </section>
     </main>
-
-    <p class="hint">カードをタップ（クリック）すると「解答表示 → 次の問題」と進みます。</p>
   </div>
 
   <script>
+    // EXP 用の設定
+    const EXP_KEY = "midunohi.exam.exp";
+    let exp = 0;
+    const expDisplayEl = document.getElementById("expDisplay");
+
+    function loadExp() {
+      try {
+        const stored = localStorage.getItem(EXP_KEY);
+        if (stored == null) {
+          exp = 0;
+        } else {
+          const n = Number(stored);
+          exp = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+        }
+      } catch (e) {
+        console.warn("EXP を読み込めませんでした", e);
+        exp = 0;
+      }
+      updateExpDisplay();
+    }
+
+    function saveExp() {
+      try {
+        localStorage.setItem(EXP_KEY, String(exp));
+      } catch (e) {
+        console.warn("EXP を保存できませんでした", e);
+      }
+      updateExpDisplay();
+    }
+
+    function updateExpDisplay() {
+      if (expDisplayEl) expDisplayEl.textContent = String(exp);
+    }
+
     // フラッシュカードのデータ（MathJax でレンダリングされるように LaTeX 形式を使用）
     const problems = [
-      { title: "第1問（微分）", question: "関数 $y = x^3$ の導関数は？", answer: "$\\dfrac{dy}{dx} = 3x^2$" },
-      { title: "第2問（積分）", question: "$\\displaystyle \\int 2x\\,dx$ を求めよ。", answer: "$x^2 + C$" },
-      { title: "第3問（三角）", question: "$\\sin 90^{\\circ}$ の値は？", answer: "$1$" },
-      { title: "第4問（指数）", question: "$2^0$ の値は？", answer: "$1$" },
-      { title: "第5問（対数）", question: "$\\log_{10} 100$ の値は？", answer: "$2$" },
-      { title: "第6問（ベクトル）", question: "ベクトル $\\langle 1, 2 \\rangle$ と $\\langle 3, 4 \\rangle$ の内積は？", answer: "$1 \\cdot 3 + 2 \\cdot 4 = 11$" },
-      { title: "第7問（一次方程式）", question: "一次方程式 $2x + 3 = 7$ の解は？", answer: "$x = 2$" },
-      { title: "第8問（平方完成）", question: "$x^2 + 2x + 1$ を平方完成せよ。", answer: "$(x + 1)^2$" },
-      { title: "第9問（確率）", question: "コイン1枚を1回投げるとき、表が出る確率は？", answer: "$\\dfrac{1}{2}$" },
-      { title: "第10問（数列）", question: "等差数列 $a_1 = 1,\\ d = 2$ の第2項 $a_2$ を求めよ。", answer: "$a_2 = 1 + 2 = 3$" }
+      { title: "第1問（微分）", question: "関数 $y = x^3$ の導関数は？", answer: "$$\\dfrac{dy}{dx} = 3x^2$$" },
+      { title: "第2問（積分）", question: "$$\\displaystyle \\int 2x\\,dx$$ を求めよ。", answer: "$$x^2 + C$$" },
+      { title: "第3問（三角）", question: "$$\\sin 90^{\\circ}$$ の値は？", answer: "$$1$$" },
+      { title: "第4問（指数）", question: "$$2^0$$ の値は？", answer: "$$1$$" },
+      { title: "第5問（対数）", question: "$$\\log_{10} 100$$ の値は？", answer: "$$2$$" },
+      { title: "第6問（ベクトル）", question: "ベクトル $$\\langle 1, 2 \\rangle$$ と $$\\langle 3, 4 \\rangle$$ の内積は？", answer: "$$1 \\cdot 3 + 2 \\cdot 4 = 11$$" },
+      { title: "第7問（一次方程式）", question: "一次方程式 $$2x + 3 = 7$$ の解は？", answer: "$$x = 2$$" },
+      { title: "第8問（平方完成）", question: "$$x^2 + 2x + 1$$ を平方完成せよ。", answer: "$$(x + 1)^2$$" },
+      { title: "第9問（確率）", question: "コイン1枚を1回投げるとき、表が出る確率は？", answer: "$$\\dfrac{1}{2}$$" },
+      { title: "第10問（数列）", question: "等差数列 $$a_1 = 1,\\ d = 2$$ の第2項 $$a_2$$ を求めよ。", answer: "$$a_2 = 1 + 2 = 3$$" }
     ];
 
     const problemIndexEl = document.getElementById("problemIndex");
@@ -188,7 +226,7 @@
       typesetCurrentCard();
     }
 
-    // 簡単な自己テスト
+    // 簡単な自己テスト（既存テストは変更せずそのまま維持）
     function runSelfTests() {
       console.assert(Array.isArray(problems), "problems は配列である必要があります");
       console.assert(problems.length >= 1, "少なくとも 1 問は登録してください");
@@ -200,6 +238,8 @@
         console.assert(typeof p.question === "string" && p.question.length > 0, `問題${i + 1} に question が必要です`);
         console.assert(typeof p.answer === "string" && p.answer.length > 0, `問題${i + 1} に answer が必要です`);
       });
+      // 追加の簡単テスト: EXP の初期値が数値か
+      console.assert(typeof exp === "number", "exp は数値である必要があります");
     }
 
     // タップ（クリック）で「解答表示 → 次の問題」
@@ -208,6 +248,14 @@
         // まだ解答を見ていない状態 → 解答を表示
         problemAnswerEl.classList.remove("is-hidden");
         showingAnswer = true;
+
+        // 解答表示時に 1/5 の確率で EXP を 1 増やす
+        if (Math.random() < 0.2) {
+          exp += 1;
+          saveExp();
+          console.log("EXP +1:", exp);
+        }
+
         typesetCurrentCard();
       } else {
         // 解答表示中 → 次の問題へ
@@ -217,6 +265,8 @@
     });
 
     // 初期表示 & テスト実行
+    loadExp();
+    console.log("初期 EXP:", exp);
     runSelfTests();
     renderProblem();
   </script>
