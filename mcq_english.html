@@ -2,35 +2,46 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>英語4択クイズ</title>
+  <title>英語 4択</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    :root { color-scheme: dark; }
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       padding: 16px;
-      background: #f5f5f5;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, #433155 0, #120518 40%, #030008 100%);
+      color: #f4ecff;
     }
     .container {
       max-width: 720px;
       margin: 0 auto;
-      background: #ffffff;
-      border: 1px solid #ccc;
       padding: 16px;
+      background: rgba(8, 4, 16, 0.9);
+      border-radius: 12px;
+      border: 1px solid rgba(190, 140, 255, 0.6);
+      box-shadow: 0 0 30px rgba(120, 60, 200, 0.6);
     }
     h1 {
-      font-size: 1.3rem;
       margin: 0 0 8px;
+      font-size: 1.3rem;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 6px #b68cff;
     }
     .meta {
       font-size: 0.9rem;
-      color: #555;
+      color: #c8b4ff;
       margin-bottom: 12px;
     }
     .question {
       font-size: 1rem;
       margin-bottom: 12px;
-      white-space: pre-wrap; /* "\n" をそのまま表示 */
+      white-space: pre-wrap;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(16, 8, 40, 0.9);
+      border: 1px solid rgba(160, 120, 255, 0.5);
     }
     .choices {
       display: flex;
@@ -40,28 +51,36 @@
     }
     .choice-btn {
       text-align: left;
-      padding: 8px;
-      border: 1px solid #ccc;
-      background: #fff;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(120, 90, 190, 0.8);
+      background: rgba(10, 6, 24, 0.9);
+      color: inherit;
       cursor: pointer;
       font-size: 0.95rem;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+    }
+    .choice-btn:hover:not(.disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 0 12px rgba(180, 130, 255, 0.8);
+      background: radial-gradient(circle at top left, #2a163f, #0a0618 60%);
     }
     .choice-btn.correct {
-      background: #e6ffe6;
-      border-color: #55aa55;
+      background: radial-gradient(circle at top, #14522f, #071710 60%);
+      border-color: #42d37f;
+      box-shadow: 0 0 14px rgba(66, 211, 127, 0.8);
     }
     .choice-btn.wrong {
-      background: #ffe6e6;
-      border-color: #cc5555;
+      background: radial-gradient(circle at top, #5b1422, #190609 60%);
+      border-color: #ff5b7f;
+      box-shadow: 0 0 14px rgba(255, 91, 127, 0.8);
     }
-    .choice-btn.disabled {
-      opacity: 0.7;
-      cursor: default;
-    }
+    .choice-btn.disabled { opacity: 0.7; cursor: default; }
     .feedback {
       min-height: 1.5em;
       font-size: 0.95rem;
       margin-bottom: 8px;
+      color: #ffe6ff;
     }
     .controls {
       display: flex;
@@ -69,46 +88,54 @@
       align-items: center;
       gap: 8px;
       margin-top: 4px;
-    }
-    .score {
       font-size: 0.9rem;
     }
     #nextBtn {
-      padding: 6px 12px;
-      border: none;
-      background: #007aff;
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(200, 160, 255, 0.9);
+      background: radial-gradient(circle at top, #7a3dff, #3c1280 60%);
       color: #fff;
-      font-size: 0.9rem;
       cursor: pointer;
+      font-size: 0.9rem;
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+    }
+    #nextBtn:hover:enabled {
+      transform: translateY(-1px);
+      box-shadow: 0 0 14px rgba(200, 160, 255, 0.9);
+      background: radial-gradient(circle at top, #9c5fff, #4a19a0 60%);
     }
     #nextBtn:disabled {
-      background: #aaa;
+      opacity: 0.6;
       cursor: default;
+      box-shadow: none;
+      background: #3b3450;
     }
     #result {
       margin-top: 12px;
       font-size: 0.95rem;
-      border-top: 1px solid #ddd;
+      border-top: 1px solid rgba(180, 140, 255, 0.4);
       padding-top: 8px;
+      color: #e0d4ff;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>英語4択クイズ</h1>
+    <h1>英語 4択</h1>
     <div class="meta" id="status"></div>
     <div class="question" id="question"></div>
     <div class="choices" id="choices"></div>
     <div class="feedback" id="feedback"></div>
     <div class="controls">
-      <div class="score" id="score"></div>
+      <div id="score"></div>
       <button id="nextBtn" disabled>次へ</button>
     </div>
     <div id="result"></div>
   </div>
 
   <script>
-    // --- 問題データ（テストも兼ねる） ---
     const questions = [
       {
         text: "He finally managed to ______ his fear of speaking in public.",
@@ -172,18 +199,6 @@
       }
     ];
 
-    // --- 簡単なバリデーション（テスト） ---
-    (function validateQuestions() {
-      questions.forEach((q, idx) => {
-        if (!Array.isArray(q.choices) || q.choices.length !== 4) {
-          console.warn("[validateQuestions] choices が4つではありません", idx, q);
-        }
-        if (typeof q.correctIndex !== "number" || q.correctIndex < 0 || q.correctIndex >= q.choices.length) {
-          console.warn("[validateQuestions] correctIndex が不正です", idx, q);
-        }
-      });
-    })();
-
     const statusEl = document.getElementById("status");
     const questionEl = document.getElementById("question");
     const choicesEl = document.getElementById("choices");
@@ -192,9 +207,16 @@
     const nextBtn = document.getElementById("nextBtn");
     const resultEl = document.getElementById("result");
 
+    const EXP_KEY = "midunohi.exam.exp";
+    let exp = Number(localStorage.getItem(EXP_KEY) || 0);
+
     let currentIndex = 0;
     let score = 0;
     let answered = false;
+
+    function updateStatus() {
+      statusEl.textContent = `問題 ${currentIndex + 1} / ${questions.length} ｜ EXP: ${exp}`;
+    }
 
     function renderQuestion() {
       const q = questions[currentIndex];
@@ -203,7 +225,7 @@
       resultEl.textContent = "";
       nextBtn.disabled = true;
 
-      statusEl.textContent = `問題 ${currentIndex + 1} / ${questions.length}`;
+      updateStatus();
       questionEl.textContent = q.text;
       scoreEl.textContent = `スコア: ${score}`;
 
@@ -231,11 +253,15 @@
 
       if (index === q.correctIndex) {
         score++;
-        feedbackEl.textContent = "正解！";
+        exp += 2;
+        feedbackEl.textContent = "正解！ (+2 EXP)";
       } else {
-        feedbackEl.textContent = `不正解… 正解は ${String.fromCharCode(65 + q.correctIndex)}. ${q.choices[q.correctIndex]}。`;
+        exp += 1;
+        feedbackEl.textContent = `不正解… 正解は ${String.fromCharCode(65 + q.correctIndex)}. ${q.choices[q.correctIndex]}。 (+1 EXP)`;
       }
 
+      localStorage.setItem(EXP_KEY, exp);
+      updateStatus();
       scoreEl.textContent = `スコア: ${score}`;
       nextBtn.disabled = false;
       nextBtn.textContent = currentIndex === questions.length - 1 ? "結果" : "次へ";
@@ -254,10 +280,9 @@
     function showResult() {
       const total = questions.length;
       const percent = Math.round((score / total) * 100);
-      resultEl.textContent = `お疲れさまでした。${total}問中${score}問正解（${percent}%）でした。`;
+      resultEl.textContent = `お疲れさまでした。${total}問中${score}問正解（${percent}%）。累計 EXP: ${exp}`;
     }
 
-    // 初期表示
     renderQuestion();
   </script>
 </body>
