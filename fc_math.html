@@ -69,7 +69,7 @@
       background: #020617;
       border: 1px solid #1f2937;
       padding: 0.9rem 1rem;
-      white-space: pre-wrap;
+      white-space: normal;
       font-size: 0.95rem;
       display: flex;
       flex-direction: column;
@@ -80,6 +80,8 @@
 
     .card-face {
       width: 100%;
+      display: inline-block;
+      white-space: nowrap;   /* 問題文を1行に固定 */
     }
 
     .card-answer {
@@ -181,17 +183,18 @@
     }
 
     // フラッシュカードのデータ（MathJax でレンダリングされるように LaTeX 形式を使用）
+    // 問題データ（JS 文字列内なのでバックスラッシュは必ず \\ でエスケープ）
     const problems = [
       { title: "第1問（微分）", question: "関数 $y = x^3$ の導関数は？", answer: "$$\\dfrac{dy}{dx} = 3x^2$$" },
-      { title: "第2問（積分）", question: "$$\\displaystyle \\int 2x\\,dx$$ を求めよ。", answer: "$$x^2 + C$$" },
-      { title: "第3問（三角）", question: "$$\\sin 90^{\\circ}$$ の値は？", answer: "$$1$$" },
-      { title: "第4問（指数）", question: "$$2^0$$ の値は？", answer: "$$1$$" },
-      { title: "第5問（対数）", question: "$$\\log_{10} 100$$ の値は？", answer: "$$2$$" },
-      { title: "第6問（ベクトル）", question: "ベクトル $$\\langle 1, 2 \\rangle$$ と $$\\langle 3, 4 \\rangle$$ の内積は？", answer: "$$1 \\cdot 3 + 2 \\cdot 4 = 11$$" },
-      { title: "第7問（一次方程式）", question: "一次方程式 $$2x + 3 = 7$$ の解は？", answer: "$$x = 2$$" },
-      { title: "第8問（平方完成）", question: "$$x^2 + 2x + 1$$ を平方完成せよ。", answer: "$$(x + 1)^2$$" },
+      { title: "第2問（積分）", question: "$\\displaystyle \\int 2x\\,dx$ を求めよ。", answer: "$$x^2 + C$$" },
+      { title: "第3問（三角）", question: "$\\sin 90^{\\circ}$ の値は？", answer: "$$1$$" },
+      { title: "第4問（指数）", question: "$2^0$ の値は？", answer: "$$1$$" },
+      { title: "第5問（対数）", question: "$\\log_{10} 100$ の値は？", answer: "$$2$$" },
+      { title: "第6問（ベクトル）", question: "ベクトル $\\langle 1, 2 \\rangle$ と $\\langle 3, 4 \\rangle$ の内積は？", answer: "$$1 \\cdot 3 + 2 \\cdot 4 = 11$$" },
+      { title: "第7問（一次方程式）", question: "一次方程式 $2x + 3 = 7$ の解は？", answer: "$$x = 2$$" },
+      { title: "第8問（平方完成）", question: "$x^2 + 2x + 1$ を平方完成せよ。", answer: "$$(x + 1)^2$$" },
       { title: "第9問（確率）", question: "コイン1枚を1回投げるとき、表が出る確率は？", answer: "$$\\dfrac{1}{2}$$" },
-      { title: "第10問（数列）", question: "等差数列 $$a_1 = 1,\\ d = 2$$ の第2項 $$a_2$$ を求めよ。", answer: "$$a_2 = 1 + 2 = 3$$" }
+      { title: "第10問（数列）", question: "等差数列 $a_1 = 1,\\ d = 2$ の第2項 $a_2$ を求めよ。", answer: "$$a_2 = 1 + 2 = 3$$" }
     ];
 
     const problemIndexEl = document.getElementById("problemIndex");
