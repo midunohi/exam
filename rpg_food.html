@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>英単語RPGバトル（最小版・食べ物・最終修正版）</title>
+<title>モンスター狩り(英単語 4択)</title>
 <style>
   :root{--bg:#0b1020;--panel:#16223d;--fg:#e5e7eb;--ok:#22c55e;--bad:#ef4444;--muted:#94a3b8}
   *{box-sizing:border-box}
@@ -17,7 +17,7 @@
   .grow{flex:1}
   .label{opacity:.8}
   .val{opacity:.9}
-  .bar{height:12px;background:#0a1429;border-radius:8px;overflow:hidden}
+  .bar{height:14px;min-width:260px;background:#0a1429;border-radius:8px;overflow:hidden}
   .bar>span{display:block;height:100%;width:0;transition:width .25s}
   .hp>span{background:#b91c1c}
   .exp>span{background:#0ea5e9}
@@ -25,18 +25,18 @@
   #top{display:flex;justify-content:space-between;align-items:flex-start}
   #hero,#enemy{display:flex;flex-direction:column;gap:6px;background:rgba(22,34,61,.6);padding:8px;border-radius:10px}
 
-  #qa{display:flex;flex-direction:column;align-items:center;gap:10px;margin:0 auto;max-width:min(900px,94vw)}
+  #qa{display:flex;flex-direction:column;align-items:center;gap:8px;margin:0 auto;max-width:min(900px,94vw)}
   #question{font-size:18px;text-align:center}
   #choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
   button.choice{background:#1b2947;color:var(--fg);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px;font-size:16px;cursor:pointer}
   button.choice:disabled{opacity:.6;cursor:default}
 
-  #logWrap{margin:0 auto;max-width:min(900px,94vw);width:100%}
+  #logWrap{display:none}
   #log{height:22vh;overflow:auto;font-size:14px}
   #log p{margin:.35em 0}
   .ok{color:var(--ok)} .bad{color:var(--bad)}
 
-  #btns{display:flex;gap:8px;justify-content:flex-end}
+  #btns{display:none}
   #btns button{background:#1b2947;color:var(--fg);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;cursor:pointer}
 
   #stageSvg{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -127,6 +127,11 @@
   // ===== 初期化 =====
   window.addEventListener('DOMContentLoaded', init, {once:true});
   function init(){
+    // === EXP を localStorage から復元 ===
+    const savedExp = Number(localStorage.getItem('midunohi.exam.exp'));
+    if(!Number.isNaN(savedExp) && savedExp >= 0){
+      S.exp = savedExp;
+    }
     S.pool=[...WORDS];
     spawnEnemy();
     renderHUD();
@@ -223,7 +228,18 @@
       document.getElementById('retryBtn').style.display='inline-block';
     }
   }
-  function addExp(x){ S.exp+=x; while(S.exp>=S.nextExp){ S.exp-=S.nextExp; levelUp(); } renderHUD(); }
+  function addExp(x){ 
+    S.exp+=x; 
+    while(S.exp>=S.nextExp){ 
+      S.exp-=S.nextExp; 
+      levelUp(); 
+    }
+    // === EXP を localStorage に保存 ===
+    try{
+      localStorage.setItem('midunohi.exam.exp', String(S.exp));
+    }catch(e){ console.warn('localStorage 保存失敗', e); }
+    renderHUD(); 
+  }
   function levelUp(){ S.lv++; const hpG=8+Math.floor(S.lv*1.5); const atkG=2; S.maxHP+=hpG; S.hp=S.maxHP; S.atk+=atkG; S.nextExp=Math.round(S.nextExp*1.35); log(`✨ <span class=ok>レベルアップ！</span> Lv${S.lv} / HP+${hpG} / ATK+${atkG}`); }
   function nextStage(){ S.local++; if(S.local>5){ S.local=1; S.world++; } spawnEnemy(); document.getElementById('nextBtn').style.display='none'; nextQuestion(); }
 
