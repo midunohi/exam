@@ -119,8 +119,8 @@
     const wordDisplay  = document.getElementById('wordDisplay');
     const statusLabel  = document.getElementById('statusLabel');
 
-    let words  = [];
-    let index  = 0;
+    let words = [];
+    let index = 0;
     let running = false;
     let timerId = null;
 
@@ -149,8 +149,7 @@
       }
       const current = Math.min(index + 1, words.length);
       wordDisplay.textContent = words[index] || "";
-      statusLabel.textContent =
-        current + " / " + words.length + (running ? "　再生中" : "　停止中");
+      statusLabel.textContent = current + " / " + words.length + (running ? "　再生中" : "　停止中");
     }
 
     function advance() {
@@ -164,10 +163,19 @@
     }
 
     function startTimer() {
-      if (timerId) clearInterval(timerId);
+      if (timerId) {
+        clearTimeout(timerId);
+        timerId = null;
+      }
       if (!running || !words.length) return;
-      const interval = wpmToIntervalMs(Number(speedSlider.value));
-      timerId = setInterval(advance, interval);
+      const firstInterval = wpmToIntervalMs(Number(speedSlider.value));
+      timerId = setTimeout(function tick() {
+        if (!running || !words.length) return;
+        advance();
+        if (!running || !words.length) return;
+        const nextInterval = wpmToIntervalMs(Number(speedSlider.value));
+        timerId = setTimeout(tick, nextInterval);
+      }, firstInterval);
     }
 
     function play() {
@@ -183,7 +191,7 @@
       running = false;
       playPauseBtn.textContent = "▶︎";
       if (timerId) {
-        clearInterval(timerId);
+        clearTimeout(timerId);
         timerId = null;
       }
       updateDisplay();
