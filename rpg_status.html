@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>キャラステータス</title>
+<style>
+  :root{
+    --bg:#020617;
+    --fg:#e5e7eb;
+    --line:#1f2937;
+    --accent:#38bdf8;
+    --hp:#ef4444;
+    --hp2:#b91c1c;
+    --exp:#38bdf8;
+    --exp2:#0ea5e9;
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
+    background:
+      linear-gradient(to bottom,
+        #0b1a33 0%,
+        #1e3a8a 45%,
+        #1f2937 46%,
+        #020617 100%
+      );
+    color:var(--fg);
+  }
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px;
+  }
+  #wrap{
+    width:100%;
+    max-width:720px;
+    background:rgba(15,23,42,.9);
+    border-radius:16px;
+    border:1px solid rgba(148,163,184,.35);
+    box-shadow:0 18px 45px rgba(0,0,0,.7);
+    padding:16px 16px 18px;
+  }
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:12px;
+  }
+  header h1{
+    font-size:18px;
+    margin:0;
+  }
+  header small{
+    display:block;
+    font-size:11px;
+    opacity:.8;
+  }
+  #backBtn{
+    padding:4px 10px;
+    border-radius:999px;
+    border:0;
+    background:#0f172a;
+    color:var(--fg);
+    font-size:12px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  #backBtn span{font-size:14px}
+
+  main{
+    display:grid;
+    grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+    gap:12px;
+  }
+  @media (max-width:640px){
+    main{grid-template-columns:minmax(0,1fr);}
+  }
+
+  .card{
+    background:radial-gradient(circle at top,#111827,#020617 70%);
+    border-radius:14px;
+    border:1px solid rgba(55,65,81,.9);
+    padding:12px;
+  }
+  .card h2{
+    font-size:14px;
+    margin:0 0 8px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .badge{
+    font-size:11px;
+    padding:2px 8px;
+    border-radius:999px;
+    border:1px solid rgba(148,163,184,.7);
+    opacity:.9;
+  }
+
+  .row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px}
+  .row .label{width:64px;opacity:.8}
+  .row .val{font-variant-numeric:tabular-nums}
+
+  .barWrap{flex:1;height:12px;border-radius:999px;overflow:hidden;background:#020617;border:1px solid #020617}
+  .barInner{height:100%;width:0;transition:width .25s}
+  .barHp{background:linear-gradient(90deg,var(--hp),var(--hp2));}
+  .barExp{background:linear-gradient(90deg,var(--exp),var(--exp2));}
+  .barText{min-width:110px;text-align:right;font-size:11px;opacity:.9}
+
+  #heroName{font-weight:600;font-size:15px}
+  #lvTag{font-size:11px;padding:1px 6px;border-radius:999px;background:#0f172a;border:1px solid rgba(148,163,184,.7);}
+
+  dl{
+    margin:6px 0 0;
+    display:grid;
+    grid-template-columns:auto 1fr;
+    row-gap:2px;
+    column-gap:6px;
+    font-size:11px;
+  }
+  dt{opacity:.7}
+  dd{margin:0;font-variant-numeric:tabular-nums}
+
+  #summary{
+    margin-top:8px;
+    font-size:12px;
+    padding:8px 8px 6px;
+    border-radius:10px;
+    background:rgba(15,23,42,.9);
+    border:1px solid rgba(55,65,81,.9);
+  }
+
+  #statusText{
+    font-size:12px;
+    line-height:1.5;
+    opacity:.95;
+  }
+  #statusText b{color:#f97316;font-weight:600}
+
+  #hint{
+    margin-top:6px;
+    font-size:11px;
+    opacity:.75;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header>
+    <div>
+      <h1>キャラステータス</h1>
+    </div>
+    <button id="backBtn" type="button"><span>◀</span> ゲームにもどる</button>
+  </header>
+
+  <main>
+    <section class="card" id="heroCard">
+      <h2>
+        <span id="lvTag">Lv <span id="lv">1</span></span>
+      </h2>
+
+      <div class="row">
+        <span class="label">EXP</span>
+        <div class="barWrap"><div id="expBar" class="barInner barExp"></div></div>
+        <span id="expText" class="barText">0 / 20</span>
+      </div>
+
+      <div class="row">
+        <span class="label">HP</span>
+        <div class="barWrap"><div id="hpBar" class="barInner barHp"></div></div>
+        <span id="hpText" class="barText">30 / 30</span>
+      </div>
+
+      <div class="row"><span class="label">ATK</span><span class="val" id="atk">5</span></div>
+      <div class="row"><span class="label">総EXP</span><span class="val" id="totalExp">0</span></div>
+
+      <dl>
+        <dt>次のレベルまで</dt><dd id="toNext">20</dd>
+        <dt>期待ダメージ</dt><dd id="dmgRange">5 ～ 7</dd>
+        <dt>推奨モンスター</dt><dd id="recommend">スライム</dd>
+      </dl>
+
+      <div id="summary"></div>
+    </section>
+
+    <section class="card" id="infoCard">
+      <h2>ステータスの説明 <span class="badge">ゲーム内仕様</span></h2>
+      <div id="statusText">
+        <p>この画面では、これまでのバトルで獲得した <b>総EXP</b> から、現在の<b>レベル</b>・<b>最大HP</b>・<b>攻撃力(ATK)</b> を再計算して表示しています。</p>
+        <p>ゲーム本編と同じく、一定量のEXPを超えると自動的に<b>レベルアップ</b>し、<b>HP と ATK が成長</b>します。</p>
+      </div>
+      <div id="hint">
+        ※ この画面はステータス表示専用です。問題に答えて戦うには、ゲーム本編の画面に戻ってください。
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+// ゲーム本編と同じキー
+const KEY = 'midunohi.exam.exp';
+const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
+const setBar = (el,r) => { if(!el) return; el.style.width=(100*clamp(r,0,1)).toFixed(1)+'%'; };
+
+const state = {
+  lv:1,
+  exp:0,
+  nextExp:20,
+  hp:30,
+  maxHP:30,
+  baseATK:5,
+  totalExp:0
+};
+
+function resetStats(){
+  state.lv=1;
+  state.exp=0;
+  state.nextExp=20;
+  state.baseATK=5;
+  state.maxHP=30;
+  state.hp=state.maxHP;
+}
+
+function silentLevelUp(){
+  state.lv++;
+  const hpGain = 8 + Math.floor(state.lv*1.5);
+  state.maxHP += hpGain;
+  state.hp = state.maxHP;
+  state.baseATK += 2;
+  state.nextExp = Math.round(state.nextExp*1.35);
+}
+
+function loadExp(){
+  const v = Number(localStorage.getItem(KEY) || '0');
+  if(!Number.isFinite(v) || v<=0){
+    resetStats();
+    state.totalExp = 0;
+    return;
+  }
+  state.totalExp = v;
+  resetStats();
+  let rest = v;
+  while(rest >= state.nextExp){
+    rest -= state.nextExp;
+    silentLevelUp();
+  }
+  state.exp = rest;
+}
+
+function renderHUD(){
+  const lvEl = document.getElementById('lv');
+  const atkEl = document.getElementById('atk');
+  const hpText = document.getElementById('hpText');
+  const expText = document.getElementById('expText');
+  const expBar = document.getElementById('expBar');
+  const hpBar = document.getElementById('hpBar');
+  const totalExp = document.getElementById('totalExp');
+  const toNext = document.getElementById('toNext');
+  const dmgRange = document.getElementById('dmgRange');
+  const recommend = document.getElementById('recommend');
+  const summary = document.getElementById('summary');
+
+  lvEl.textContent = state.lv;
+  atkEl.textContent = state.baseATK;
+  hpText.textContent = `${state.maxHP} / ${state.maxHP}`;
+  expText.textContent = `${state.exp} / ${state.nextExp}`;
+  totalExp.textContent = state.totalExp;
+
+  setBar(expBar, state.exp / state.nextExp);
+  setBar(hpBar, 1);
+
+  const toNextVal = Math.max(0, state.nextExp - state.exp);
+  toNext.textContent = toNextVal;
+
+  // 本編の playerAttack と同じダメージ幅
+  const base = state.baseATK;
+  const v = Math.max(1, Math.floor(base*0.5));
+  const minDmg = base;
+  const maxDmg = base + v;
+  dmgRange.textContent = `${minDmg} ～ ${maxDmg}`;
+
+  // 推奨モンスターの簡易ロジック
+  let rec = 'スライム';
+  if(state.lv >= 4) rec = 'ウルフ';
+  if(state.lv >= 7) rec = 'オーガ';
+  recommend.textContent = rec;
+
+  const msgParts = [];
+  msgParts.push(`これまでに <b>${state.totalExp}</b> EXP を獲得しました。`);
+  msgParts.push(`現在は <b>Lv${state.lv}</b>、最大HP <b>${state.maxHP}</b>、攻撃力 <b>${state.baseATK}</b> です。`);
+  if(toNextVal>0){
+    msgParts.push(`次のレベルまであと <b>${toNextVal}</b> EXP です。`);
+  }else{
+    msgParts.push('次のレベルまであとわずか！');
+  }
+  summary.innerHTML = msgParts.join('<br>');
+}
+
+function init(){
+  loadExp();
+  renderHUD();
+  const backBtn = document.getElementById('backBtn');
+  backBtn.addEventListener('click',()=>{
+    if(document.referrer){
+      history.back();
+    }else{
+      // 別タブで開かれた場合は何もしない / もしくはアラート
+      alert('ゲーム画面から開くと「戻る」で帰れます。');
+    }
+  });
+}
+
+init();
+</script>
+</body>
+</html>
