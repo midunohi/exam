@@ -7,19 +7,17 @@
   :root{--bg:#020617;--ok:#22c55e;--bad:#ef4444}
   *{box-sizing:border-box}
   html,body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
-  /* シンプルな地平線背景（空＋地面） */
-  background:
-    linear-gradient(to bottom,
-      #0b1a33 0%,
-      #1e3a8a 45%,  /* 空 */
-      #1f2937 46%,  /* 地平線 */
-      #020617 100%  /* 地面 */
-    );
+  /* 背景画像（なければ紺色にフォールバック） */
+  background-color:#0b1a33;
+  background-image:url('img/bg_rpg_field.png');
+  background-repeat:no-repeat;
+  background-position:center top;
+  background-size:cover;
   color:#ffffff;
 }
 
-  #wrap{min-height:100vh;display:flex;flex-direction:column;gap:8px;padding:8px}
-  #topGrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:8px}
+  #wrap{min-height:100vh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:8px}
+  #topGrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:8px;align-items:start}
   .panel{background:none;border-radius:0;padding:0}
   .compact{font-size:14px;line-height:1.3}
   .row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
@@ -35,8 +33,8 @@
   button.choice{padding:8px;border-radius:8px;border:0;background:#111827;color:inherit;font-size:14px;cursor:pointer}
   button.choice:disabled{opacity:.6;cursor:default}
 
-  #logWrap{flex:1;min-height:110px;display:flex;flex-direction:column;padding-top:2px}
-  #log{flex:1;overflow:auto;font-size:13px;padding:4px 2px}
+  #logWrap{min-height:96px;max-height:30vh;display:flex;flex-direction:column;padding-top:2px;background:rgba(0,0,0,.35);border-radius:8px}
+  #log{flex:1;overflow:auto;font-size:13px;padding:4px 6px}
   #log p{margin:2px 0}
   .ok{color:var(--ok)}
   .bad{color:var(--bad)}
@@ -46,7 +44,7 @@
   #buttons{margin-top:4px;text-align:right}
   #buttons button{margin-left:4px;padding:4px 10px;font-size:12px;border-radius:6px;border:0;cursor:pointer;background:#111827;color:inherit}
 
-  #enemyView svg{display:block;width:100%;height:auto}
+  #enemyView img{display:block;width:100%;height:auto;max-height:30vh;object-fit:contain}
 </style>
 </head>
 <body>
@@ -73,26 +71,9 @@
     </section>
 
     <!-- 右2段目: 敵グラフィック（簡単なSVG） -->
+        <!-- 右2段目: 敵グラフィック（画像） -->
     <section id="enemyView" class="panel">
-      <svg viewBox="0 0 120 90">
-        <defs>
-          <radialGradient id="slimeGrad" cx="35%" cy="30%" r="60%">
-            <stop offset="0%" stop-color="#bbf7d0"/>
-            <stop offset="100%" stop-color="#22c55e"/>
-          </radialGradient>
-        </defs>
-        <!-- 影 -->
-        <ellipse cx="60" cy="70" rx="32" ry="8" fill="#000" opacity=".35"/>
-        <!-- 球体スライム（完全な円形） -->
-        <circle cx="60" cy="40" r="28" fill="url(#slimeGrad)" stroke="#16a34a" stroke-width="3"/>
-        <!-- 目 -->
-        <circle cx="50" cy="38" r="5" fill="#022c22"/>
-        <circle cx="70" cy="38" r="5" fill="#022c22"/>
-        <circle cx="51" cy="37" r="2" fill="#e5e7eb"/>
-        <circle cx="71" cy="37" r="2" fill="#e5e7eb"/>
-        <!-- 口 -->
-        <path d="M50,50 Q60,54 70,50" fill="none" stroke="#052e16" stroke-width="3" stroke-linecap="round"/>
-      </svg>
+      <img src="img/dust_lizard.png" alt="ダストリザード" style="display:block;width:100%;height:auto;object-fit:contain;opacity:0.95" onerror="this.style.display='none'" />
     </section>
   </div>
 
@@ -127,7 +108,7 @@ const WORDS=[
 ];
 
 const ENEMIES=[
-  {name:'スライム', hp:28, atk:[3,6], xp:10},
+  {name:'ダストリザード', hp:28, atk:[3,6], xp:10},
   {name:'ウルフ', hp:40, atk:[5,9], xp:15},
   {name:'オーガ', hp:65, atk:[8,14], xp:20}
 ];
