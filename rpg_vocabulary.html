@@ -86,15 +86,28 @@ const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
 const setBar = (id,r) => { const el=document.getElementById(id); if(el) el.style.width=(100*clamp(r,0,1)).toFixed(1)+'%'; };
 const log = html => { const el=document.getElementById('log'); if(!el) return; el.insertAdjacentHTML('beforeend',`<p>${html}</p>`); el.scrollTop=el.scrollHeight; };
 
-const WORDS=[
-  {jp:'忍耐',ans:'perseverance',opts:['bravery','tenacity','perseverance','humility']},
-  {jp:'見せかけ',ans:'pretense',opts:['presence','pretense','premise','protégé']},
-  {jp:'当惑',ans:'consternation',opts:['contemplation','constellation','consternation','conflagration']},
-  {jp:'不吉な',ans:'ominous',opts:['ominous','amiable','anxious','arduous']},
-  {jp:'実用的な',ans:'pragmatic',opts:['dogmatic','pragmatic','problematic','charismatic']}
+// en_ja/words.json が読み込めない環境用の最小限の代替データ
+const FALLBACK_WORDS=[
+  {en:'increase', ja:'増える、増やす'},
+  {en:'reduce',   ja:'減らす'},
+  {en:'gather',   ja:'集める'},
+  {en:'explore',  ja:'探索する'},
+  {en:'defeat',   ja:'打ち倒す、打ち負かす'},
+  {en:'guard',    ja:'守る'},
+  {en:'release',  ja:'解放する'},
+  {en:'vanish',   ja:'消える'},
 ];
 
-const state={ lv:1, exp:0, nextExp:20, hp:30, maxHP:30, baseATK:5, enemyLv:1, pool:[...WORDS], used:new Set(), totalExp:0 };
+let wordsData = [];
+
+const state={
+  lv:1, exp:0, nextExp:20,
+  hp:30, maxHP:30, baseATK:5,
+  enemyLv:1,
+  pool:[],
+  used:new Set(),
+  totalExp:0
+};
 
 function resetStats(){
   state.lv=1;
@@ -130,6 +143,7 @@ function addExp(x){
   renderHUD();
 }
 
+// 敵関連
 let enemy=null;
 function spawnEnemy(){
   enemy={
@@ -160,6 +174,26 @@ function updateEnemyHUD(){
   setBar('enemyHpBar', enemy.hp/enemy.maxHP);
 }
 
+// 単語データ読み込み（en_ja/words.json が優先）
+async function loadWords(){
+  try{
+    const res = await fetch('en_ja/words.json', {cache:'no-store'});
+    if(!res.ok) throw new Error('http error');
+    const data = await res.json();
+    if(!Array.isArray(data) || !data.length) throw new Error('empty');
+    // 形式の簡易チェック
+    if(!('en' in data[0]) || !('ja' in data[0])) throw new Error('bad format');
+    wordsData = data;
+    log('📖 en_ja/words.json を読み込みました。');
+  }catch(e){
+    // 読み込み失敗時はフォールバック
+    wordsData = FALLBACK_WORDS;
+    log('<span class="bad">⚠ en_ja/words.json を読み込めなかったため、内蔵のサンプル単語で出題します。</span>');
+  }
+  state.pool = wordsData;
+}
+
+// 出題まわり
 let currentQ=null;
 function shuffle(a){
   for(let i=a.length-1;i>0;i--){
@@ -170,19 +204,33 @@ function shuffle(a){
 }
 
 function nextQuestion(){
-  const poolIdx=state.pool.map((_,i)=>i).filter(i=>!state.used.has(i));
+  if(!state.pool || !state.pool.length){
+    document.getElementById('question').textContent='単語データが見つかりません。';
+    document.getElementById('choices').innerHTML='';
+    return;
+  }
+
+  const poolIdx = state.pool.map((_,i)=>i).filter(i=>!state.used.has(i));
   if(!poolIdx.length){
     state.used.clear();
     return nextQuestion();
   }
-  const pick=poolIdx[rand(poolIdx.length)];
+
+  const pick = poolIdx[rand(poolIdx.length)];
   state.used.add(pick);
-  const q=state.pool[pick];
-  const opts=[...new Set(q.opts)];
-  if(!opts.includes(q.ans)) opts[rand(opts.length)]=q.ans;
-  currentQ={jp:q.jp,ans:q.ans,choices:shuffle(opts)};
-  document.getElementById('question').textContent=`「${currentQ.jp}」の英語は？`;
-  const box=document.getElementById('choices');
+  const q = state.pool[pick]; // {en, ja}
+
+  const correct = q.en;
+  const choicesSet = new Set([correct]);
+  while(choicesSet.size < 4 && choicesSet.size < state.pool.length){
+    const cand = state.pool[rand(state.pool.length)].en;
+    choicesSet.add(cand);
+  }
+  const choices = shuffle([...choicesSet]);
+
+  currentQ = { ja:q.ja, ans:correct, choices };
+  document.getElementById('question').textContent = `「${currentQ.ja}」の英語は？`;
+  const box = document.getElementById('choices');
   box.innerHTML='';
   currentQ.choices.forEach(w=>{
     const b=document.createElement('button');
@@ -241,9 +289,10 @@ function nextEnemy(){
   document.getElementById('nextBtn').style.display='none';
 }
 
-function init(){
+async function init(){
   resetStats();
   renderHUD();
+  await loadWords();
   spawnEnemy();
   nextQuestion();
   document.getElementById('nextBtn').onclick=nextEnemy;
