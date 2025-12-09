@@ -109,6 +109,23 @@ const state={
   totalExp:0
 };
 
+// 保存された経験値を復元してレベル計算
+function loadSavedExp(){
+  const v = Number(localStorage.getItem(KEY) || '0');
+  if(!Number.isFinite(v) || v <= 0){
+    resetStats();
+    return;
+  }
+  state.totalExp = v;
+  resetStats();
+  let rest = v;
+  while(rest >= state.nextExp){
+    rest -= state.nextExp;
+    silentLevelUp();
+  }
+  state.exp = rest;
+}
+
 function resetStats(){
   state.lv=1;
   state.exp=0;
@@ -134,10 +151,12 @@ function levelUp(){
 }
 
 function addExp(x){
-  state.totalExp+=x;
-  state.exp+=x;
-  while(state.exp>=state.nextExp){
-    state.exp-=state.nextExp;
+  if(x<=0) return;
+  state.totalExp += x;
+  try{ localStorage.setItem(KEY, String(state.totalExp)); }catch(e){}
+  state.exp += x;
+  while(state.exp >= state.nextExp){
+    state.exp -= state.nextExp;
     levelUp();
   }
   renderHUD();
@@ -290,7 +309,7 @@ function nextEnemy(){
 }
 
 async function init(){
-  resetStats();
+  loadSavedExp();
   renderHUD();
   await loadWords();
   spawnEnemy();
