@@ -70,7 +70,7 @@
     });
 
     async function loadCategory(name) {
-      const res = await fetch(`qa/${name}.json`);
+      const res = await fetch(`../qa/${name}.json`);
       if (!res.ok) throw new Error(`qa/${name}.json を読み込めませんでした`);
       const data = await res.json();
       if (!Array.isArray(data)) throw new Error(`qa/${name}.json の形式が配列ではありません`);
