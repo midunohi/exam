@@ -80,7 +80,7 @@
 
     async function init() {
       try {
-        const res = await fetch("qa/categories.json");
+        const res = await fetch("../qa/categories.json");
         if (!res.ok) throw new Error("categories.json を読み込めませんでした");
         const cat = await res.json();
         const files = Array.isArray(cat.files) ? cat.files : [];
