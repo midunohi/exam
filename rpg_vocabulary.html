@@ -193,22 +193,44 @@ function updateEnemyHUD(){
   setBar('enemyHpBar', enemy.hp/enemy.maxHP);
 }
 
-// 単語データ読み込み（en_ja/words.json が優先）
+// 単語データ読み込み（categories.json -> files 配列を全部読む）
 async function loadWords(){
   try{
-    const res = await fetch('en_ja/words.json', {cache:'no-store'});
-    if(!res.ok) throw new Error('http error');
-    const data = await res.json();
-    if(!Array.isArray(data) || !data.length) throw new Error('empty');
-    // 形式の簡易チェック
-    if(!('en' in data[0]) || !('ja' in data[0])) throw new Error('bad format');
-    wordsData = data;
-    log('📖 en_ja/words.json を読み込みました。');
+    // 1) categories.json を読む
+    const catRes = await fetch('en_ja/categories.json', { cache: 'no-store' });
+    if(!catRes.ok) throw new Error('categories http error');
+
+    const cat = await catRes.json();
+    const files = Array.isArray(cat?.files) ? cat.files : [];
+    if(files.length === 0) throw new Error('categories empty files');
+
+    // 2) files 配列の全ファイルを並列で読む（例: ["words","daily"] -> words.json, daily.json）
+    const results = await Promise.all(
+      files.map(async (name) => {
+        const res = await fetch(`en_ja/${name}.json`, { cache: 'no-store' });
+        if(!res.ok) throw new Error(`${name}.json http error`);
+        const data = await res.json();
+        if(!Array.isArray(data)) throw new Error(`${name}.json bad format (not array)`);
+        return data;
+      })
+    );
+
+    // 3) 全部結合して wordsData に入れる
+    const merged = results.flat();
+
+    // 4) 最低限の形式チェック（{en, ja}）
+    if(!merged.length || !('en' in merged[0]) || !('ja' in merged[0])) {
+      throw new Error('merged bad format');
+    }
+
+    wordsData = merged;
+    log(`📖 categories.json から ${files.length} ファイル、合計 ${wordsData.length} 件読み込みました。`);
   }catch(e){
     // 読み込み失敗時はフォールバック
     wordsData = FALLBACK_WORDS;
-    log('<span class="bad">⚠ en_ja/words.json を読み込めなかったため、内蔵のサンプル単語で出題します。</span>');
+    log('<span class="bad">⚠ categories.json / 単語ファイルの読み込みに失敗したため、内蔵のサンプル単語で出題します。</span>');
   }
+
   state.pool = wordsData;
 }
 
