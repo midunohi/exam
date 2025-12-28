@@ -170,24 +170,39 @@
     // 単語データ（en_ja/words.json から読み込み）
     let WORD_POOL = [];
 
-    async function loadWords() {
-      try {
-        const res = await fetch("./en_ja/words.json");
-        if (!res.ok) throw new Error("fetch failed");
+async function loadWords() {
+  try {
+    // 1) categories.json を読む
+    const catRes = await fetch("./en_ja/categories.json");
+    if (!catRes.ok) throw new Error("categories.json fetch failed");
+    const cat = await catRes.json();
+
+    const files = Array.isArray(cat?.files) ? cat.files : null;
+    if (!files || files.length === 0) throw new Error("invalid categories.json");
+
+    // 2) files に列挙された json を全部読む（並列）
+    const results = await Promise.all(
+      files.map(async (name) => {
+        const res = await fetch(`./en_ja/${name}.json`);
+        if (!res.ok) throw new Error(`${name}.json fetch failed`);
         const data = await res.json();
-        if (!Array.isArray(data)) throw new Error("invalid json");
-        WORD_POOL = data; // [{ en, ja }, ...]
-      } catch (e) {
-        console.warn("words.json の読み込みに失敗しました。フォールバックを使用します。", e);
-        // フォールバック（最低限）
-        WORD_POOL = [
-          { en: "existence", ja: "存在" },
-          { en: "entity", ja: "実体" },
-          { en: "essence", ja: "本質" },
-          { en: "realm", ja: "領域" }
-        ];
-      }
-    }
+        if (!Array.isArray(data)) throw new Error(`${name}.json invalid json`);
+        return data; // [{en, ja}, ...]
+      })
+    );
+
+    // 3) 結合して WORD_POOL にする（フラット化）
+    WORD_POOL = results.flat();
+  } catch (e) {
+    console.warn("単語データの読み込みに失敗しました。フォールバックを使用します。", e);
+    WORD_POOL = [
+      { en: "existence", ja: "存在" },
+      { en: "entity", ja: "実体" },
+      { en: "essence", ja: "本質" },
+      { en: "realm", ja: "領域" }
+    ];
+  }
+}
 
     // シンプルなカウンタ＋EXP（WebStorageで保存）
     const EXP_KEY = "midunohi.exam.exp";
