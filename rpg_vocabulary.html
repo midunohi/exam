@@ -70,7 +70,7 @@
     </section>
 
     <section id="enemyView" class="panel">
-      <img src="img/dust_lizard.png" alt="ダストリザード" style="display:block;width:100%;height:auto;object-fit:contain;opacity:0.95" onerror="this.style.display='none'" />
+      <img id="enemyImg" src="" alt="" style="display:block;width:100%;height:auto;object-fit:contain;opacity:0.95" onerror="this.style.display='none'" />
     </section>
   </div>
 
@@ -98,12 +98,25 @@ const FALLBACK_WORDS=[
   {en:'vanish',   ja:'消える'},
 ];
 
+// monsters.js が読めない環境用の代替データ
+const FALLBACK_MONSTERS = [
+  { id: 'ash_wyrm',    ja: 'アッシュ・ワーム' },
+  { id: 'dust_lizard', ja: 'ダスト・リザード' },
+  { id: 'ember_golem', ja: 'エンバー・ゴーレム' },
+  { id: 'night_siren', ja: 'ナイト・サイレン' },
+];
+
 let wordsData = [];
+let MONSTERS = [];
 
 const state={
   lv:1, exp:0, nextExp:20,
   hp:30, maxHP:30, baseATK:5,
-  enemyLv:1,
+
+  // 敵の進行（モンスター周回Lv / モンスター順）
+  enemyLevel:1,
+  monsterIndex:0,
+
   pool:[],
   used:new Set(),
   totalExp:0
@@ -133,7 +146,9 @@ function resetStats(){
   state.baseATK=5;
   state.maxHP=30;
   state.hp=state.maxHP;
-  state.enemyLv=1;
+
+  state.enemyLevel=1;
+  state.monsterIndex=0;
 }
 
 function silentLevelUp(){
@@ -162,21 +177,77 @@ function addExp(x){
   renderHUD();
 }
 
-// 敵関連
+// ----------------
+// モンスター読み込み（img/monsters/monsters.js）
+// ----------------
+async function loadMonsters(){
+  try{
+    const res = await fetch('img/monsters/monsters.js', { cache:'no-store' });
+    if(!res.ok) throw new Error('monsters.js http error');
+    const txt = await res.text();
+
+    // export const MONSTERS = [ ... ]; から [ ... ] 部分だけ抜き出して評価
+    const i = txt.indexOf('[');
+    const j = txt.lastIndexOf(']');
+    if(i < 0 || j < 0 || j <= i) throw new Error('monsters.js parse error');
+    const arrText = txt.slice(i, j+1);
+    const arr = new Function(`return ${arrText}`)();
+
+    if(!Array.isArray(arr) || !arr.length || !arr[0].id || !arr[0].ja) throw new Error('monsters.js bad format');
+    MONSTERS = arr;
+    log(`🧩 monsters.js から ${MONSTERS.length} 体読み込みました。`);
+  }catch(e){
+    MONSTERS = FALLBACK_MONSTERS;
+    log('<span class="bad">⚠ monsters.js の読み込みに失敗したため、内蔵のモンスター一覧で進行します。</span>');
+  }
+}
+
+function setEnemyImage(mon){
+  const img = document.getElementById('enemyImg');
+  if(!img) return;
+  img.style.display = 'block';
+  img.src = `img/monsters/${mon.id}.png`;
+  img.alt = mon.ja;
+  img.onerror = () => { img.style.display = 'none'; };
+}
+
+// ----------------
+// 敵関連（順番に登場 / 周回でLv+1）
+// ----------------
 let enemy=null;
+function currentMonster(){
+  if(!MONSTERS.length) return { id:'dust_lizard', ja:'ダスト・リザード' };
+  return MONSTERS[clamp(state.monsterIndex,0,MONSTERS.length-1)];
+}
+
 function spawnEnemy(){
+  const mon = currentMonster();
+  const L = state.enemyLevel;
   enemy={
-    name:'ダストリザード',
-    level:state.enemyLv,
-    maxHP:28+state.enemyLv*8,
-    hp:28+state.enemyLv*8,
-    atkMin:3+state.enemyLv*2,
-    atkMax:6+state.enemyLv*2,
-    xp:10+state.enemyLv*5
+    id: mon.id,
+    name: mon.ja,
+    level: L,
+    maxHP: 28 + L*8,
+    hp:    28 + L*8,
+    atkMin: 3 + L*2,
+    atkMax: 6 + L*2,
+    xp:    10 + L*5
   };
   document.getElementById('enemyName').textContent = `${enemy.name} Lv${enemy.level}`;
+  setEnemyImage(mon);
   updateEnemyHUD();
   log(`👾 Lv${enemy.level} ${enemy.name} が現れた！`);
+}
+
+function advanceMonster(){
+  if(!MONSTERS.length) return;
+
+  state.monsterIndex++;
+  if(state.monsterIndex >= MONSTERS.length){
+    state.monsterIndex = 0;
+    state.enemyLevel++;
+    log(`<span class="ok">🔁 周回！ 敵Lvが ${state.enemyLevel} になった</span>`);
+  }
 }
 
 function renderHUD(){
@@ -196,7 +267,6 @@ function updateEnemyHUD(){
 // 単語データ読み込み（categories.json -> files 配列を全部読む）
 async function loadWords(){
   try{
-    // 1) categories.json を読む
     const catRes = await fetch('en_ja/categories.json', { cache: 'no-store' });
     if(!catRes.ok) throw new Error('categories http error');
 
@@ -204,7 +274,6 @@ async function loadWords(){
     const files = Array.isArray(cat?.files) ? cat.files : [];
     if(files.length === 0) throw new Error('categories empty files');
 
-    // 2) files 配列の全ファイルを並列で読む（例: ["words","daily"] -> words.json, daily.json）
     const results = await Promise.all(
       files.map(async (name) => {
         const res = await fetch(`en_ja/${name}.json`, { cache: 'no-store' });
@@ -215,10 +284,7 @@ async function loadWords(){
       })
     );
 
-    // 3) 全部結合して wordsData に入れる
     const merged = results.flat();
-
-    // 4) 最低限の形式チェック（{en, ja}）
     if(!merged.length || !('en' in merged[0]) || !('ja' in merged[0])) {
       throw new Error('merged bad format');
     }
@@ -226,7 +292,6 @@ async function loadWords(){
     wordsData = merged;
     log(`📖 categories.json から ${files.length} ファイル、合計 ${wordsData.length} 件読み込みました。`);
   }catch(e){
-    // 読み込み失敗時はフォールバック
     wordsData = FALLBACK_WORDS;
     log('<span class="bad">⚠ categories.json / 単語ファイルの読み込みに失敗したため、内蔵のサンプル単語で出題します。</span>');
   }
@@ -259,7 +324,7 @@ function nextQuestion(){
 
   const pick = poolIdx[rand(poolIdx.length)];
   state.used.add(pick);
-  const q = state.pool[pick]; // {en, ja}
+  const q = state.pool[pick];
 
   const correct = q.en;
   const choicesSet = new Set([correct]);
@@ -319,7 +384,10 @@ function checkEnd(){
   if(enemy.hp<=0){
     log(`🏆 撃破！ +${enemy.xp} EXP`);
     addExp(enemy.xp);
-    state.enemyLv++;
+
+    // 次の敵は「順番に進める」。周回して最初に戻る瞬間に敵Lv+1。
+    advanceMonster();
+
     nextBtn.style.display='inline-block';
   }
 }
@@ -333,7 +401,16 @@ function nextEnemy(){
 async function init(){
   loadSavedExp();
   renderHUD();
+
+  await loadMonsters();
+
+  // 開始位置は dust_lizard（存在すればそこから）
+  const startId = 'dust_lizard';
+  const idx = MONSTERS.findIndex(m => m && m.id === startId);
+  state.monsterIndex = idx >= 0 ? idx : 0;
+
   await loadWords();
+
   spawnEnemy();
   nextQuestion();
   document.getElementById('nextBtn').onclick=nextEnemy;
