@@ -6,31 +6,59 @@
 <style>
   :root{--bg:#020617;--ok:#22c55e;--bad:#ef4444}
   *{box-sizing:border-box}
-  html,body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
-  background-color:#0b1a33;
-  background-image:url('img/bg_rpg_field.png');
-  background-repeat:no-repeat;
-  background-position:center top;
-  background-size:cover;
-  color:#ffffff;
-}
+  html,body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
+    background:#0b1a33 url('img/bg_rpg_field.png') no-repeat center top/cover;
+    color:#fff;
+  }
 
   #wrap{min-height:100vh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:8px}
   #topGrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:8px;align-items:start}
   .panel{background:none;border-radius:0;padding:0}
   .compact{font-size:14px;line-height:1.3}
   .row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-  .row span.label{opacity:.8}
+  .row .label{opacity:.8}
   .bar{flex:1;height:12px;border-radius:999px;overflow:hidden;background:#020617}
-  .bar>span{display:block;height:100%;width:0;transition:width .25s}
+  .bar>span{display:block;height:100%;width:0;transition:width .2s}
   .hp>span{background:linear-gradient(90deg,#ef4444,#b91c1c)}
   .exp>span{background:linear-gradient(90deg,#38bdf8,#0ea5e9)}
   .val{min-width:90px;text-align:right;opacity:.9;font-size:12px}
 
-  #question{margin:0 0 6px;font-size:16px}
-  #choices{ display:flex; flex-direction:column; gap:6px; }
-  button.choice{padding:8px;border-radius:8px;border:0;background:#111827;color:inherit;font-size:14px;cursor:pointer}
-  button.choice:disabled{opacity:.6;cursor:default}
+  /* QA: 隙間を埋める */
+  #qaBox{display:flex;flex-direction:column;min-height:34vh}
+  #question{margin:0 0 8px;font-size:20px;font-weight:700}
+  #choices{flex:1;display:flex;flex-direction:column;gap:4px;min-height:0}
+
+  button.choice{
+    flex:1;
+    min-height:52px;
+    padding:12px 10px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(17,24,39,.86);
+    color:inherit;
+    font-size:20px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  button.choice:disabled{opacity:.55;cursor:default}
+
+  /* 次へスロット：常にスペース確保（visibilityで切替） */
+  #nextSlot{height:46px;display:flex;align-items:center}
+  #nextBtn{
+    padding:8px 14px;
+    font-size:14px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(17,24,39,.86);
+    color:inherit;
+    cursor:pointer;
+
+    visibility:hidden;
+    pointer-events:none;
+  }
+  #nextBtn.show{visibility:visible;pointer-events:auto}
 
   #logWrap{min-height:96px;max-height:30vh;display:flex;flex-direction:column;padding-top:2px;background:rgba(0,0,0,.35);border-radius:8px}
   #log{flex:1;overflow:auto;font-size:13px;padding:4px 6px}
@@ -40,10 +68,7 @@
   .blink{animation:blink .24s 3}
   @keyframes blink{50%{filter:brightness(2)}}
 
-  #buttonsInline{margin-top:6px;text-align:left}
-  #buttonsInline button{margin-right:4px;padding:4px 10px;font-size:12px;border-radius:6px;border:0;cursor:pointer;background:#111827;color:inherit}
-
-  #enemyView img{display:block;width:100%;height:auto;max-height:30vh;object-fit:contain}
+  #enemyView img{display:block;width:100%;height:auto;max-height:30vh;object-fit:contain;opacity:.95}
 </style>
 </head>
 <body>
@@ -57,20 +82,18 @@
     </section>
 
     <section id="enemyBox" class="panel compact">
-      <div class="row"><span class="label">ENEMY</span><span id="enemyName">ダストリザード Lv1</span></div>
+      <div class="row"><span class="label">ENEMY</span><span id="enemyName">—</span></div>
       <div class="row"><span class="label">HP</span><div class="bar hp"><span id="enemyHpBar"></span></div><span class="val" id="enemyHpText">0 / 0</span></div>
     </section>
 
     <section id="qaBox" class="panel">
       <p id="question">—</p>
       <div id="choices"></div>
-      <div id="buttonsInline">
-        <button id="nextBtn" style="display:none">次の敵 ▶</button>
-      </div>
+      <div id="nextSlot"><button id="nextBtn">次の敵 ▶</button></div>
     </section>
 
     <section id="enemyView" class="panel">
-      <img id="enemyImg" src="" alt="" style="display:block;width:100%;height:auto;object-fit:contain;opacity:0.95" onerror="this.style.display='none'" />
+      <img id="enemyImg" src="" alt="" onerror="this.style.display='none'" />
     </section>
   </div>
 
@@ -80,265 +103,144 @@
 </div>
 
 <script>
-const KEY = 'midunohi.exam.exp';
-const rand = n => Math.floor(Math.random()*n);
-const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
-const setBar = (id,r) => { const el=document.getElementById(id); if(el) el.style.width=(100*clamp(r,0,1)).toFixed(1)+'%'; };
-const log = html => { const el=document.getElementById('log'); if(!el) return; el.insertAdjacentHTML('beforeend',`<p>${html}</p>`); el.scrollTop=el.scrollHeight; };
+const $=id=>document.getElementById(id);
+const KEY='midunohi.exam.exp';
+const NEXT=20;
+const R=n=>(Math.random()*n)|0;
+const clamp=(x,a,b)=>x<a?a:x>b?b:x;
+const bar=(id,r)=>{const e=$(id); if(e) e.style.width=(100*clamp(r,0,1)).toFixed(1)+'%';};
+const log=s=>{const e=$('log'); if(!e) return; e.insertAdjacentHTML('beforeend',`<p>${s}</p>`); e.scrollTop=e.scrollHeight;};
+const showNext=f=>$('nextBtn').classList.toggle('show',!!f);
 
-// en_ja/words.json が読み込めない環境用の最小限の代替データ
+// fallback
 const FALLBACK_WORDS=[
-  {en:'increase', ja:'増える、増やす'},
-  {en:'reduce',   ja:'減らす'},
-  {en:'gather',   ja:'集める'},
-  {en:'explore',  ja:'探索する'},
-  {en:'defeat',   ja:'打ち倒す、打ち負かす'},
-  {en:'guard',    ja:'守る'},
-  {en:'release',  ja:'解放する'},
-  {en:'vanish',   ja:'消える'},
+  {en:'increase',ja:'増える、増やす'},{en:'reduce',ja:'減らす'},{en:'gather',ja:'集める'},{en:'explore',ja:'探索する'},
+  {en:'defeat',ja:'打ち倒す'},{en:'guard',ja:'守る'},{en:'release',ja:'解放する'},{en:'vanish',ja:'消える'}
+];
+const FALLBACK_MONSTERS=[
+  {id:'ash_wyrm',ja:'アッシュ・ワーム'},{id:'dust_lizard',ja:'ダスト・リザード'},{id:'ember_golem',ja:'エンバー・ゴーレム'},{id:'night_siren',ja:'ナイト・サイレン'}
 ];
 
-// monsters.js が読めない環境用の代替データ
-const FALLBACK_MONSTERS = [
-  { id: 'ash_wyrm',    ja: 'アッシュ・ワーム' },
-  { id: 'dust_lizard', ja: 'ダスト・リザード' },
-  { id: 'ember_golem', ja: 'エンバー・ゴーレム' },
-  { id: 'night_siren', ja: 'ナイト・サイレン' },
-];
-
-let wordsData = [];
-let MONSTERS = [];
+let words=[], MONSTERS=[], enemy=null, Q=null;
 
 const state={
-  lv:1, exp:0, nextExp:20,
-  hp:30, maxHP:30, baseATK:5,
-
-  // 敵の進行（モンスター周回Lv / モンスター順）
-  enemyLevel:1,
-  monsterIndex:0,
-
-  pool:[],
-  used:new Set(),
-  totalExp:0
+  totalExp:0, lv:1, exp:0,
+  maxHP:30, hp:30, atk:5,
+  mi:0, used:new Set()
 };
 
-// 保存された経験値を復元してレベル計算
-function loadSavedExp(){
-  const v = Number(localStorage.getItem(KEY) || '0');
-  if(!Number.isFinite(v) || v <= 0){
-    resetStats();
-    return;
+function recalc(){
+  state.lv = 1 + Math.floor(state.totalExp / NEXT);
+  state.exp = state.totalExp % NEXT;
+  state.maxHP = 26 + state.lv*8;          // 成長は緩め
+  state.atk   = 5  + Math.floor(state.lv*1.2);
+  state.hp = clamp(state.hp,0,state.maxHP);
+}
+
+function render(){
+  $('lv').textContent=state.lv;
+  $('atk').textContent=state.atk;
+  $('hpText').textContent=`${state.hp} / ${state.maxHP}`;
+  $('expText').textContent=`${state.exp} / ${NEXT}`;
+  bar('hpBar', state.hp/state.maxHP);
+  bar('expBar', state.exp/NEXT);
+}
+
+function save(){ try{ localStorage.setItem(KEY, String(state.totalExp)); }catch(e){} }
+
+function gainExp(x){
+  const before=state.lv;
+  state.totalExp += x; save();
+  recalc();
+  if(state.lv>before){
+    const heal = Math.round(state.maxHP*0.35);              // LvUPは回復するが全快しない
+    state.hp = clamp(state.hp + heal, 0, state.maxHP);
+    log(`<span class="ok">✨ Lv${before} → Lv${state.lv}（+${heal}HP）</span>`);
   }
-  state.totalExp = v;
-  resetStats();
-  let rest = v;
-  while(rest >= state.nextExp){
-    rest -= state.nextExp;
-    silentLevelUp();
-  }
-  state.exp = rest;
+  render();
 }
 
-function resetStats(){
-  state.lv=1;
-  state.exp=0;
-  state.nextExp=20;
-  state.baseATK=5;
-  state.maxHP=30;
-  state.hp=state.maxHP;
-
-  state.enemyLevel=1;
-  state.monsterIndex=0;
-}
-
-function silentLevelUp(){
-  state.lv++;
-  const hpGain=8+Math.floor(state.lv*1.5);
-  state.maxHP+=hpGain;
-  state.hp=state.maxHP;
-  state.baseATK+=2;
-  state.nextExp=Math.round(state.nextExp*1.35);
-}
-
-function levelUp(){
-  silentLevelUp();
-  log(`<span class="ok">✨ レベルアップ！ Lv${state.lv}</span>`);
-}
-
-function addExp(x){
-  if(x<=0) return;
-  state.totalExp += x;
-  try{ localStorage.setItem(KEY, String(state.totalExp)); }catch(e){}
-  state.exp += x;
-  while(state.exp >= state.nextExp){
-    state.exp -= state.nextExp;
-    levelUp();
-  }
-  renderHUD();
-}
-
-// ----------------
-// モンスター読み込み（img/monsters/monsters.js）
-// ----------------
 async function loadMonsters(){
   try{
-    const res = await fetch('img/monsters/monsters.js', { cache:'no-store' });
-    if(!res.ok) throw new Error('monsters.js http error');
-    const txt = await res.text();
-
-    // export const MONSTERS = [ ... ]; から [ ... ] 部分だけ抜き出して評価
-    const i = txt.indexOf('[');
-    const j = txt.lastIndexOf(']');
-    if(i < 0 || j < 0 || j <= i) throw new Error('monsters.js parse error');
-    const arrText = txt.slice(i, j+1);
-    const arr = new Function(`return ${arrText}`)();
-
-    if(!Array.isArray(arr) || !arr.length || !arr[0].id || !arr[0].ja) throw new Error('monsters.js bad format');
-    MONSTERS = arr;
-    log(`🧩 monsters.js から ${MONSTERS.length} 体読み込みました。`);
-  }catch(e){
-    MONSTERS = FALLBACK_MONSTERS;
-    log('<span class="bad">⚠ monsters.js の読み込みに失敗したため、内蔵のモンスター一覧で進行します。</span>');
-  }
+    const res=await fetch('img/monsters/monsters.js',{cache:'no-store'});
+    if(!res.ok) throw 0;
+    const t=await res.text();
+    const i=t.indexOf('['), j=t.lastIndexOf(']');
+    const arr=new Function(`return ${t.slice(i,j+1)}`)();
+    if(!Array.isArray(arr) || !arr[0]?.id || !arr[0]?.ja) throw 0;
+    MONSTERS=arr;
+  }catch(e){ MONSTERS=FALLBACK_MONSTERS; }
 }
 
 function setEnemyImage(mon){
-  const img = document.getElementById('enemyImg');
-  if(!img) return;
-  img.style.display = 'block';
-  img.src = `img/monsters/${mon.id}.png`;
-  img.alt = mon.ja;
-  img.onerror = () => { img.style.display = 'none'; };
-}
-
-// ----------------
-// 敵関連（順番に登場 / 周回でLv+1）
-// ----------------
-let enemy=null;
-function currentMonster(){
-  if(!MONSTERS.length) return { id:'dust_lizard', ja:'ダスト・リザード' };
-  return MONSTERS[clamp(state.monsterIndex,0,MONSTERS.length-1)];
+  const img=$('enemyImg');
+  img.style.display='block';
+  img.src=`img/monsters/${mon.id}.png`;
+  img.alt=mon.ja;
+  img.onerror=()=>img.style.display='none';
 }
 
 function spawnEnemy(){
-  const mon = currentMonster();
-  const L = state.enemyLevel;
+  const mon = MONSTERS[state.mi % MONSTERS.length] || FALLBACK_MONSTERS[0];
+  const L = state.lv;                    // 敵Lvは常にプレイヤーLv（=倒した数+1）
+  state.mi = (state.mi+1) % MONSTERS.length;
+
   enemy={
-    id: mon.id,
-    name: mon.ja,
-    level: L,
-    maxHP: 28 + L*8,
-    hp:    28 + L*8,
+    id:mon.id, name:mon.ja, level:L,
+    maxHP: 18 + L*10,
+    hp:    18 + L*10,
     atkMin: 3 + L*2,
-    atkMax: 6 + L*2,
-    xp:    10 + L*5
+    atkMax: 6 + L*3,
+    xp: NEXT
   };
-  document.getElementById('enemyName').textContent = `${enemy.name} Lv${enemy.level}`;
+
+  $('enemyName').textContent=`${enemy.name} Lv${enemy.level}`;
   setEnemyImage(mon);
-  updateEnemyHUD();
+  updateEnemy();
   log(`👾 Lv${enemy.level} ${enemy.name} が現れた！`);
 }
 
-function advanceMonster(){
-  if(!MONSTERS.length) return;
-
-  state.monsterIndex++;
-  if(state.monsterIndex >= MONSTERS.length){
-    state.monsterIndex = 0;
-    state.enemyLevel++;
-    log(`<span class="ok">🔁 周回！ 敵Lvが ${state.enemyLevel} になった</span>`);
-  }
+function updateEnemy(){
+  $('enemyHpText').textContent=`${enemy.hp} / ${enemy.maxHP}`;
+  bar('enemyHpBar', enemy.hp/enemy.maxHP);
 }
 
-function renderHUD(){
-  document.getElementById('lv').textContent=state.lv;
-  document.getElementById('atk').textContent=state.baseATK;
-  document.getElementById('hpText').textContent=`${state.hp} / ${state.maxHP}`;
-  document.getElementById('expText').textContent=`${state.exp} / ${state.nextExp}`;
-  setBar('hpBar', state.hp/state.maxHP);
-  setBar('expBar', state.exp/state.nextExp);
-}
-
-function updateEnemyHUD(){
-  document.getElementById('enemyHpText').textContent=`${enemy.hp} / ${enemy.maxHP}`;
-  setBar('enemyHpBar', enemy.hp/enemy.maxHP);
-}
-
-// 単語データ読み込み（categories.json -> files 配列を全部読む）
 async function loadWords(){
   try{
-    const catRes = await fetch('en_ja/categories.json', { cache: 'no-store' });
-    if(!catRes.ok) throw new Error('categories http error');
-
-    const cat = await catRes.json();
-    const files = Array.isArray(cat?.files) ? cat.files : [];
-    if(files.length === 0) throw new Error('categories empty files');
-
-    const results = await Promise.all(
-      files.map(async (name) => {
-        const res = await fetch(`en_ja/${name}.json`, { cache: 'no-store' });
-        if(!res.ok) throw new Error(`${name}.json http error`);
-        const data = await res.json();
-        if(!Array.isArray(data)) throw new Error(`${name}.json bad format (not array)`);
-        return data;
-      })
-    );
-
-    const merged = results.flat();
-    if(!merged.length || !('en' in merged[0]) || !('ja' in merged[0])) {
-      throw new Error('merged bad format');
-    }
-
-    wordsData = merged;
-    log(`📖 categories.json から ${files.length} ファイル、合計 ${wordsData.length} 件読み込みました。`);
-  }catch(e){
-    wordsData = FALLBACK_WORDS;
-    log('<span class="bad">⚠ categories.json / 単語ファイルの読み込みに失敗したため、内蔵のサンプル単語で出題します。</span>');
-  }
-
-  state.pool = wordsData;
+    const c=await (await fetch('en_ja/categories.json',{cache:'no-store'})).json();
+    const files=Array.isArray(c?.files)?c.files:[];
+    if(!files.length) throw 0;
+    const all=(await Promise.all(files.map(n=>fetch(`en_ja/${n}.json`,{cache:'no-store'}).then(r=>r.json())))).flat();
+    if(!all.length || !('en'in all[0]) || !('ja'in all[0])) throw 0;
+    words=all;
+  }catch(e){ words=FALLBACK_WORDS; }
 }
 
-// 出題まわり
-let currentQ=null;
 function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    const j=rand(i+1);
-    [a[i],a[j]]=[a[j],a[i]];
-  }
+  for(let i=a.length-1;i>0;i--){ const j=R(i+1); [a[i],a[j]]=[a[j],a[i]]; }
   return a;
 }
 
 function nextQuestion(){
-  if(!state.pool || !state.pool.length){
-    document.getElementById('question').textContent='単語データが見つかりません。';
-    document.getElementById('choices').innerHTML='';
-    return;
-  }
+  if(state.hp<=0){ $('question').textContent='☠️ GAME OVER'; $('choices').innerHTML=''; showNext(false); return; }
+  if(!words.length){ $('question').textContent='単語データがありません'; $('choices').innerHTML=''; return; }
 
-  const poolIdx = state.pool.map((_,i)=>i).filter(i=>!state.used.has(i));
-  if(!poolIdx.length){
-    state.used.clear();
-    return nextQuestion();
-  }
+  const idxs=words.map((_,i)=>i).filter(i=>!state.used.has(i));
+  if(!idxs.length){ state.used.clear(); return nextQuestion(); }
 
-  const pick = poolIdx[rand(poolIdx.length)];
+  const pick=idxs[R(idxs.length)];
   state.used.add(pick);
-  const q = state.pool[pick];
+  const q=words[pick];
 
-  const correct = q.en;
-  const choicesSet = new Set([correct]);
-  while(choicesSet.size < 4 && choicesSet.size < state.pool.length){
-    const cand = state.pool[rand(state.pool.length)].en;
-    choicesSet.add(cand);
-  }
-  const choices = shuffle([...choicesSet]);
+  const correct=q.en;
+  const set=new Set([correct]);
+  while(set.size<4 && set.size<words.length) set.add(words[R(words.length)].en);
 
-  currentQ = { ja:q.ja, ans:correct, choices };
-  document.getElementById('question').textContent = `「${currentQ.ja}」の英語は？`;
-  const box = document.getElementById('choices');
-  box.innerHTML='';
-  currentQ.choices.forEach(w=>{
+  Q={ja:q.ja, ans:correct, ch:shuffle([...set])};
+
+  $('question').textContent=`「${Q.ja}」の英語は？`;
+  const box=$('choices'); box.innerHTML='';
+  Q.ch.forEach(w=>{
     const b=document.createElement('button');
     b.className='choice';
     b.textContent=w;
@@ -347,80 +249,90 @@ function nextQuestion(){
   });
 }
 
-function playerAttack(){
-  const base=state.baseATK;
-  const v=Math.max(1,Math.floor(base*0.5));
-  return base+rand(v+1);
+function playerDmg(){
+  const base=state.atk;
+  return base + R(1+Math.max(1,Math.floor(base*0.6)));
 }
 
-function enemyAttack(){
-  return enemy.atkMin+rand(enemy.atkMax-enemy.atkMin+1);
+function recoilDmg(){ // 正解でもダメージ
+  const L=enemy.level;
+  return (2+Math.floor(L*0.8)) + R(2+Math.floor(L*0.4));
+}
+
+function fatalWrongDmg(){ // 不正解は致命的（HP割合＋敵係数）
+  const p = Math.round(state.maxHP*(0.55 + Math.min(0.20, enemy.level*0.01))); // Lvで少し上がる
+  const e = enemy.atkMax*2;
+  return Math.max(p,e) + R(1+Math.round(state.maxHP*0.10));
+}
+
+function disableChoices(){
+  document.querySelectorAll('button.choice').forEach(b=>b.disabled=true);
 }
 
 function answer(choice){
-  if(!currentQ) return;
-  [...document.querySelectorAll('button.choice')].forEach(b=>b.disabled=true);
+  if(!Q || !enemy || state.hp<=0) return;
+  disableChoices();
 
-  if(choice===currentQ.ans){
-    const dmg = playerAttack();
-    enemy.hp = clamp(enemy.hp - dmg, 0, enemy.maxHP);
-    log(`✅ 正解！ <span class="ok">${dmg} ダメージ</span>`);
-    updateEnemyHUD();
+  if(choice===Q.ans){
+    const d=playerDmg();
+    enemy.hp=clamp(enemy.hp-d,0,enemy.maxHP);
+    log(`✅ 正解！ <span class="ok">${d} ダメージ</span>`);
+    updateEnemy();
 
-    // ✅ 正解時の反動ダメージ（敵Lvに応じて増える）
-    const selfDmg = 1 + rand(enemy.level + 1); // 1..(Lv+1)
-    state.hp = clamp(state.hp - selfDmg, 0, state.maxHP);
-    log(`💥 反動！ <span class="bad">${selfDmg} ダメージ</span>`);
+    const self=recoilDmg();
+    state.hp=clamp(state.hp-self,0,state.maxHP);
+    log(`💥 反動！ <span class="bad">${self} ダメージ</span>`);
   }else{
-    const dmg = enemyAttack();
-    state.hp = clamp(state.hp - dmg, 0, state.maxHP);
-    log(`❌ 不正解… <span class="bad">${dmg} ダメージ</span>`);
+    const d=fatalWrongDmg();
+    state.hp=clamp(state.hp-d,0,state.maxHP);
+    log(`❌ 不正解… <span class="bad">${d} ダメージ</span>`);
   }
 
-  renderHUD();
-  checkEnd();
-  if(!isBattleOver()) setTimeout(nextQuestion,300);
-}
+  render();
 
-function isBattleOver(){
-  return state.hp<=0 || enemy.hp<=0;
-}
+  if(state.hp<=0){
+    log(`<span class="bad">☠️ 倒れた…</span>`);
+    nextQuestion();
+    return;
+  }
 
-function checkEnd(){
-  const nextBtn=document.getElementById('nextBtn');
   if(enemy.hp<=0){
-    log(`🏆 撃破！ +${enemy.xp} EXP`);
-    addExp(enemy.xp);
-
-    // 次の敵は「順番に進める」。周回して最初に戻る瞬間に敵Lv+1。
-    advanceMonster();
-
-    nextBtn.style.display='inline-block';
+    const heal=Math.round(state.maxHP*0.18)+2;          // 撃破回復（少しだけ）
+    state.hp=clamp(state.hp+heal,0,state.maxHP);
+    log(`🏆 撃破！ <span class="ok">+${enemy.xp} EXP</span> / <span class="ok">+${heal}HP</span>`);
+    render();
+    gainExp(enemy.xp);
+    showNext(true);
+    return;
   }
+
+  setTimeout(nextQuestion, 180);
 }
 
 function nextEnemy(){
+  showNext(false);
   spawnEnemy();
   nextQuestion();
-  document.getElementById('nextBtn').style.display='none';
 }
 
-async function init(){
-  loadSavedExp();
-  renderHUD();
+function init(){
+  state.totalExp = Number(localStorage.getItem(KEY) || '0');
+  if(!Number.isFinite(state.totalExp) || state.totalExp<0) state.totalExp=0;
+  recalc();
+  state.hp = state.maxHP; // HPは毎回スタート時に満タン（保存しない）
+  render();
 
-  await loadMonsters();
+  loadMonsters().then(()=>{
+    // dust_lizardがいればそこから開始
+    const idx = MONSTERS.findIndex(m=>m?.id==='dust_lizard');
+    state.mi = idx>=0 ? idx : 0;
 
-  // 開始位置は dust_lizard（存在すればそこから）
-  const startId = 'dust_lizard';
-  const idx = MONSTERS.findIndex(m => m && m.id === startId);
-  state.monsterIndex = idx >= 0 ? idx : 0;
-
-  await loadWords();
-
-  spawnEnemy();
-  nextQuestion();
-  document.getElementById('nextBtn').onclick=nextEnemy;
+    loadWords().then(()=>{
+      spawnEnemy();
+      nextQuestion();
+      $('nextBtn').onclick=nextEnemy;
+    });
+  });
 }
 
 init();
