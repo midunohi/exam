@@ -360,16 +360,23 @@ function enemyAttack(){
 function answer(choice){
   if(!currentQ) return;
   [...document.querySelectorAll('button.choice')].forEach(b=>b.disabled=true);
+
   if(choice===currentQ.ans){
-    const dmg=playerAttack();
-    enemy.hp=clamp(enemy.hp-dmg,0,enemy.maxHP);
+    const dmg = playerAttack();
+    enemy.hp = clamp(enemy.hp - dmg, 0, enemy.maxHP);
     log(`✅ 正解！ <span class="ok">${dmg} ダメージ</span>`);
     updateEnemyHUD();
+
+    // ✅ 正解時の反動ダメージ（敵Lvに応じて増える）
+    const selfDmg = 1 + rand(enemy.level + 1); // 1..(Lv+1)
+    state.hp = clamp(state.hp - selfDmg, 0, state.maxHP);
+    log(`💥 反動！ <span class="bad">${selfDmg} ダメージ</span>`);
   }else{
-    const dmg=enemyAttack();
-    state.hp=clamp(state.hp-dmg,0,state.maxHP);
+    const dmg = enemyAttack();
+    state.hp = clamp(state.hp - dmg, 0, state.maxHP);
     log(`❌ 不正解… <span class="bad">${dmg} ダメージ</span>`);
   }
+
   renderHUD();
   checkEnd();
   if(!isBattleOver()) setTimeout(nextQuestion,300);
