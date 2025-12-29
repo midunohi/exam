@@ -1,4 +1,21 @@
 [
-{ "en": "yield", "ja": "生み出す" },
-{ "en": "youth", "ja": "若者" }
+  { "en": "yield", "ja": "生み出す" },
+  { "en": "youth", "ja": "若者" },
+
+  { "en": "yearn", "ja": "切望する" },
+  { "en": "yet", "ja": "しかしながら" },
+  { "en": "yielding", "ja": "従順な" },
+  { "en": "yoke", "ja": "束縛する" },
+  { "en": "yell", "ja": "叫ぶ" },
+  { "en": "yawn", "ja": "あくびをする" },
+
+  { "en": "yard", "ja": "庭" },
+  { "en": "yesterday", "ja": "昨日" },
+
+  { "en": "yoke", "ja": "くびき、束縛" },
+  { "en": "yearly", "ja": "毎年の" },
+  { "en": "youthful", "ja": "若々しい" },
+
+  { "en": "yieldingly", "ja": "従順に" },
+  { "en": "yourselves", "ja": "あなた方自身" }
 ]

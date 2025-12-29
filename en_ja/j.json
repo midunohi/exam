@@ -1,7 +1,37 @@
 [
-{ "en": "jobless", "ja": "失業の" },
-{ "en": "joint", "ja": "共同の" },
-{ "en": "journal", "ja": "学術誌" },
-{ "en": "judicial", "ja": "司法の" },
-{ "en": "justify", "ja": "正当化する" }
+  { "en": "jobless", "ja": "失業の" },
+  { "en": "joint", "ja": "共同の" },
+  { "en": "journal", "ja": "学術誌" },
+  { "en": "judicial", "ja": "司法の" },
+  { "en": "justify", "ja": "正当化する" },
+
+  { "en": "justice", "ja": "正義、公正" },
+  { "en": "jurisdiction", "ja": "管轄権" },
+  { "en": "jury", "ja": "陪審（員）" },
+  { "en": "jurisprudence", "ja": "法理学" },
+
+  { "en": "jeopardize", "ja": "危険にさらす" },
+  { "en": "jeopardy", "ja": "危険" },
+
+  { "en": "justify", "ja": "正当化する" },
+  { "en": "justification", "ja": "正当化、正当な理由" },
+  { "en": "justifiable", "ja": "正当化できる" },
+
+  { "en": "judgment", "ja": "判断、判決" },
+  { "en": "judge", "ja": "判断する" },
+  { "en": "judicious", "ja": "賢明な、分別のある" },
+
+  { "en": "journalism", "ja": "報道、ジャーナリズム" },
+  { "en": "journalist", "ja": "記者" },
+
+  { "en": "justify", "ja": "（理論・主張を）正当化する" },
+
+  { "en": "juvenile", "ja": "未成年の、幼少の" },
+  { "en": "just", "ja": "公正な" },
+
+  { "en": "jealousy", "ja": "嫉妬" },
+  { "en": "jealous", "ja": "嫉妬深い" },
+
+  { "en": "junction", "ja": "接合点、分岐点" },
+  { "en": "jointly", "ja": "共同で" }
 ]

@@ -1,7 +1,13 @@
 [
-{ "en": "keen", "ja": "鋭い" },
-{ "en": "kernel", "ja": "核心" },
-{ "en": "keynote", "ja": "基調" },
-{ "en": "kinship", "ja": "親族関係" },
-{ "en": "knowledgeable", "ja": "博識な" }
+  { "en": "keen", "ja": "鋭い" },
+  { "en": "kernel", "ja": "核心" },
+  { "en": "keynote", "ja": "基調" },
+  { "en": "kinship", "ja": "親族関係" },
+  { "en": "knowledgeable", "ja": "博識な" },
+
+  { "en": "kindle", "ja": "刺激する" },
+  { "en": "knack", "ja": "こつ" },
+  { "en": "knit", "ja": "結びつける" },
+  { "en": "knead", "ja": "練る" },
+  { "en": "knot", "ja": "難題" }
 ]

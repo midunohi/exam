@@ -1,7 +1,23 @@
 [
-{ "en": "welfare", "ja": "福祉" },
-{ "en": "widespread", "ja": "広範な" },
-{ "en": "withdraw", "ja": "撤退する" },
-{ "en": "withstand", "ja": "耐える" },
-{ "en": "workforce", "ja": "労働力" }
+  { "en": "welfare", "ja": "福祉" },
+  { "en": "widespread", "ja": "広範な" },
+  { "en": "withdraw", "ja": "撤退する／引き出す" },
+  { "en": "withstand", "ja": "耐える" },
+  { "en": "workforce", "ja": "労働力" },
+
+  { "en": "whereas", "ja": "一方で〜だが" },
+  { "en": "warrant", "ja": "正当化する／根拠となる" },
+  { "en": "weaken", "ja": "弱める" },
+  { "en": "wealth", "ja": "富／財産" },
+  { "en": "willingness", "ja": "意欲" },
+  { "en": "witness", "ja": "目撃者／目撃する" },
+  { "en": "worsen", "ja": "悪化する" },
+  { "en": "worthwhile", "ja": "価値がある" },
+  { "en": "widespread", "ja": "広範な" },
+  { "en": "withhold", "ja": "差し控える" },
+  { "en": "well-being", "ja": "幸福／健康" },
+  { "en": "welfare state", "ja": "福祉国家" },
+  { "en": "workload", "ja": "仕事量" },
+  { "en": "workplace", "ja": "職場" },
+  { "en": "worth", "ja": "価値" }
 ]

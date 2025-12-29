@@ -1,8 +1,27 @@
 [
-{ "en": "qualitative", "ja": "質的な" },
-{ "en": "quantitative", "ja": "量的な" },
-{ "en": "quantity", "ja": "量" },
-{ "en": "questionnaire", "ja": "質問票" },
-{ "en": "quota", "ja": "割当量" },
-{ "en": "quote", "ja": "引用する" }
+  { "en": "qualitative", "ja": "質的な" },
+  { "en": "quantitative", "ja": "量的な" },
+  { "en": "quantity", "ja": "量" },
+  { "en": "questionnaire", "ja": "質問票" },
+  { "en": "quota", "ja": "割当量" },
+  { "en": "quote", "ja": "引用する" },
+
+  { "en": "qualify", "ja": "資格を与える／制限する" },
+  { "en": "qualification", "ja": "資格" },
+  { "en": "quality", "ja": "質" },
+  { "en": "qualify as", "ja": "〜と見なされる" },
+
+  { "en": "quarrel", "ja": "口論する" },
+  { "en": "query", "ja": "質問／疑問" },
+  { "en": "quest", "ja": "探求" },
+
+  { "en": "queue", "ja": "列（に並ぶ）" },
+  { "en": "quickly", "ja": "素早く" },
+  { "en": "quietly", "ja": "静かに" },
+
+  { "en": "quite", "ja": "かなり／全く" },
+  { "en": "quintessential", "ja": "典型的な" },
+
+  { "en": "quota system", "ja": "割当制度" },
+  { "en": "quotation", "ja": "引用文" }
 ]
