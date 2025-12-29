@@ -104,13 +104,16 @@
 
 <script>
 const $=id=>document.getElementById(id);
-const KEY='midunohi.exam.exp';
-const NEXT=20;
+const KEY='midunohi.exam.exp_total'; // 累計EXP
 const R=n=>(Math.random()*n)|0;
 const clamp=(x,a,b)=>x<a?a:x>b?b:x;
 const bar=(id,r)=>{const e=$(id); if(e) e.style.width=(100*clamp(r,0,1)).toFixed(1)+'%';};
 const log=s=>{const e=$('log'); if(!e) return; e.insertAdjacentHTML('beforeend',`<p>${s}</p>`); e.scrollTop=e.scrollHeight;};
 const showNext=f=>$('nextBtn').classList.toggle('show',!!f);
+
+// ---- EXP曲線（ここだけ好みで調整） ----
+const EXP0 = 20;         // Lv1->2 必要EXP
+const EXP_GROW = 1.35;   // 必要EXP成長率
 
 // fallback
 const FALLBACK_WORDS=[
@@ -124,38 +127,59 @@ const FALLBACK_MONSTERS=[
 let words=[], MONSTERS=[], enemy=null, Q=null;
 
 const state={
-  totalExp:0, lv:1, exp:0,
+  total:0,   // 累計EXP（保存）
+  lv:1, exp:0, nextExp:EXP0,
   maxHP:30, hp:30, atk:5,
-  mi:0, used:new Set()
+
+  // モンスター順
+  mi:0,
+  // 敵Lv：初期は max(1, lv-10)
+  enemyLv:1,
+
+  used:new Set()
 };
 
-function recalc(){
-  state.lv = 1 + Math.floor(state.totalExp / NEXT);
-  state.exp = state.totalExp % NEXT;
-  state.maxHP = 26 + state.lv*8;          // 成長は緩め
+function save(){ try{ localStorage.setItem(KEY, String(state.total)); }catch(e){} }
+
+// 累計EXPから (lv, exp, nextExp) を復元（必要EXPが増える方式）
+function recalcFromTotal(){
+  let lv=1, next=EXP0, t=state.total;
+  while(t >= next){
+    t -= next;
+    lv++;
+    next = Math.round(next * EXP_GROW);
+  }
+  state.lv=lv; state.exp=t; state.nextExp=next;
+
+  // ステータス（ここも好みで調整）
+  state.maxHP = 26 + state.lv*8;
   state.atk   = 5  + Math.floor(state.lv*1.2);
   state.hp = clamp(state.hp,0,state.maxHP);
+
+  // 敵Lvは「最小で適正-10」：初期値は常にこれ
+  state.enemyLv = Math.max(1, state.lv - 10);
 }
 
 function render(){
   $('lv').textContent=state.lv;
   $('atk').textContent=state.atk;
   $('hpText').textContent=`${state.hp} / ${state.maxHP}`;
-  $('expText').textContent=`${state.exp} / ${NEXT}`;
+  $('expText').textContent=`${state.exp} / ${state.nextExp}`;
   bar('hpBar', state.hp/state.maxHP);
-  bar('expBar', state.exp/NEXT);
+  bar('expBar', state.exp/state.nextExp);
 }
 
-function save(){ try{ localStorage.setItem(KEY, String(state.totalExp)); }catch(e){} }
-
 function gainExp(x){
-  const before=state.lv;
-  state.totalExp += x; save();
-  recalc();
-  if(state.lv>before){
-    const heal = Math.round(state.maxHP*0.35);              // LvUPは回復するが全快しない
+  if(x<=0) return;
+  const beforeLv=state.lv;
+
+  state.total += x; save();
+  recalcFromTotal();
+
+  if(state.lv>beforeLv){
+    const heal = Math.round(state.maxHP*0.35);
     state.hp = clamp(state.hp + heal, 0, state.maxHP);
-    log(`<span class="ok">✨ Lv${before} → Lv${state.lv}（+${heal}HP）</span>`);
+    log(`<span class="ok">✨ レベルアップ！ Lv${beforeLv} → Lv${state.lv}（+${heal}HP）</span>`);
   }
   render();
 }
@@ -180,10 +204,18 @@ function setEnemyImage(mon){
   img.onerror=()=>img.style.display='none';
 }
 
+function updateEnemy(){
+  $('enemyHpText').textContent=`${enemy.hp} / ${enemy.maxHP}`;
+  bar('enemyHpBar', enemy.hp/enemy.maxHP);
+}
+
+// 敵の初期出現Lv：max(1, lv-10)
+// 倒すごとに enemyLv++（ただし最大で lv まで）
 function spawnEnemy(){
   const mon = MONSTERS[state.mi % MONSTERS.length] || FALLBACK_MONSTERS[0];
-  const L = state.lv;                    // 敵Lvは常にプレイヤーLv（=倒した数+1）
   state.mi = (state.mi+1) % MONSTERS.length;
+
+  const L = state.enemyLv;
 
   enemy={
     id:mon.id, name:mon.ja, level:L,
@@ -191,18 +223,13 @@ function spawnEnemy(){
     hp:    18 + L*10,
     atkMin: 3 + L*2,
     atkMax: 6 + L*3,
-    xp: NEXT
+    xp: Math.max(8, Math.round(state.nextExp*0.55)) // 難易度調整用：少なめに
   };
 
   $('enemyName').textContent=`${enemy.name} Lv${enemy.level}`;
   setEnemyImage(mon);
   updateEnemy();
   log(`👾 Lv${enemy.level} ${enemy.name} が現れた！`);
-}
-
-function updateEnemy(){
-  $('enemyHpText').textContent=`${enemy.hp} / ${enemy.maxHP}`;
-  bar('enemyHpBar', enemy.hp/enemy.maxHP);
 }
 
 async function loadWords(){
@@ -253,14 +280,12 @@ function playerDmg(){
   const base=state.atk;
   return base + R(1+Math.max(1,Math.floor(base*0.6)));
 }
-
-function recoilDmg(){ // 正解でもダメージ
+function recoilDmg(){
   const L=enemy.level;
   return (2+Math.floor(L*0.8)) + R(2+Math.floor(L*0.4));
 }
-
-function fatalWrongDmg(){ // 不正解は致命的（HP割合＋敵係数）
-  const p = Math.round(state.maxHP*(0.55 + Math.min(0.20, enemy.level*0.01))); // Lvで少し上がる
+function fatalWrongDmg(){
+  const p = Math.round(state.maxHP*(0.55 + Math.min(0.20, enemy.level*0.01)));
   const e = enemy.atkMax*2;
   return Math.max(p,e) + R(1+Math.round(state.maxHP*0.10));
 }
@@ -297,9 +322,13 @@ function answer(choice){
   }
 
   if(enemy.hp<=0){
-    const heal=Math.round(state.maxHP*0.18)+2;          // 撃破回復（少しだけ）
+    const heal=Math.round(state.maxHP*0.18)+2;
     state.hp=clamp(state.hp+heal,0,state.maxHP);
     log(`🏆 撃破！ <span class="ok">+${enemy.xp} EXP</span> / <span class="ok">+${heal}HP</span>`);
+
+    // 敵Lvを上げる（最大でプレイヤーLvまで）
+    state.enemyLv = Math.min(state.lv, state.enemyLv + 1);
+
     render();
     gainExp(enemy.xp);
     showNext(true);
@@ -316,14 +345,14 @@ function nextEnemy(){
 }
 
 function init(){
-  state.totalExp = Number(localStorage.getItem(KEY) || '0');
-  if(!Number.isFinite(state.totalExp) || state.totalExp<0) state.totalExp=0;
-  recalc();
-  state.hp = state.maxHP; // HPは毎回スタート時に満タン（保存しない）
+  state.total = Number(localStorage.getItem(KEY) || '0');
+  if(!Number.isFinite(state.total) || state.total<0) state.total=0;
+
+  recalcFromTotal();
+  state.hp = state.maxHP; // HPは開始時全快（保存しない）
   render();
 
   loadMonsters().then(()=>{
-    // dust_lizardがいればそこから開始
     const idx = MONSTERS.findIndex(m=>m?.id==='dust_lizard');
     state.mi = idx>=0 ? idx : 0;
 
