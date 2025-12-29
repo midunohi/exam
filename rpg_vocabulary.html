@@ -223,7 +223,7 @@ function spawnEnemy(){
     hp:    18 + L*10,
     atkMin: 3 + L*2,
     atkMax: 6 + L*3,
-    xp: Math.max(8, Math.round(state.nextExp*0.55)) // 難易度調整用：少なめに
+    xp: 6 + Math.floor(L*1.2)
   };
 
   $('enemyName').textContent=`${enemy.name} Lv${enemy.level}`;
@@ -327,7 +327,7 @@ function answer(choice){
     log(`🏆 撃破！ <span class="ok">+${enemy.xp} EXP</span> / <span class="ok">+${heal}HP</span>`);
 
     // 敵Lvを上げる（最大でプレイヤーLvまで）
-    state.enemyLv = Math.min(state.lv, state.enemyLv + 1);
+    state.enemyLv = state.enemyLv + 1;
 
     render();
     gainExp(enemy.xp);
