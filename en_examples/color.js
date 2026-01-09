@@ -1,10 +1,5 @@
-// Colors & Appearance (expanded)
-// Format (keyed by EN):
-// const enExamples_colors = {
-//   "word": { ja: "日本語", examples: [{ en: "...", ja: "..." }, ...] }
-// }
 
-const enExamples_colors = {
+const enExamples_color = {
   // --- Basic colors ---------------------------------------------------
   "red": {
     ja: "赤い",
