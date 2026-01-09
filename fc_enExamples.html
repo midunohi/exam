@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flashcards: EN Examples Loader</title>
+  <style>
+    :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --good:#34d399; }
+    html,body{height:100%; margin:0; background: radial-gradient(70rem 60rem at 50% -10%, #0b1220 0%, var(--bg) 40%, #070b14 100%); font-family: system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;}
+    .container{max-width:960px; margin:0 auto; padding:16px 16px 72px;}
+    header{display:flex; gap:12px; align-items:flex-start; justify-content:space-between; color:var(--fg); margin-top:12px; flex-wrap:wrap}
+    header .title{font-weight:800; letter-spacing:.3px; white-space:normal; word-break:break-word; line-height:1.25}
+    .controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    select{background:#0a1322; color:var(--fg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-weight:700}
+    button{background:#0a1322; color:var(--fg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-weight:800; cursor:pointer}
+    button:hover{border-color:#2b3a55}
+    .status{color:var(--muted); font-size:12px}
+
+    .card{margin-top:14px; background:linear-gradient(180deg,#0a1322,#0a0f1a); border:1px solid var(--border); border-radius:20px; padding:24px; display:grid; grid-template-columns:1fr; gap:16px; align-items:start; box-shadow:0 10px 30px rgba(0,0,0,.35);}    
+    .term-mean{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+    .term{font-size:36px; line-height:1.2; color:var(--fg); font-weight:800;}
+    .mean{font-size:24px; color:var(--acc);} /* 答え=薄い青緑 */
+    .phrases{display:flex; flex-direction:column; gap:8px}
+    .phrase-line{display:flex; flex-direction:column; gap:2px; align-items:flex-start}
+    .phrase-en{color:var(--fg); font-size:16px}
+    /* 日本語は非表示時でも1行分の高さを保持 */
+    .phrase-ja{color:var(--muted); font-size:16px; line-height:1.4; min-height:1.4em}
+    .foot{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; color:var(--muted); flex-wrap:wrap}
+    .meters{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .meter{display:flex; align-items:center; gap:8px}
+    .badge{font-size:12px; padding:2px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted)}
+    .bar{position:relative; width:220px; height:10px; background:#0c1220; border:1px solid var(--border); border-radius:999px; overflow:hidden}
+    .fill{position:absolute; inset:0; width:0%; background:linear-gradient(90deg, var(--acc), var(--good)); box-shadow:0 0 20px rgba(34,211,238,.4) inset}
+    .count{font-weight:700; color:var(--fg)}
+    .hint{font-size:12px; color:var(--muted)}
+    a.back{color:var(--acc); text-decoration:none; font-size:14px}
+  </style>
+
+  <!-- files.js を「普通の script」として先に読み込む（export無しでも使えるように） -->
+  <script src="en_examples/files.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="title">EN Examples Flashcards<br/>単語例文フラッシュカード</div>
+        <div class="status" id="status">loading…</div>
+      </div>
+      <div class="controls" aria-label="dataset controls">
+        <select id="fileSelect" aria-label="en_examples file"></select>
+        <button id="reloadBtn" type="button">Reload</button>
+      </div>
+    </header>
+
+    <section class="card" aria-live="polite" id="card" tabindex="0">
+      <div class="term-mean">
+        <div class="term" id="term">...</div>
+        <div class="mean" id="meaning"></div>
+      </div>
+      <div class="phrases" id="phrases"></div>
+      <div class="foot">
+        <div class="meters" aria-live="polite">
+          <div class="meter" title="この周回の進捗">
+            <span class="badge">Cycle</span>
+            <div class="bar" aria-label="Reveal Cycle Progress" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
+              <div class="fill" id="cycleFill"></div>
+            </div>
+            <span class="badge" id="cycleText">0 / 10</span>
+          </div>
+          <div class="meter" title="トータルの表示回数">
+            <span class="badge">Reveals</span>
+            <span class="count" id="revealCount">0</span>
+          </div>
+        </div>
+        <div id="progress">0 / 0</div>
+        <div class="hint">クリック=次へ（未表示なら表示→次へ） / Space・Enter=表示トグル / →=次 / ←=前</div>
+      </div>
+    </section>
+  </div>
+  <div style="padding:16px; max-width:960px; margin:0 auto"><a class="back" href="index.html">戻る</a></div>
+
+  <script>
+  // ============================
+  // Loader: en_examples/* を読み込んで dataset[] に変換
+  // 期待する各ファイルの形式（例）：
+  //   const enExamples_astronomy = { "planet": { ja:"惑星", examples:[{en,ja},...] }, ... }
+  // files.js：
+  //   const files_enExamples = ["astronomy.js", ...]
+  // ============================
+
+  const STUB_EN_EXAMPLES = {
+    planet: {
+      ja: "惑星",
+      examples: [
+        { en: "a rocky planet", ja: "岩石惑星" },
+        { en: "clear its orbital neighborhood", ja: "軌道近傍を一掃する" },
+        { en: "in the habitable zone", ja: "ハビタブルゾーン内で" },
+      ],
+    },
+  };
+
+  const statusEl = document.getElementById('status');
+  const fileSelect = document.getElementById('fileSelect');
+  const reloadBtn = document.getElementById('reloadBtn');
+
+  function setStatus(msg){ statusEl.textContent = msg; }
+
+  function safeGlobalEval(name){
+    // グローバルレキシカル環境（const）から取り出すための global eval
+    try{ return (0, eval)(name); }catch(_){ return undefined; }
+  }
+
+  function ensureMinPhrases(phrases, n=3){
+    const out = Array.isArray(phrases) ? phrases.slice(0) : [];
+    while(out.length < n) out.push({en:"", ja:""});
+    return out;
+  }
+
+  function toDataset(enExamplesObj){
+    if(!enExamplesObj || typeof enExamplesObj !== 'object') return [];
+    const entries = Object.entries(enExamplesObj);
+    const items = entries.map(([en, v])=>{
+      const ja = v?.ja ?? "";
+      const examples = v?.examples ?? v?.phrases ?? v?.ex ?? [];
+      const phrases = ensureMinPhrases(
+        examples.map(p => ({ en: String(p?.en ?? ""), ja: String(p?.ja ?? "") }))
+      );
+      return { en, ja, phrases };
+    });
+    // 空要素を除外
+    return items.filter(x => x.en && (x.ja || x.phrases.some(p=>p.en||p.ja)));
+  }
+
+  function injectScript(src){
+    return new Promise((resolve, reject)=>{
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = ()=>resolve(true);
+      s.onerror = ()=>reject(new Error('load failed: '+src));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function loadEnExamplesFile(filename){
+    const base = filename.replace(/\.js$/,'');
+    const globalName = `enExamples_${base}`;
+    const src = `en_examples/${filename}`;
+
+    try{
+      await injectScript(src);
+      const obj = safeGlobalEval(globalName);
+      if(!obj) throw new Error(`global not found: ${globalName}`);
+      return { ok:true, name:base, obj };
+    }catch(err){
+      console.warn(err);
+      return { ok:false, name:base, obj:STUB_EN_EXAMPLES, err };
+    }
+  }
+
+  function initFileSelect(){
+    const files = (typeof files_enExamples !== 'undefined' && Array.isArray(files_enExamples))
+      ? files_enExamples
+      : ["astronomy.js"]; // files.js が無い場合の最小
+
+    fileSelect.innerHTML = '';
+    files.forEach(f=>{
+      const opt = document.createElement('option');
+      opt.value = f;
+      opt.textContent = f;
+      fileSelect.appendChild(opt);
+    });
+
+    const saved = localStorage.getItem('enExamplesFile');
+    if(saved && files.includes(saved)) fileSelect.value = saved;
+  }
+
+  // ============================
+  // Flashcards Core (既存UI/操作は維持)
+  // ============================
+
+  let dataset = []; // 動的にセット
+
+  // --- State -----------------------------------------------------------
+  let idx = 0;
+  let revealed = false;
+  let revealTotal = Number(localStorage.getItem('revealTotal')||0);
+  let cycleReveals = Number(sessionStorage.getItem('cycleReveals')||0);
+  let cycleGoal = 1; // dataset 読み込み後に更新
+
+  // --- Elements --------------------------------------------------------
+  const els = {
+    term: document.getElementById('term'),
+    meaning: document.getElementById('meaning'),
+    phrases: document.getElementById('phrases'),
+    progress: document.getElementById('progress'),
+    cycleFill: document.getElementById('cycleFill'),
+    cycleText: document.getElementById('cycleText'),
+    revealCount: document.getElementById('revealCount'),
+    card: document.getElementById('card')
+  };
+
+  // --- Rendering -------------------------------------------------------
+  function render(){
+    if(!dataset.length){
+      els.term.textContent = '…';
+      els.meaning.textContent = '';
+      els.phrases.innerHTML = '';
+      els.progress.textContent = '0 / 0';
+      els.cycleFill.style.width = '0%';
+      els.revealCount.textContent = String(revealTotal);
+      els.cycleText.textContent = `0 / 0`;
+      return;
+    }
+
+    const item = dataset[idx];
+    els.term.textContent = item.en;
+    els.meaning.textContent = revealed ? item.ja : '';
+    els.phrases.innerHTML = '';
+
+    (item.phrases || []).forEach(p => {
+      const line = document.createElement('div');
+      line.className = 'phrase-line';
+      const en = document.createElement('div');
+      en.className = 'phrase-en';
+      en.textContent = p.en;
+      const ja = document.createElement('div');
+      ja.className = 'phrase-ja';
+      ja.textContent = p.ja;
+      ja.style.visibility = revealed ? 'visible' : 'hidden';
+      line.appendChild(en);
+      line.appendChild(ja);
+      els.phrases.appendChild(line);
+    });
+
+    els.progress.textContent = `${idx+1} / ${dataset.length}`;
+
+    // meters
+    const pct = Math.min(100, (cycleReveals / cycleGoal) * 100);
+    els.cycleFill.style.width = pct + '%';
+    els.revealCount.textContent = String(revealTotal);
+    const bar = els.cycleFill.parentElement;
+    bar.setAttribute('aria-valuemax', String(cycleGoal));
+    bar.setAttribute('aria-valuenow', String(cycleReveals));
+    els.cycleText.textContent = `${cycleReveals} / ${cycleGoal}`;
+  }
+
+  // --- Actions ---------------------------------------------------------
+  function doReveal(){
+    if(!dataset.length) return;
+
+    if(!revealed){
+      revealed = true;
+      revealTotal += 1;
+      cycleReveals += 1;
+      localStorage.setItem('revealTotal', String(revealTotal));
+      sessionStorage.setItem('cycleReveals', String(cycleReveals));
+      try{ if('vibrate' in navigator) navigator.vibrate(10); }catch(_){/* noop */}
+      // 周回達成で軽い演出
+      if(cycleReveals >= cycleGoal){
+        pulseBar();
+        cycleReveals = 0; // 周回をリセット
+        sessionStorage.setItem('cycleReveals', '0');
+      }
+      render();
+    } else {
+      // 既に表示中→Hide
+      revealed = false;
+      render();
+    }
+  }
+
+  function next(){
+    if(!dataset.length) return;
+    if(!revealed){ doReveal(); }
+    else { revealed=false; idx=(idx+1)%dataset.length; render(); }
+  }
+
+  function prev(){
+    if(!dataset.length) return;
+    if(revealed){ revealed=false; render(); }
+    else { idx=(idx-1+dataset.length)%dataset.length; render(); }
+  }
+
+  function pulseBar(){
+    const el = els.cycleFill;
+    el.animate([
+      {filter:'brightness(1)'},
+      {filter:'brightness(2)'},
+      {filter:'brightness(1)'}
+    ], {duration:600, easing:'ease-in-out'});
+  }
+
+  // --- Events ----------------------------------------------------------
+  els.card.addEventListener('click', next);
+
+  window.addEventListener('keydown', e=>{
+    if(['Space','Enter','ArrowRight','ArrowLeft'].includes(e.code)) e.preventDefault();
+    if(e.code==='Space' || e.code==='Enter') doReveal();
+    else if(e.code==='ArrowRight') next();
+    else if(e.code==='ArrowLeft') prev();
+  }, {passive:false});
+
+  // ============================
+  // Boot
+  // ============================
+
+  async function applySelectedFile(){
+    const filename = fileSelect.value || 'astronomy.js';
+    localStorage.setItem('enExamplesFile', filename);
+
+    setStatus(`loading en_examples/${filename} …`);
+    const res = await loadEnExamplesFile(filename);
+
+    dataset = toDataset(res.obj);
+    if(!dataset.length){
+      dataset = toDataset(STUB_EN_EXAMPLES);
+      setStatus(`⚠️ ${filename} は読めましたが内容が空でした → スタブ表示`);
+    }else if(res.ok){
+      setStatus(`✅ loaded: ${filename}（${dataset.length} words）`);
+    }else{
+      setStatus(`⚠️ ${filename} が見つからない/読めない → スタブ表示`);
+    }
+
+    // state reset (表示が崩れないように)
+    idx = 0;
+    revealed = false;
+    cycleGoal = dataset.length;
+    render();
+  }
+
+  function boot(){
+    initFileSelect();
+    fileSelect.addEventListener('change', applySelectedFile);
+    reloadBtn.addEventListener('click', applySelectedFile);
+    applySelectedFile();
+  }
+
+  boot();
+  </script>
+</body>
+</html>
