@@ -3,37 +3,37 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Flashcards: EN Examples Loader</title>
+  <title>英単語・例文 フラッシュカード</title>
   <style>
-    :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --good:#34d399; }
+    :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --answer:#7CFFB2; }
     html,body{height:100%; margin:0; background: radial-gradient(70rem 60rem at 50% -10%, #0b1220 0%, var(--bg) 40%, #070b14 100%); font-family: system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;}
-    .container{max-width:960px; margin:0 auto; padding:16px 16px 72px;}
-    header{display:flex; gap:12px; align-items:flex-start; justify-content:space-between; color:var(--fg); margin-top:12px; flex-wrap:wrap}
+    .container{max-width:960px; margin:0 auto; padding:16px 16px 64px;}
+    header{display:flex; gap:12px; align-items:center; justify-content:space-between; color:var(--fg); margin-top:12px; flex-wrap:wrap}
     header .title{font-weight:800; letter-spacing:.3px; white-space:normal; word-break:break-word; line-height:1.25}
+    .meta{display:flex; gap:14px; align-items:center; color:var(--muted); font-size:13px}
     .controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-    select{background:#0a1322; color:var(--fg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-weight:700}
-    button{background:#0a1322; color:var(--fg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-weight:800; cursor:pointer}
+    button{background:#0a1322; color:var(--fg); border:1px solid var(--border); border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer}
     button:hover{border-color:#2b3a55}
-    .status{color:var(--muted); font-size:12px}
 
     .card{margin-top:14px; background:linear-gradient(180deg,#0a1322,#0a0f1a); border:1px solid var(--border); border-radius:20px; padding:24px; display:grid; grid-template-columns:1fr; gap:16px; align-items:start; box-shadow:0 10px 30px rgba(0,0,0,.35);}    
     .term-mean{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
-    .term{font-size:36px; line-height:1.2; color:var(--fg); font-weight:800;}
-    .mean{font-size:24px; color:var(--acc);} /* 答え=薄い青緑 */
+    .term{line-height:1.2;}
     .phrases{display:flex; flex-direction:column; gap:8px}
     .phrase-line{display:flex; flex-direction:column; gap:2px; align-items:flex-start}
-    .phrase-en{color:var(--fg); font-size:16px}
-    /* 日本語は非表示時でも1行分の高さを保持 */
-    .phrase-ja{color:var(--muted); font-size:16px; line-height:1.4; min-height:1.4em}
-    .foot{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; color:var(--muted); flex-wrap:wrap}
-    .meters{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
-    .meter{display:flex; align-items:center; gap:8px}
-    .badge{font-size:12px; padding:2px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted)}
-    .bar{position:relative; width:220px; height:10px; background:#0c1220; border:1px solid var(--border); border-radius:999px; overflow:hidden}
-    .fill{position:absolute; inset:0; width:0%; background:linear-gradient(90deg, var(--acc), var(--good)); box-shadow:0 0 20px rgba(34,211,238,.4) inset}
-    .count{font-weight:700; color:var(--fg)}
-    .hint{font-size:12px; color:var(--muted)}
+    .phrase-ja{line-height:1.4; min-height:1.4em}
+    .q-text,.a-text{font-size:clamp(18px,3.6vw,24px); font-weight:700;}
+    .question{color:var(--muted);}
+    .question.is-active{color:var(--fg);}
+    .answer{color:var(--answer);}
+    .answer.is-hidden{visibility:hidden;}
+
     a.back{color:var(--acc); text-decoration:none; font-size:14px}
+
+    @media (max-width: 640px){
+      .container{padding:12px 12px 56px;}
+      .card{padding:18px; border-radius:16px}
+      button{padding:10px 12px}
+    }
   </style>
 
   <!-- files.js を「普通の script」として先に読み込む（export無しでも使えるように） -->
@@ -43,38 +43,23 @@
   <div class="container">
     <header>
       <div>
-        <div class="title">EN Examples Flashcards<br/>単語例文フラッシュカード</div>
-        <div class="status" id="status">loading…</div>
+        <div class="title">英単語・例文 フラッシュカード</div>
+        <div class="meta">
+          <span id="categoryLabel">カテゴリ: --</span>
+          <span id="expLabel">EXP: 0</span>
+        </div>
       </div>
       <div class="controls" aria-label="dataset controls">
-        <select id="fileSelect" aria-label="en_examples file"></select>
-        <button id="reloadBtn" type="button">Reload</button>
+        <button id="randomBtn" type="button">ランダムでカテゴリーを選んでカードを表示</button>
       </div>
     </header>
 
     <section class="card" aria-live="polite" id="card" tabindex="0">
       <div class="term-mean">
-        <div class="term" id="term">...</div>
-        <div class="mean" id="meaning"></div>
+        <div class="term question q-text" id="term">...</div>
+        <div class="mean answer a-text is-hidden" id="meaning"></div>
       </div>
       <div class="phrases" id="phrases"></div>
-      <div class="foot">
-        <div class="meters" aria-live="polite">
-          <div class="meter" title="この周回の進捗">
-            <span class="badge">Cycle</span>
-            <div class="bar" aria-label="Reveal Cycle Progress" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
-              <div class="fill" id="cycleFill"></div>
-            </div>
-            <span class="badge" id="cycleText">0 / 10</span>
-          </div>
-          <div class="meter" title="トータルの表示回数">
-            <span class="badge">Reveals</span>
-            <span class="count" id="revealCount">0</span>
-          </div>
-        </div>
-        <div id="progress">0 / 0</div>
-        <div class="hint">クリック=次へ（未表示なら表示→次へ） / Space・Enter=表示トグル / →=次 / ←=前</div>
-      </div>
     </section>
   </div>
   <div style="padding:16px; max-width:960px; margin:0 auto"><a class="back" href="index.html">戻る</a></div>
@@ -99,11 +84,24 @@
     },
   };
 
-  const statusEl = document.getElementById('status');
-  const fileSelect = document.getElementById('fileSelect');
-  const reloadBtn = document.getElementById('reloadBtn');
+  const EXP_KEY = "midunohi.exam.exp";
 
-  function setStatus(msg){ statusEl.textContent = msg; }
+  function loadExp(){
+    try{
+      const raw = localStorage.getItem(EXP_KEY);
+      const n = Number(raw || 0);
+      return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+    }catch(_){
+      return 0;
+    }
+  }
+
+  function saveExp(){
+    try{ localStorage.setItem(EXP_KEY, String(exp)); }catch(_){ /* noop */ }
+  }
+
+  let exp = loadExp();
+  let currentCategory = '--';
 
   function safeGlobalEval(name){
     // グローバルレキシカル環境（const）から取り出すための global eval
@@ -158,182 +156,176 @@
     }
   }
 
-  function initFileSelect(){
+  function getFiles(){
     const files = (typeof files_enExamples !== 'undefined' && Array.isArray(files_enExamples))
       ? files_enExamples
-      : ["astronomy.js"]; // files.js が無い場合の最小
+      : ["astronomy.js"];
+    return files.length ? files : ["astronomy.js"];
+  }
 
-    fileSelect.innerHTML = '';
-    files.forEach(f=>{
-      const opt = document.createElement('option');
-      opt.value = f;
-      opt.textContent = f;
-      fileSelect.appendChild(opt);
-    });
+  function pickRandomIndex(len, except){
+    if(len <= 1) return 0;
+    let n = 0;
+    do{ n = Math.floor(Math.random() * len); }while(n === except);
+    return n;
+  }
 
-    const saved = localStorage.getItem('enExamplesFile');
-    if(saved && files.includes(saved)) fileSelect.value = saved;
+  function getRevealTotal(item){
+    let total = 0;
+    if(item.ja) total += 1;
+    (item.phrases || []).forEach(p=>{ if(p.ja) total += 1; });
+    return total;
   }
 
   // ============================
-  // Flashcards Core (既存UI/操作は維持)
+  // Flashcards Core
   // ============================
 
   let dataset = []; // 動的にセット
-
-  // --- State -----------------------------------------------------------
   let idx = 0;
-  let revealed = false;
-  let revealTotal = Number(localStorage.getItem('revealTotal')||0);
-  let cycleReveals = Number(sessionStorage.getItem('cycleReveals')||0);
-  let cycleGoal = 1; // dataset 読み込み後に更新
+  let revealStep = 0;
 
   // --- Elements --------------------------------------------------------
   const els = {
     term: document.getElementById('term'),
     meaning: document.getElementById('meaning'),
     phrases: document.getElementById('phrases'),
-    progress: document.getElementById('progress'),
-    cycleFill: document.getElementById('cycleFill'),
-    cycleText: document.getElementById('cycleText'),
-    revealCount: document.getElementById('revealCount'),
-    card: document.getElementById('card')
+    card: document.getElementById('card'),
+    categoryLabel: document.getElementById('categoryLabel'),
+    expLabel: document.getElementById('expLabel'),
+    randomBtn: document.getElementById('randomBtn')
   };
 
   // --- Rendering -------------------------------------------------------
+  function updateMeta(){
+    els.categoryLabel.textContent = `カテゴリ: ${currentCategory}`;
+    els.expLabel.textContent = `EXP: ${exp}`;
+  }
+
   function render(){
     if(!dataset.length){
       els.term.textContent = '…';
       els.meaning.textContent = '';
+      els.meaning.classList.add('is-hidden');
       els.phrases.innerHTML = '';
-      els.progress.textContent = '0 / 0';
-      els.cycleFill.style.width = '0%';
-      els.revealCount.textContent = String(revealTotal);
-      els.cycleText.textContent = `0 / 0`;
+      updateMeta();
       return;
     }
 
     const item = dataset[idx];
     els.term.textContent = item.en;
-    els.meaning.textContent = revealed ? item.ja : '';
+    els.meaning.textContent = item.ja || '';
+
+    const meaningVisible = item.ja && revealStep >= 1;
+    els.meaning.classList.toggle('is-hidden', !meaningVisible);
+
     els.phrases.innerHTML = '';
 
-    (item.phrases || []).forEach(p => {
+    let step = item.ja ? 1 : 0;
+    const questionEls = [];
+    questionEls.push(els.term);
+    (item.phrases || []).forEach((p, i) => {
       const line = document.createElement('div');
       line.className = 'phrase-line';
       const en = document.createElement('div');
-      en.className = 'phrase-en';
+      en.className = 'phrase-en question q-text';
       en.textContent = p.en;
       const ja = document.createElement('div');
-      ja.className = 'phrase-ja';
+      ja.className = 'phrase-ja answer a-text';
       ja.textContent = p.ja;
-      ja.style.visibility = revealed ? 'visible' : 'hidden';
+      let jaVisible = false;
+      if(p.ja){
+        step += 1;
+        jaVisible = revealStep >= step;
+      }
+      ja.classList.toggle('is-hidden', !jaVisible);
       line.appendChild(en);
       line.appendChild(ja);
       els.phrases.appendChild(line);
+      questionEls.push(en);
     });
 
-    els.progress.textContent = `${idx+1} / ${dataset.length}`;
-
-    // meters
-    const pct = Math.min(100, (cycleReveals / cycleGoal) * 100);
-    els.cycleFill.style.width = pct + '%';
-    els.revealCount.textContent = String(revealTotal);
-    const bar = els.cycleFill.parentElement;
-    bar.setAttribute('aria-valuemax', String(cycleGoal));
-    bar.setAttribute('aria-valuenow', String(cycleReveals));
-    els.cycleText.textContent = `${cycleReveals} / ${cycleGoal}`;
+    const total = getRevealTotal(item);
+    if(total === 0 || revealStep >= total){
+      questionEls.forEach(el => el.classList.add('is-active'));
+    }else{
+      questionEls.forEach(el => el.classList.remove('is-active'));
+      const activeIndex = Math.min(revealStep, questionEls.length - 1);
+      questionEls[activeIndex].classList.add('is-active');
+    }
+    updateMeta();
   }
 
   // --- Actions ---------------------------------------------------------
-  function doReveal(){
-    if(!dataset.length) return;
+  function gainExp(n){
+    exp += n;
+    saveExp();
+    updateMeta();
+  }
 
-    if(!revealed){
-      revealed = true;
-      revealTotal += 1;
-      cycleReveals += 1;
-      localStorage.setItem('revealTotal', String(revealTotal));
-      sessionStorage.setItem('cycleReveals', String(cycleReveals));
-      try{ if('vibrate' in navigator) navigator.vibrate(10); }catch(_){/* noop */}
-      // 周回達成で軽い演出
-      if(cycleReveals >= cycleGoal){
-        pulseBar();
-        cycleReveals = 0; // 周回をリセット
-        sessionStorage.setItem('cycleReveals', '0');
-      }
-      render();
-    } else {
-      // 既に表示中→Hide
-      revealed = false;
-      render();
+  function nextCard(){
+    idx = pickRandomIndex(dataset.length, idx);
+    revealStep = 0;
+    render();
+  }
+
+  function advance(){
+    if(!dataset.length) return;
+    const item = dataset[idx];
+    const total = getRevealTotal(item);
+
+    if(total === 0){
+      gainExp(1);
+      nextCard();
+      return;
     }
-  }
 
-  function next(){
-    if(!dataset.length) return;
-    if(!revealed){ doReveal(); }
-    else { revealed=false; idx=(idx+1)%dataset.length; render(); }
-  }
+    if(revealStep < total){
+      revealStep += 1;
+      render();
+      return;
+    }
 
-  function prev(){
-    if(!dataset.length) return;
-    if(revealed){ revealed=false; render(); }
-    else { idx=(idx-1+dataset.length)%dataset.length; render(); }
-  }
-
-  function pulseBar(){
-    const el = els.cycleFill;
-    el.animate([
-      {filter:'brightness(1)'},
-      {filter:'brightness(2)'},
-      {filter:'brightness(1)'}
-    ], {duration:600, easing:'ease-in-out'});
+    gainExp(1);
+    nextCard();
   }
 
   // --- Events ----------------------------------------------------------
-  els.card.addEventListener('click', next);
+  els.card.addEventListener('click', advance);
 
   window.addEventListener('keydown', e=>{
-    if(['Space','Enter','ArrowRight','ArrowLeft'].includes(e.code)) e.preventDefault();
-    if(e.code==='Space' || e.code==='Enter') doReveal();
-    else if(e.code==='ArrowRight') next();
-    else if(e.code==='ArrowLeft') prev();
+    if(['Space','Enter'].includes(e.code)) e.preventDefault();
+    if(e.code==='Space' || e.code==='Enter') advance();
   }, {passive:false});
 
   // ============================
   // Boot
   // ============================
 
-  async function applySelectedFile(){
-    const filename = fileSelect.value || 'astronomy.js';
-    localStorage.setItem('enExamplesFile', filename);
+  async function loadRandomCategory(){
+    const files = getFiles();
+    const filename = files[Math.floor(Math.random() * files.length)];
+    currentCategory = filename.replace(/\.js$/,'');
 
-    setStatus(`loading en_examples/${filename} …`);
+    els.term.textContent = 'loading…';
+    els.meaning.textContent = '';
+    els.meaning.classList.add('is-hidden');
+    els.phrases.innerHTML = '';
+
     const res = await loadEnExamplesFile(filename);
-
     dataset = toDataset(res.obj);
     if(!dataset.length){
       dataset = toDataset(STUB_EN_EXAMPLES);
-      setStatus(`⚠️ ${filename} は読めましたが内容が空でした → スタブ表示`);
-    }else if(res.ok){
-      setStatus(`✅ loaded: ${filename}（${dataset.length} words）`);
-    }else{
-      setStatus(`⚠️ ${filename} が見つからない/読めない → スタブ表示`);
     }
 
-    // state reset (表示が崩れないように)
-    idx = 0;
-    revealed = false;
-    cycleGoal = dataset.length;
+    idx = pickRandomIndex(dataset.length, -1);
+    revealStep = 0;
     render();
   }
 
   function boot(){
-    initFileSelect();
-    fileSelect.addEventListener('change', applySelectedFile);
-    reloadBtn.addEventListener('click', applySelectedFile);
-    applySelectedFile();
+    els.randomBtn.addEventListener('click', loadRandomCategory);
+    loadRandomCategory();
   }
 
   boot();
