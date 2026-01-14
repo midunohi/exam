@@ -8,65 +8,161 @@
   <style>
     /* --- background image setup --- */
     body{
-    background: url('img/bg_index.png') no-repeat center center fixed;
-    background-size: cover;
+      background: url('img/bg_index.png') no-repeat center center fixed;
+      background-size: cover;
     }
-    /* --- minimal theming (tiny CSS, keep structure intact) --- */
-    :root{ --fg:#222; --bg:#fff; --muted:#666; --line:#e6e6e6; --accent:#0a84ff; }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif}
-    .wrap{max-width:960px;margin:0 auto;padding:20px}
-    header{padding:8px 0 16px;border-bottom:1px solid var(--line)}
-    header h1{font-size:22px;margin:0}
-    .sitemap{margin:18px 0}
-    .sitemap h2{font-size:16px;margin:0 0 10px;color:var(--muted)}
-    .sitemap ul{list-style:none;padding:0;margin:12px 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 8px}
-    .sitemap li{margin:0}
-    .sitemap a{display:block;border:1px solid var(--line);border-radius:12px;padding:6px 10px;text-decoration:none;color:inherit;transition:transform .06s ease, box-shadow .15s ease, border-color .15s ease;font-size:14px;line-height:1.4}
-    .sitemap a:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.06);border-color:#d6d6d6}
-    .sitemap a:focus{outline:2px solid var(--accent);outline-offset:2px}
-    .sitemap a::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:2px}
 
-    .sitemap a.recommended{ border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent); font-weight: 600; position: relative; }
-    .sitemap a.recommended::after{ content: "★おすすめ"; font-size: 11px; color: #fff; background: var(--accent); padding: 2px 6px; border-radius: 999px; margin-left: 6px; }
-    .sitemap a.wip{ opacity: 0.4; filter: grayscale(1); }
+    /* --- minimal theming (tiny CSS, keep structure intact) --- */
+    :root{
+      --fg:#222;
+      --bg:#fff;
+      --muted:#666;
+      --line:#e6e6e6;
+      --accent:#0a84ff;
+      --shadow: rgba(0,0,0,.06);
+    }
+
+    *{ box-sizing:border-box }
+    html,body{
+      margin:0;
+      height:100%;
+      color:var(--fg);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;
+    }
+
+    .wrap{ max-width:960px; margin:0 auto; padding:20px }
+    header{ padding:8px 0 16px; border-bottom:1px solid var(--line) }
+    header h1{ font-size:22px; margin:0 }
+
+    .sitemap{ margin:18px 0 }
+    .sitemap h2{ font-size:16px; margin:0 0 10px; color:var(--muted) }
+    .sitemap ul{
+      list-style:none;
+      padding:0;
+      margin:12px 0;
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+      gap:4px 8px;
+    }
+    .sitemap li{ margin:0 }
+
+    /* --- link base --- */
+    .sitemap a{
+      display:block;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:6px 10px;
+      text-decoration:none;
+      color:inherit;
+      transition:transform .06s ease, box-shadow .15s ease, border-color .15s ease, opacity .15s ease, filter .15s ease;
+      font-size:14px;
+      line-height:1.4;
+      position:relative; /* for status mark */
+    }
+
+    .sitemap a:hover{
+      transform:translateY(-1px);
+      box-shadow:0 4px 12px var(--shadow);
+      border-color:#d6d6d6;
+    }
+
+    .sitemap a:focus{
+      outline:2px solid var(--accent);
+      outline-offset:2px;
+    }
+
+    /* --- status mark: single mark (no duplicate dot) --- */
+    .sitemap a::before{
+      content:"";
+      display:inline-block;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:var(--accent);
+      margin-right:8px;
+      vertical-align:-1px;
+      box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    /* recommended: keep strong via mark only (same slot as dot) */
+    .sitemap a.recommended::before{
+      content:"★";
+      width:auto;
+      height:auto;
+      border-radius:0;
+      background:transparent;
+      box-shadow:none;
+      font-size:14px;
+      line-height:1;
+      color:var(--accent);
+      vertical-align:-1px;
+      margin-right:8px;
+    }
+
+    /* wip: keep pale/grayscale, and mark changes subtly */
+    .sitemap a.wip{
+      opacity:.4;
+      filter:grayscale(1);
+    }
+    .sitemap a.wip::before{
+      background:color-mix(in srgb, var(--muted) 70%, transparent);
+      box-shadow:none;
+    }
 
     @media (prefers-color-scheme: dark){
-      :root{ --fg:#e5e7eb; --bg:#0f172a; --muted:#9ca3af; --line:#2a2f3a; --accent:#60a5fa; }
-      header{border-color:var(--line)}
-      .sitemap a{background:linear-gradient(180deg,#0b1220,#0a0f1a)}
+      :root{
+        --fg:#e5e7eb;
+        --bg:#0f172a;
+        --muted:#9ca3af;
+        --line:#2a2f3a;
+        --accent:#60a5fa;
+        --shadow: rgba(0,0,0,.35);
+      }
+      header{ border-color:var(--line) }
+      .sitemap a{
+        background:linear-gradient(180deg,#0b1220,#0a0f1a);
+      }
+      .sitemap a:hover{
+        border-color:color-mix(in srgb, var(--line) 70%, #fff 10%);
+      }
     }
   </style>
 </head>
+
 <body>
   <main class="wrap" role="main">
     <header>
       <h1>みづの 大学受験 問題集</h1>
     </header>
+
     <nav class="sitemap" aria-label="サイトマップ">
       <h2>モンスター狩り</h2>
       <ul>
         <li><a href="rpg_vocabulary.html" class="recommended">英単語 4択</a></li>
         <li><a href="rpg_status.html" class="wip">キャラ ステータス</a></li>
       </ul>
+
       <h2>英語 4択</h2>
       <ul>
         <li><a href="mcq_vocabulary.html" class="wip">英単語 4択</a></li>
         <li><a href="mcq_english.html" class="wip">英語 4択</a></li>
         <li><a href="dic_viewer.html" class="wip">英単語帳</a></li>
       </ul>
+
       <h2>英語 フラッシュカード</h2>
       <ul>
         <li><a href="fc_enExamples.html" class="recommended">英単語・例文 フラッシュカード</a></li>
         <li><a href="fc/fc_qa.html" class="wip">英語 フラッシュカード</a></li>
         <li><a href="fc/fc_shape.html" class="wip">英語 フラッシュカード 図形</a></li>
       </ul>
+
       <h2>数学 フラッシュカード</h2>
       <ul>
         <li><a href="fc/fc_math.html" class="wip">数学 フラッシュカード</a></li>
         <li><a href="fc/fc_calculus.html" class="wip">微積分</a></li>
       </ul>
-       <h2>英語 速読</h2>
+
+      <h2>英語 速読</h2>
       <ul>
         <li><a href="speed_reading.html" class="wip">英語 速読</a></li>
       </ul>
