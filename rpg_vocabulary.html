@@ -4,7 +4,30 @@
 <meta charset="UTF-8" />
 <title>モンスター狩り 英単語</title>
 <style>
-  :root{--bg:#020617;--ok:#22c55e;--bad:#ef4444}
+  :root{
+  --bg:#020617;
+  --ok:#22c55e;
+  --bad:#ef4444;
+  --q-size: clamp(22px, 1.8vw + 14px, 30px);
+  --choice-size: clamp(20px, 1.6vw + 14px, 28px);
+  --choice-min-h: clamp(52px, 6vh, 72px);
+  --next-size: clamp(16px, 1.2vw + 12px, 22px);
+  --next-pad-y: clamp(10px, 1.2vh, 16px);
+  --next-pad-x: clamp(16px, 2vw, 26px);
+  --next-h: clamp(52px, 6vh, 70px);
+}
+
+@media (orientation: portrait){
+  :root{
+    --q-size: clamp(26px, 3.6vw + 12px, 38px);
+    --choice-size: clamp(24px, 3.2vw + 12px, 36px);
+    --choice-min-h: clamp(60px, 10vh, 90px);
+    --next-size: clamp(20px, 2.6vw + 12px, 28px);
+    --next-pad-y: clamp(12px, 2vh, 18px);
+    --next-pad-x: clamp(20px, 4vw, 32px);
+    --next-h: clamp(62px, 9vh, 88px);
+  }
+}
   *{box-sizing:border-box}
   html,body{
     margin:0;
@@ -27,28 +50,28 @@
 
   /* QA: 隙間を埋める */
   #qaBox{display:flex;flex-direction:column;min-height:34vh}
-  #question{margin:0 0 8px;font-size:20px;font-weight:700}
+  #question{margin:0 0 8px;font-size:var(--q-size);font-weight:700}
   #choices{flex:1;display:flex;flex-direction:column;gap:4px;min-height:0}
 
   button.choice{
     flex:1;
-    min-height:52px;
+    min-height:var(--choice-min-h);
     padding:12px 10px;
     border-radius:10px;
     border:1px solid rgba(255,255,255,.10);
     background:rgba(17,24,39,.86);
     color:inherit;
-    font-size:20px;
+    font-size:var(--choice-size);
     font-weight:700;
     cursor:pointer;
   }
   button.choice:disabled{opacity:.55;cursor:default}
 
   /* 次へスロット：常にスペース確保（visibilityで切替） */
-  #nextSlot{height:46px;display:flex;align-items:center}
+  #nextSlot{height:var(--next-h);display:flex;align-items:center}
   #nextBtn{
-    padding:8px 14px;
-    font-size:14px;
+    padding:var(--next-pad-y) var(--next-pad-x);
+    font-size:var(--next-size);
     border-radius:10px;
     border:1px solid rgba(255,255,255,.10);
     background:rgba(17,24,39,.86);
