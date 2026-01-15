@@ -5,9 +5,10 @@
   <title>英単語 フラッシュカード</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { margin: 0; font-family: system-ui, sans-serif; background: #111; color: #f5f5f5; }
+    :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --answer:#7CFFB2; }
+    html, body{ height:100%; margin:0; background: linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("../img/bg_fc_enExamples.png"); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; font-family: system-ui,-apple-system,Segoe UI,Roboto, "Hiragino Kaku Gothic ProN",Meiryo,sans-serif; color: var(--fg); }
     #card {
-      max-width: 480px;
+      max-width: 960px;
       margin: 0 auto;
       padding: 1.5rem 1.25rem 2rem;
       box-sizing: border-box;
@@ -17,15 +18,15 @@
       justify-content: center;
       cursor: pointer;
     }
-    #counter { font-size: 0.8rem; opacity: 0.7; margin-bottom: 0.75rem; }
-    #question { font-size: 1.1rem; line-height: 1.6; }
-    #answer { margin-top: 0.75rem; font-size: 1rem; line-height: 1.6; visibility: hidden; }
-    #hint { margin-top: 1.5rem; font-size: 0.8rem; opacity: 0.6; }
+    #counter { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.75rem; }
+    #question { font-size: clamp(18px,3.6vw,24px); line-height: 1.6; font-weight: 700; }
+    #answer { margin-top: 0.75rem; font-size: clamp(18px,3.6vw,24px); line-height: 1.6; visibility: hidden; color: var(--answer); font-weight: 700; }
+    #hint { margin-top: 1.5rem; font-size: 0.8rem; color: var(--muted); }
   </style>
 </head>
 <body>
   <div id="card">
-    <div id="counter"></div>
+    <div id="counter"><span id="countLabel">0 / 0</span> ｜ EXP: <span id="expLabel">0</span></div>
     <div id="question"></div>
     <div id="answer"></div>
     <div id="hint">タップ：答え表示 → 次のカード</div>
@@ -33,13 +34,40 @@
 
   <script>
     const cardEl = document.getElementById("card");
-    const counterEl = document.getElementById("counter");
+    const countLabelEl = document.getElementById("countLabel");
+    const expLabelEl = document.getElementById("expLabel");
     const qEl = document.getElementById("question");
     const aEl = document.getElementById("answer");
 
+    const EXP_KEY = "midunohi.exam.exp";
+    let exp = 0;
     let cards = [];   // qa/ 以下の JSON から読み込む
     let index = 0;
     let shown = false;
+
+    function loadExp() {
+      try {
+        const stored = localStorage.getItem(EXP_KEY);
+        const n = Number(stored || 0);
+        exp = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+      } catch (e) {
+        exp = 0;
+      }
+      updateExpDisplay();
+    }
+
+    function saveExp() {
+      try {
+        localStorage.setItem(EXP_KEY, String(exp));
+      } catch (e) {
+        /* noop */
+      }
+      updateExpDisplay();
+    }
+
+    function updateExpDisplay() {
+      if (expLabelEl) expLabelEl.textContent = String(exp);
+    }
 
     function showCard(n) {
       const len = cards.length;
@@ -47,7 +75,7 @@
         qEl.textContent = "(カードが読み込まれていません)";
         aEl.textContent = "";
         aEl.style.visibility = "hidden";
-        counterEl.textContent = "0 / 0";
+        countLabelEl.textContent = "0 / 0";
         return;
       }
       index = (n + len) % len;
@@ -56,7 +84,7 @@
       aEl.textContent = c.answer || "(answer がありません)";
       aEl.style.visibility = "hidden";
       shown = false;
-      counterEl.textContent = `${index + 1} / ${len}`;
+      countLabelEl.textContent = `${index + 1} / ${len}`;
     }
 
     cardEl.addEventListener("click", () => {
@@ -65,6 +93,8 @@
         aEl.style.visibility = "visible";
         shown = true;
       } else {
+        exp += 1;
+        saveExp();
         showCard(index + 1);
       }
     });
@@ -91,10 +121,11 @@
         qEl.textContent = "カード一覧の読み込みに失敗しました";
         aEl.textContent = "qa/categories.json と qa/*.json を確認してください";
         aEl.style.visibility = "visible";
-        counterEl.textContent = "0 / 0";
+        countLabelEl.textContent = "0 / 0";
       }
     }
 
+    loadExp();
     init();
   </script>
 </body>

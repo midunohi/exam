@@ -5,13 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>数学 フラッシュカード</title>
   <style>
+    :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --answer:#7CFFB2; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto, "Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
       line-height: 1.7;
       margin: 0;
       padding: 0;
-      background: #0f172a;
-      color: #e5e7eb;
+      background: linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("../img/bg_fc_enExamples.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: var(--fg);
     }
 
     .page {
@@ -23,7 +28,7 @@
     header {
       margin-bottom: 1.5rem;
       padding-bottom: 0.75rem;
-      border-bottom: 1px solid #1f2937;
+      border-bottom: 1px solid var(--border);
     }
 
     h1 {
@@ -33,20 +38,20 @@
 
     .meta {
       font-size: 0.85rem;
-      color: #9ca3af;
+      color: var(--muted);
     }
 
     .hint {
       font-size: 0.85rem;
-      color: #9ca3af;
+      color: var(--muted);
       margin-top: 0.9rem;
     }
 
     .flashcard {
-      background: #020617;
+      background: linear-gradient(180deg,#0a1322,#0a0f1a);
       border-radius: 0.9rem;
       padding: 1.2rem 1.4rem;
-      border: 1px solid #111827;
+      border: 1px solid var(--border);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
       cursor: pointer;
       user-select: none;
@@ -54,7 +59,7 @@
 
     .card-header {
       font-size: 0.9rem;
-      color: #9ca3af;
+      color: var(--muted);
       margin-bottom: 0.5rem;
     }
 
@@ -66,11 +71,11 @@
     .card-body {
       min-height: 120px; /* 解答部分も含めてあらかじめ高さを確保しておく */
       border-radius: 0.75rem;
-      background: #020617;
-      border: 1px solid #1f2937;
+      background: #0a0f1a;
+      border: 1px solid var(--border);
       padding: 0.9rem 1rem;
       white-space: normal;
-      font-size: 0.95rem;
+      font-size: clamp(18px,3.6vw,24px);
       display: flex;
       flex-direction: column;
       align-items: center;      /* 左右中央揃え */
@@ -87,8 +92,8 @@
     .card-answer {
       margin-top: 0.75rem;
       padding-top: 0.6rem;
-      border-top: 1px dashed #1f2937;
-      color: #d1d5db;
+      border-top: 1px dashed var(--border);
+      color: var(--answer);
       transition: opacity 0.15s ease;
     }
 
@@ -125,7 +130,7 @@
   <div class="page">
     <header>
       <h1>数学 フラッシュカード</h1>
-      <div class="meta">EXP: <span id="expDisplay">0</span> ｜ カードをタップで「解答表示 → 次の問題」。解答表示時に 20% の確率で EXP +1</div>
+      <div class="meta">EXP: <span id="expDisplay">0</span> ｜ カードをタップで「解答表示 → 次の問題」。カード1つ完了で EXP +1</div>
     </header>
 
     <main>
@@ -252,16 +257,12 @@
         problemAnswerEl.classList.remove("is-hidden");
         showingAnswer = true;
 
-        // 解答表示時に 1/5 の確率で EXP を 1 増やす
-        if (Math.random() < 0.2) {
-          exp += 1;
-          saveExp();
-          console.log("EXP +1:", exp);
-        }
-
         typesetCurrentCard();
       } else {
         // 解答表示中 → 次の問題へ
+        exp += 1;
+        saveExp();
+        console.log("EXP +1:", exp);
         currentIndex = (currentIndex + 1) % problems.length;
         renderProblem();
       }
