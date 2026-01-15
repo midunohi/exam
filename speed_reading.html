@@ -33,26 +33,18 @@
       margin-bottom: 12px;
       font-size: 12px;
     }
-    select, input[type="range"] {
-      font-size: 12px;
-    }
-    select {
-      padding: 4px 6px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background: #111;
-      color: #fff;
-      min-width: 180px;
-    }
+    input[type="range"] { font-size: 12px; }
     button {
       border: none;
       border-radius: 999px;
-      padding: 4px 10px;
+      padding: 6px 12px;
       font-size: 12px;
       cursor: pointer;
       background: #2563eb;
       color: #fff;
+      user-select: none;
     }
+    button.secondary { background:#111; border:1px solid #333; }
     .word-box {
       width: 100%;
       max-width: 600px;
@@ -82,38 +74,34 @@
 <body>
   <div>
     <h1>英語スピードリーディング</h1>
+
     <div class="controls">
-      <label>
-        英文：
-        <select id="textSelect">
-          <option value="">選択してください</option>
-          <option value="p1">Reading is a skill</option>
-          <option value="p2">Technology and society</option>
-          <option value="p3">Study and memory</option>
-        </select>
-      </label>
       <button id="playPauseBtn">▶︎</button>
+      <button id="randomBtn" class="secondary">🎲 例文ランダム</button>
+
       <label>
         速度
-        <input type="range" id="speedSlider" min="150" max="800" step="10" value="350" />
-        <span id="speedLabel">350 wpm</span>
+        <!-- デフォルトを「ネイティブより速くない」範囲の学習向けに調整 -->
+        <input type="range" id="speedSlider" min="120" max="500" step="10" value="240" />
+        <span id="speedLabel">240 wpm</span>
       </label>
     </div>
+
     <div class="word-box">
-      <div id="wordDisplay" class="word">英文を選んでください</div>
+      <div id="wordDisplay" class="word">準備中…</div>
     </div>
     <div class="status" id="statusLabel">0 / 0　停止中</div>
   </div>
 
   <script>
-    const passages = {
-      p1: "Reading is a skill that you can improve through practice. When you read English every day, you gradually get used to common phrases and sentence patterns. This makes it easier to understand long passages in entrance exams. Try to focus on the meaning of each group of words rather than translating word by word.",
-      p2: "Technology has changed the way we communicate with each other. In the past, people had to write letters and wait many days for a reply. Today, we can send messages instantly by email or social media. However, some researchers say that we may be losing deep conversations because we are always online.",
-      p3: "Many students believe that they must study for long hours without a break. In fact, short and focused study sessions are often more effective. When you review important points regularly, the information moves from short term memory to long term memory. This method is useful when you prepare for university entrance exams."
-    };
+    const passages = [
+      "Reading is a skill that you can improve through practice. When you read English every day, you gradually get used to common phrases and sentence patterns. This makes it easier to understand long passages in entrance exams. Try to focus on the meaning of each group of words rather than translating word by word.",
+      "Technology has changed the way we communicate with each other. In the past, people had to write letters and wait many days for a reply. Today, we can send messages instantly by email or social media. However, some researchers say that we may be losing deep conversations because we are always online.",
+      "Many students believe that they must study for long hours without a break. In fact, short and focused study sessions are often more effective. When you review important points regularly, the information moves from short term memory to long term memory. This method is useful when you prepare for university entrance exams."
+    ];
 
-    const textSelect   = document.getElementById('textSelect');
     const playPauseBtn = document.getElementById('playPauseBtn');
+    const randomBtn    = document.getElementById('randomBtn');
     const speedSlider  = document.getElementById('speedSlider');
     const speedLabel   = document.getElementById('speedLabel');
     const wordDisplay  = document.getElementById('wordDisplay');
@@ -123,13 +111,7 @@
     let index = 0;
     let running = false;
     let timerId = null;
-
-    function setWordsFromPassage(id) {
-      const text = passages[id] || "";
-      words = text.split(/\s+/).filter(Boolean);
-      index = 0;
-      updateDisplay();
-    }
+    let lastPick = -1;
 
     function wpmToIntervalMs(wpm) {
       return 60000 / Math.max(1, wpm);
@@ -143,7 +125,7 @@
 
     function updateDisplay() {
       if (!words.length) {
-        wordDisplay.textContent = "英文を選んでください";
+        wordDisplay.textContent = "例文をランダム選択してください";
         statusLabel.textContent = "0 / 0　停止中";
         return;
       }
@@ -152,12 +134,34 @@
       statusLabel.textContent = current + " / " + words.length + (running ? "　再生中" : "　停止中");
     }
 
+    function setWordsFromText(text) {
+      words = (text || "").split(/\s+/).filter(Boolean);
+      index = 0;
+      updateDisplay();
+    }
+
+    function pickRandomPassage() {
+      if (!passages.length) return "";
+      if (passages.length === 1) return passages[0];
+
+      // 連続で同じ例文になりにくくする
+      let k = Math.floor(Math.random() * passages.length);
+      if (k === lastPick) k = (k + 1) % passages.length;
+      lastPick = k;
+      return passages[k];
+    }
+
+    function randomizePassage() {
+      pause();                 // 再選択時は停止して最初からにする
+      setWordsFromText(pickRandomPassage());
+    }
+
     function advance() {
       if (!running || !words.length) return;
       index++;
       if (index >= words.length) {
         pause();
-        index = words.length - 1;
+        index = Math.max(0, words.length - 1);
       }
       updateDisplay();
     }
@@ -168,18 +172,20 @@
         timerId = null;
       }
       if (!running || !words.length) return;
-      const firstInterval = wpmToIntervalMs(Number(speedSlider.value));
+
+      const interval = wpmToIntervalMs(Number(speedSlider.value));
       timerId = setTimeout(function tick() {
         if (!running || !words.length) return;
         advance();
         if (!running || !words.length) return;
-        const nextInterval = wpmToIntervalMs(Number(speedSlider.value));
-        timerId = setTimeout(tick, nextInterval);
-      }, firstInterval);
+        timerId = setTimeout(tick, wpmToIntervalMs(Number(speedSlider.value)));
+      }, interval);
     }
 
     function play() {
+      if (!words.length) randomizePassage();
       if (!words.length) return;
+
       running = true;
       playPauseBtn.textContent = "⏸";
       if (index >= words.length) index = 0;
@@ -197,22 +203,26 @@
       updateDisplay();
     }
 
-    textSelect.addEventListener("change", () => {
-      pause();
-      setWordsFromPassage(textSelect.value);
-    });
-
+    // UI events
     playPauseBtn.addEventListener("click", () => {
       running ? pause() : play();
     });
 
+    randomBtn.addEventListener("click", () => {
+      randomizePassage();
+    });
+
     speedSlider.addEventListener("input", updateSpeedLabel);
 
+    // Key controls
     document.addEventListener("keydown", (e) => {
-      if (e.target.tagName === "SELECT") return;
+      // Space: play/pause, R: randomize, ↑↓: speed
       if (e.code === "Space") {
         e.preventDefault();
         running ? pause() : play();
+      } else if (e.key === "r" || e.key === "R") {
+        e.preventDefault();
+        randomizePassage();
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         const v = Math.min(Number(speedSlider.max), Number(speedSlider.value) + 20);
@@ -226,7 +236,9 @@
       }
     });
 
+    // 初期化：起動時にランダム例文をセット（停止状態）
     updateSpeedLabel();
+    randomizePassage();
   </script>
 </body>
 </html>
