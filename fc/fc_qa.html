@@ -18,6 +18,13 @@
       justify-content: center;
       cursor: pointer;
     }
+    .card-panel {
+      background: linear-gradient(180deg,#0a1322,#0a0f1a);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
     #counter { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.75rem; }
     #question { font-size: clamp(18px,3.6vw,24px); line-height: 1.6; font-weight: 700; }
     #answer { margin-top: 0.75rem; font-size: clamp(18px,3.6vw,24px); line-height: 1.6; visibility: hidden; color: var(--answer); font-weight: 700; }
@@ -26,10 +33,12 @@
 </head>
 <body>
   <div id="card">
-    <div id="counter"><span id="countLabel">0 / 0</span> ｜ EXP: <span id="expLabel">0</span></div>
-    <div id="question"></div>
-    <div id="answer"></div>
-    <div id="hint">タップ：答え表示 → 次のカード</div>
+    <div class="card-panel">
+      <div id="counter"><span id="countLabel">0 / 0</span> ｜ EXP: <span id="expLabel">0</span></div>
+      <div id="question"></div>
+      <div id="answer"></div>
+      <div id="hint">タップ：答え表示 → 次のカード</div>
+    </div>
   </div>
 
   <script>

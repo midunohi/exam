@@ -9,7 +9,11 @@
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #000;
+      background: linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("img/bg_fc_enExamples.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       color: #fff;
       display: flex;
       flex-direction: column;
@@ -31,6 +35,10 @@
       justify-content: center;
       align-items: center;
       margin-bottom: 12px;
+      font-size: 12px;
+    }
+    .exp {
+      color: #9ca3af;
       font-size: 12px;
     }
     input[type="range"] { font-size: 12px; }
@@ -85,6 +93,7 @@
         <input type="range" id="speedSlider" min="120" max="500" step="10" value="240" />
         <span id="speedLabel">240 wpm</span>
       </label>
+      <span class="exp">EXP: <span id="expLabel">0</span></span>
     </div>
 
     <div class="word-box">
@@ -107,11 +116,39 @@
     const wordDisplay  = document.getElementById('wordDisplay');
     const statusLabel  = document.getElementById('statusLabel');
 
+    const EXP_KEY = "midunohi.exam.exp";
+    let exp = 0;
+    let expAwarded = false;
     let words = [];
     let index = 0;
     let running = false;
     let timerId = null;
     let lastPick = -1;
+
+    function loadExp() {
+      try {
+        const stored = localStorage.getItem(EXP_KEY);
+        const n = Number(stored || 0);
+        exp = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+      } catch (e) {
+        exp = 0;
+      }
+      updateExpDisplay();
+    }
+
+    function saveExp() {
+      try {
+        localStorage.setItem(EXP_KEY, String(exp));
+      } catch (e) {
+        /* noop */
+      }
+      updateExpDisplay();
+    }
+
+    function updateExpDisplay() {
+      const el = document.getElementById("expLabel");
+      if (el) el.textContent = String(exp);
+    }
 
     function wpmToIntervalMs(wpm) {
       return 60000 / Math.max(1, wpm);
@@ -137,6 +174,7 @@
     function setWordsFromText(text) {
       words = (text || "").split(/\s+/).filter(Boolean);
       index = 0;
+      expAwarded = false;
       updateDisplay();
     }
 
@@ -160,6 +198,11 @@
       if (!running || !words.length) return;
       index++;
       if (index >= words.length) {
+        if (!expAwarded) {
+          exp += 5;
+          expAwarded = true;
+          saveExp();
+        }
         pause();
         index = Math.max(0, words.length - 1);
       }
@@ -188,7 +231,10 @@
 
       running = true;
       playPauseBtn.textContent = "⏸";
-      if (index >= words.length) index = 0;
+      if (index >= words.length) {
+        index = 0;
+        expAwarded = false;
+      }
       updateDisplay();
       startTimer();
     }
@@ -237,6 +283,7 @@
     });
 
     // 初期化：起動時にランダム例文をセット（停止状態）
+    loadExp();
     updateSpeedLabel();
     randomizePassage();
   </script>
