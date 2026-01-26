@@ -1,3 +1,4 @@
 const files_qa = [
-  "daily"
+  "daily",
+  "chemistry",
 ]
