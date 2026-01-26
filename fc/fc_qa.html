@@ -25,6 +25,17 @@
       padding: 24px;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
     }
+    .controls { margin-bottom: 0.75rem; }
+    button {
+      background: #0a1322;
+      color: var(--fg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { border-color: #2b3a55; }
     #counter { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.75rem; }
     #question { font-size: clamp(18px,3.6vw,24px); line-height: 1.6; font-weight: 700; }
     #answer { margin-top: 0.75rem; font-size: clamp(18px,3.6vw,24px); line-height: 1.6; visibility: hidden; color: var(--answer); font-weight: 700; }
@@ -34,6 +45,9 @@
 <body>
   <div id="card">
     <div class="card-panel">
+      <div class="controls">
+        <button id="randomBtn" type="button">カテゴリ読み込み中…</button>
+      </div>
       <div id="counter"><span id="countLabel">0 / 0</span> ｜ EXP: <span id="expLabel">0</span></div>
       <div id="question"></div>
       <div id="answer"></div>
@@ -48,12 +62,14 @@
     const expLabelEl = document.getElementById("expLabel");
     const qEl = document.getElementById("question");
     const aEl = document.getElementById("answer");
+    const randomBtnEl = document.getElementById("randomBtn");
 
     const EXP_KEY = "midunohi.exam.exp";
     let exp = 0;
     let cards = [];   // qa/ 以下の .js から読み込む
     let index = 0;
     let shown = false;
+    let currentCategory = "--";
 
     function loadExp() {
       try {
@@ -145,6 +161,23 @@
       });
     }
 
+    function getFiles() {
+      const files = (typeof files_qa !== "undefined" && Array.isArray(files_qa)) ? files_qa : [];
+      return files.length ? files : ["daily"];
+    }
+
+    function pickRandomIndex(len, except) {
+      if (len <= 1) return 0;
+      let n = 0;
+      do { n = Math.floor(Math.random() * len); } while (n === except);
+      return n;
+    }
+
+    function updateRandomButton() {
+      if (!randomBtnEl) return;
+      randomBtnEl.textContent = `${currentCategory} ｜ ランダムで切り替え`;
+    }
+
     async function loadCategory(name) {
       const base = String(name || "").replace(/\.js$/i, "");
       const src = `../qa/${base}.js`;
@@ -156,17 +189,25 @@
         const data = toCards(raw);
         if (!data.length) throw new Error(`qa/${base}.js にカードが見つかりません`);
         cards = data;
+        currentCategory = base;
+        updateRandomButton();
         showCard(0);
       } catch (e) {
         throw new Error(`qa/${base}.js を読み込めませんでした`);
       }
     }
 
+    async function loadRandomCategory(exceptIndex = -1) {
+      const files = getFiles();
+      const idx = pickRandomIndex(files.length, exceptIndex);
+      await loadCategory(files[idx]);
+      return idx;
+    }
+
     async function init() {
       try {
-        const files = (typeof files_qa !== "undefined" && Array.isArray(files_qa)) ? files_qa : [];
-        const first = files.length ? files[0] : "daily";
-        await loadCategory(first);
+        updateRandomButton();
+        await loadRandomCategory(-1);
       } catch (e) {
         console.error(e);
         qEl.textContent = "カード一覧の読み込みに失敗しました";
@@ -174,6 +215,18 @@
         aEl.style.visibility = "visible";
         countLabelEl.textContent = "0 / 0";
       }
+    }
+
+    let lastFileIndex = -1;
+    if (randomBtnEl) {
+      randomBtnEl.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        try {
+          lastFileIndex = await loadRandomCategory(lastFileIndex);
+        } catch (err) {
+          console.error(err);
+        }
+      });
     }
 
     loadExp();
