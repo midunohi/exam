@@ -41,6 +41,7 @@
     </div>
   </div>
 
+  <script src="../qa/files.js"></script>
   <script>
     const cardEl = document.getElementById("card");
     const countLabelEl = document.getElementById("countLabel");
@@ -50,7 +51,7 @@
 
     const EXP_KEY = "midunohi.exam.exp";
     let exp = 0;
-    let cards = [];   // qa/ 以下の JSON から読み込む
+    let cards = [];   // qa/ 以下の .js から読み込む
     let index = 0;
     let shown = false;
 
@@ -108,27 +109,68 @@
       }
     });
 
+    function safeGlobalEval(name) {
+      try {
+        return (0, eval)(name);
+      } catch (_e) {
+        return undefined;
+      }
+    }
+
+    function toCards(raw) {
+      if (!Array.isArray(raw)) return [];
+      return raw.map((row) => {
+        if (Array.isArray(row)) {
+          const [question, answer] = row;
+          return { question: String(question ?? ""), answer: String(answer ?? "") };
+        }
+        if (row && typeof row === "object") {
+          return {
+            question: String(row.question ?? ""),
+            answer: String(row.answer ?? ""),
+          };
+        }
+        return { question: "", answer: "" };
+      }).filter(c => c.question || c.answer);
+    }
+
+    function injectScript(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = src;
+        s.async = true;
+        s.onload = () => resolve(true);
+        s.onerror = () => reject(new Error(`load failed: ${src}`));
+        document.head.appendChild(s);
+      });
+    }
+
     async function loadCategory(name) {
-      const res = await fetch(`../qa/${name}.json`);
-      if (!res.ok) throw new Error(`qa/${name}.json を読み込めませんでした`);
-      const data = await res.json();
-      if (!Array.isArray(data)) throw new Error(`qa/${name}.json の形式が配列ではありません`);
-      cards = data;
-      showCard(0);
+      const base = String(name || "").replace(/\.js$/i, "");
+      const src = `../qa/${base}.js`;
+      const globalName = `qa_${base}`;
+
+      try {
+        await injectScript(src);
+        const raw = safeGlobalEval(globalName);
+        const data = toCards(raw);
+        if (!data.length) throw new Error(`qa/${base}.js にカードが見つかりません`);
+        cards = data;
+        showCard(0);
+      } catch (e) {
+        throw new Error(`qa/${base}.js を読み込めませんでした`);
+      }
     }
 
     async function init() {
       try {
-        const res = await fetch("../qa/categories.json");
-        if (!res.ok) throw new Error("categories.json を読み込めませんでした");
-        const cat = await res.json();
-        const files = Array.isArray(cat.files) ? cat.files : [];
+        const files = (typeof files_qa !== "undefined" && Array.isArray(files_qa)) ? files_qa : [];
         const first = files.length ? files[0] : "daily";
         await loadCategory(first);
       } catch (e) {
         console.error(e);
         qEl.textContent = "カード一覧の読み込みに失敗しました";
-        aEl.textContent = "qa/categories.json と qa/*.json を確認してください";
+        aEl.textContent = "qa/files.js と qa/*.js を確認してください";
         aEl.style.visibility = "visible";
         countLabelEl.textContent = "0 / 0";
       }
