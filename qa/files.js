@@ -3,4 +3,5 @@ const files_qa = [
   "classical_japanese_vocabulary",
   "daily",
   "grammar",
+  "物理の公式",
 ]
