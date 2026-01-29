@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>英単語 フラッシュカード</title>
+  <title>フラッシュカード</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --answer:#7CFFB2; }
@@ -22,8 +22,43 @@
       background: linear-gradient(180deg,#0a1322,#0a0f1a);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 24px;
+      padding: 22px 24px 24px;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .app-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .app-title{
+      font-size: clamp(18px,3.6vw,22px);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      text-decoration:none;
+      color: var(--fg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: #0a1322;
+    }
+    .back-link:hover{ border-color:#2b3a55; }
+    .category-chip{
+      font-size:0.8rem;
+      color: var(--muted);
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding: 4px 10px;
+      background:#0b1220;
+      white-space:nowrap;
     }
     .controls { margin-bottom: 0.75rem; }
     button {
@@ -45,8 +80,13 @@
 <body>
   <div id="card">
     <div class="card-panel">
+      <div class="app-bar">
+        <a class="back-link" href="../index.html" aria-label="戻る">← 戻る</a>
+        <div class="app-title">フラッシュカード</div>
+        <div id="categoryLabel" class="category-chip">カテゴリ: --</div>
+      </div>
       <div class="controls">
-        <button id="randomBtn" type="button">カテゴリ読み込み中…</button>
+        <button id="randomBtn" type="button">カテゴリをランダムで切り替え</button>
       </div>
       <div id="counter"><span id="countLabel">0 / 0</span> ｜ EXP: <span id="expLabel">0</span></div>
       <div id="question"></div>
@@ -63,6 +103,7 @@
     const qEl = document.getElementById("question");
     const aEl = document.getElementById("answer");
     const randomBtnEl = document.getElementById("randomBtn");
+    const categoryLabelEl = document.getElementById("categoryLabel");
 
     const EXP_KEY = "midunohi.exam.exp";
     let exp = 0;
@@ -70,6 +111,7 @@
     let index = 0;
     let shown = false;
     let currentCategory = "--";
+    let drawCount = 0;
 
     function loadExp() {
       try {
@@ -110,7 +152,23 @@
       aEl.textContent = c.answer || "(answer がありません)";
       aEl.style.visibility = "hidden";
       shown = false;
-      countLabelEl.textContent = `${index + 1} / ${len}`;
+      countLabelEl.textContent = `${drawCount} / ${len}`;
+    }
+
+    function showRandomCard(exceptIndex = -1) {
+      const len = cards.length;
+      if (!len) {
+        showCard(0);
+        return;
+      }
+      index = pickRandomIndex(len, exceptIndex);
+      const c = cards[index];
+      qEl.textContent = c.question || "(question がありません)";
+      aEl.textContent = c.answer || "(answer がありません)";
+      aEl.style.visibility = "hidden";
+      shown = false;
+      drawCount += 1;
+      countLabelEl.textContent = `${drawCount} / ${len}`;
     }
 
     cardEl.addEventListener("click", () => {
@@ -121,7 +179,7 @@
       } else {
         exp += 1;
         saveExp();
-        showCard(index + 1);
+        showRandomCard(index);
       }
     });
 
@@ -175,7 +233,10 @@
 
     function updateRandomButton() {
       if (!randomBtnEl) return;
-      randomBtnEl.textContent = `${currentCategory} ｜ ランダムで切り替え`;
+      randomBtnEl.textContent = `${currentCategory} をランダムで切り替え`;
+      if (categoryLabelEl) {
+        categoryLabelEl.textContent = `カテゴリ: ${currentCategory}`;
+      }
     }
 
     async function loadCategory(name) {
@@ -190,8 +251,9 @@
         if (!data.length) throw new Error(`qa/${base}.js にカードが見つかりません`);
         cards = data;
         currentCategory = base;
+        drawCount = 0;
         updateRandomButton();
-        showCard(0);
+        showRandomCard(-1);
       } catch (e) {
         throw new Error(`qa/${base}.js を読み込めませんでした`);
       }
