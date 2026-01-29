@@ -4,4 +4,5 @@ const files_qa = [
   "daily",
   "grammar",
   "物理の公式",
+  "情報",
 ]
