@@ -1,4 +1,4 @@
-const qa_daily = [
+const qa_英語例文 = [
   ["I would appreciate it if you could help me. 日本語訳は？", "助けていただけるとありがたいです。"],
   ["It is essential that we take action immediately. 日本語訳は？", "私たちが直ちに行動を起こすことが不可欠だ。"],
   ["He tends to put off important decisions. 日本語訳は？", "彼は重要な決断を先延ばしにする傾向がある。"],
