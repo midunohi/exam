@@ -1,8 +1,8 @@
 const files_qa = [
-  "chemistry",
-  "classical_japanese_vocabulary",
-  "daily",
-  "grammar",
   "物理の公式",
+  "化学",
+  "英文",
+  "英文法",
+  "古文単語",
   "情報",
 ]
