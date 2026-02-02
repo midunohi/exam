@@ -2,9 +2,9 @@
 <html lang="ja">
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>フラッシュ暗算（足し算）</title>
+<title>フラッシュ暗算</title>
 <style>
-  body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:#0b1020;color:#eef2ff}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("img/bg_fc_enExamples.png");background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;color:#eef2ff}
   .box{width:min(520px,92vw);padding:18px;border:1px solid #ffffff22;border-radius:16px;background:#121a33cc}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   input,button{font:inherit;border-radius:12px;border:1px solid #ffffff22;background:#0c1226;color:#eef2ff;padding:10px 12px}
@@ -12,36 +12,54 @@
   button{cursor:pointer;background:#2a3a66}
   button:disabled{opacity:.5;cursor:not-allowed}
   #n{font-size:72px;font-weight:900;letter-spacing:.02em;text-align:center;padding:18px 0}
+  #title{font-size:32px;font-weight:900;letter-spacing:.08em;text-align:center;margin-bottom:12px}
   #hint{font-size:12px;color:#b8c3ea;text-align:center}
   #msg{margin-top:10px;font-weight:700;text-align:center}
+  #choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;min-height:98px}
+  #choices.is-hidden{visibility:hidden;pointer-events:none}
+  .choice{background:#1a2446}
+  .choice.correct{background:#1f7a3a;border-color:#2aa84f}
+  .choice.wrong{background:#7a1f1f;border-color:#a82a2a}
+  .exp{font-size:12px;color:#b8c3ea;text-align:right}
 </style>
 
+<div id="title">フラッシュ暗算</div>
 <div class="box">
-  <div class="row">
+  <div class="exp">EXP: <span id="expLabel">0</span></div>
+  <div class="row" style="flex-wrap:nowrap;overflow:auto">
     <label>個数 <input id="k" type="number" min="2" max="200" value="5"></label>
     <label>桁 <input id="d" type="number" min="1" max="6" value="1"></label>
-    <label>間隔ms（1秒=1000） <input id="ms" type="number" min="50" max="3000" value="1000"></label>
-    <button id="start">開始</button>
-    <button id="reset">リセット</button>
+    <label>間隔ms <input id="ms" type="number" min="50" max="3000" value="1000"></label>
   </div>
 
-  <div id="n">—</div>
-  <div id="hint">開始 → 数字が次々表示 → 最後に合計を入力してEnter</div>
+  <div id="n"></div>
 
-  <div class="row" style="justify-content:center;margin-top:10px">
-    <input id="ans" inputmode="numeric" placeholder="合計" disabled>
+  <div id="choices" class="is-hidden">
+    <button class="choice" data-idx="0"></button>
+    <button class="choice" data-idx="1"></button>
+    <button class="choice" data-idx="2"></button>
+    <button class="choice" data-idx="3"></button>
   </div>
   <div id="msg"></div>
+
+  <div class="row" style="justify-content:center;margin-top:12px">
+    <button id="start">開始</button>
+  </div>
+  <div id="hint">開始 → 数字が次々表示 → 最後に4択で答える</div>
 </div>
 
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
   const kEl=$('k'), dEl=$('d'), msEl=$('ms');
-  const startBtn=$('start'), resetBtn=$('reset');
-  const nEl=$('n'), ansEl=$('ans'), msgEl=$('msg');
+  const startBtn=$('start');
+  const nEl=$('n'), msgEl=$('msg'), expLabelEl=$('expLabel');
+  const choicesEl=$('choices');
+  const choiceBtns=Array.from(choicesEl.querySelectorAll('.choice'));
 
-  let seq=[], sum=0, i=0, t=null, running=false;
+  const EXP_KEY = "midunohi.exam.exp";
+  let exp = 0;
+  let seq=[], sum=0, i=0, t=null, running=false, readyForChoice=false;
 
   const randInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
   const rangeForDigits=(d)=>{
@@ -53,7 +71,6 @@
     running=on;
     startBtn.disabled=on;
     kEl.disabled=on; dEl.disabled=on; msEl.disabled=on;
-    ansEl.disabled=on; // 走ってる間は入力不可
   }
 
   function clearTimer(){ if(t){ clearTimeout(t); t=null; } }
@@ -61,24 +78,82 @@
   function reset(){
     clearTimer();
     seq=[]; sum=0; i=0;
-    nEl.textContent='—';
-    ansEl.value='';
-    ansEl.disabled=true;
+    nEl.textContent='';
     msgEl.textContent='';
+    readyForChoice=false;
+    choicesEl.classList.add('is-hidden');
+    startBtn.hidden=false;
+    choiceBtns.forEach(b=>{
+      b.textContent='';
+      b.disabled=true;
+      b.classList.remove('correct','wrong');
+    });
     setRunning(false);
   }
 
   function showNext(){
     if(i>=seq.length){
       nEl.textContent='?';
-      ansEl.disabled=false;
-      ansEl.focus();
+      showChoices();
       setRunning(false);
       return;
     }
     nEl.textContent=String(seq[i]);
     i++;
     t=setTimeout(showNext, Math.max(50, Number(msEl.value)||300));
+  }
+
+  function shuffle(arr){
+    for(let j=arr.length-1;j>0;j--){
+      const r=Math.floor(Math.random()*(j+1));
+      [arr[j],arr[r]]=[arr[r],arr[j]];
+    }
+    return arr;
+  }
+
+  function makeChoices(correct){
+    const deltas=[-9,-5,-3,-2,-1,1,2,3,5,7,8,9,10,12,15,20];
+    const picks=new Set([correct]);
+    while(picks.size<4){
+      const delta=deltas[randInt(0,deltas.length-1)];
+      const candidate=correct+delta;
+      if(candidate>=0) picks.add(candidate);
+    }
+    return shuffle(Array.from(picks));
+  }
+
+  function showChoices(){
+    const choices=makeChoices(sum);
+    choiceBtns.forEach((b,idx)=>{
+      b.textContent=String(choices[idx]);
+      b.dataset.value=String(choices[idx]);
+      b.disabled=false;
+      b.classList.remove('correct','wrong');
+    });
+    choicesEl.classList.remove('is-hidden');
+    readyForChoice=true;
+  }
+
+  function addExp(n){
+    exp += Math.max(0, Math.floor(n));
+    try{ localStorage.setItem(EXP_KEY, String(exp)); }catch(_){ /* noop */ }
+    if(expLabelEl) expLabelEl.textContent = String(exp);
+  }
+
+  function revealResult(chosen){
+    const correctVal=String(sum);
+    choiceBtns.forEach(b=>{
+      if(b.dataset.value===correctVal) b.classList.add('correct');
+    });
+    if(chosen && chosen.dataset.value===correctVal){
+      const gain = Math.max(1, Math.floor(Number(kEl.value)||0)) * Math.max(1, Math.floor(Number(dEl.value)||0));
+      addExp(gain);
+    }
+    if(chosen && chosen.dataset.value!==correctVal){
+      chosen.classList.add('wrong');
+    }
+    choiceBtns.forEach(b=>b.disabled=true);
+    setTimeout(reset, 1000);
   }
 
   function start(){
@@ -89,32 +164,32 @@
     sum=seq.reduce((a,b)=>a+b,0);
     i=0;
     msgEl.textContent='';
+    startBtn.hidden=true;
+    choicesEl.classList.add('is-hidden');
+    choiceBtns.forEach(b=>{ b.disabled=true; b.textContent=''; b.classList.remove('correct','wrong'); });
     setRunning(true);
     showNext();
   }
 
-  function parseNum(s){
-    s=(s||'').trim()
-      .replace(/[０-９]/g,ch=>String(ch.charCodeAt(0)-0xFF10))
-      .replace(/[－ー−]/g,'-');
-    if(!s) return null;
-    const n=Number(s);
-    return Number.isFinite(n) ? n : null;
-  }
-
-  ansEl.addEventListener('keydown', (e)=>{
-    if(e.key!=='Enter') return;
-    e.preventDefault();
-    const u=parseNum(ansEl.value);
-    if(u===null){ msgEl.textContent='数字を入力してください'; return; }
-    msgEl.textContent = (u===sum) ? '正解！✨' : `不正解… 正解は ${sum}`;
+  choicesEl.addEventListener('click', (e)=>{
+    const btn=e.target.closest('.choice');
+    if(!btn || !readyForChoice) return;
+    readyForChoice=false;
+    revealResult(btn);
   });
 
   startBtn.addEventListener('click', start);
-  resetBtn.addEventListener('click', reset);
-  window.addEventListener('keydown', (e)=>{
-    if(e.key==='Escape'){ e.preventDefault(); reset(); }
-  });
+
+  (function initExp(){
+    try{
+      const raw = localStorage.getItem(EXP_KEY);
+      const n = Number(raw || 0);
+      exp = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+    }catch(_){
+      exp = 0;
+    }
+    if(expLabelEl) expLabelEl.textContent = String(exp);
+  })();
 
   reset();
 })();
