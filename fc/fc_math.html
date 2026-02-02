@@ -4,166 +4,205 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>数学 フラッシュカード</title>
+
   <style>
-    :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --answer:#7CFFB2; }
-    body {
-      font-family: system-ui,-apple-system,Segoe UI,Roboto, "Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
-      line-height: 1.7;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("../img/bg_fc_enExamples.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+    :root{
+      --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220;
+      --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af;
+      --acc:#22d3ee; --answer:#7CFFB2;
+    }
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,
+        "Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+      line-height:1.7;
+      background:
+        linear-gradient(rgba(5,8,20,.75), rgba(5,8,20,.9)),
+        url("../img/bg_fc_enExamples.png");
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      background-attachment:fixed;
+      color:var(--fg);
+    }
+    .page{
+      min-height:100vh;
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:80px 16px 24px;
+      box-sizing:border-box;
+    }
+    .topbar{
+      position:fixed;
+      top:0; left:0; right:0;
+      z-index:10;
+      padding:8px 16px;
+      display:flex;
+      justify-content:center;
+      background: linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,.4) 60%, transparent);
+      backdrop-filter: blur(6px);
+    }
+    .topbar-inner{
+      width:min(960px,96vw);
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .topbar-inner .spacer{flex:1;}
+    .app-title{
+      font-size: clamp(18px,3.6vw,22px);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      text-decoration:none;
       color: var(--fg);
-    }
-
-    .page {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem 3rem;
-    }
-
-    header {
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    h1 {
-      font-size: 1.6rem;
-      margin: 0 0 0.25rem;
-    }
-
-    .meta {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 12px;
       font-size: 0.85rem;
-      color: var(--muted);
+      font-weight: 700;
+      background: #0a1322;
     }
+    .back-link:hover{ border-color:#2b3a55; }
 
-    .hint {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-top: 0.9rem;
-    }
-
-    .flashcard {
+    .flashcard{
+      width: min(960px, 96vw);
       background: linear-gradient(180deg,#0a1322,#0a0f1a);
       border-radius: 0.9rem;
-      padding: 1.2rem 1.4rem;
+      padding: 1.2rem 1.4rem 1.8rem;
       border: 1px solid var(--border);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
       cursor: pointer;
       user-select: none;
+      position:relative;
     }
 
-    .card-header {
-      font-size: 0.9rem;
+    .category-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:6px;
+    }
+    .category-label{
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
       color: var(--muted);
-      margin-bottom: 0.5rem;
+      text-transform: uppercase;
     }
-
-    /* タイトルは不要なので非表示にする */
-    .card-title {
-      display: none;
+    .category-name{
+      font-size: clamp(16px,3.2vw,20px);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      color: var(--fg);
+      text-align: left;
     }
+    .category-count{ font-size:0.85rem; color:var(--muted); }
+    .progress{ font-size:0.85rem; color:var(--muted); }
+    .category-spacer{ flex:1; }
 
-    .card-body {
-      min-height: 120px; /* 解答部分も含めてあらかじめ高さを確保しておく */
-      border-radius: 0.75rem;
-      background: #0a0f1a;
-      border: 1px solid var(--border);
-      padding: 0.9rem 1rem;
+    .card-title { display:none; }
+
+    .qa{
+      min-height: 120px;
       white-space: normal;
       font-size: clamp(18px,3.6vw,24px);
       display: flex;
       flex-direction: column;
-      align-items: center;      /* 左右中央揃え */
-      justify-content: center;  /* 上下中央寄せ */
-      text-align: center;       /* テキストも中央揃え */
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
 
-    .card-face {
-      width: 100%;
-      display: inline-block;
-      white-space: nowrap;   /* 問題文を1行に固定 */
-    }
+    .card-face{ width:100%; display:inline-block; }
 
-    .card-answer {
+    .card-answer{
       margin-top: 0.75rem;
       padding-top: 0.6rem;
       border-top: 1px dashed var(--border);
       color: var(--answer);
       transition: opacity 0.15s ease;
     }
-
-    /* 解答非表示状態でもスペースは維持してレイアウトを変えない */
-    .card-answer.is-hidden {
+    .card-answer.is-hidden{
       color: transparent;
       border-color: transparent;
     }
 
+    .exp-corner{
+      position:absolute;
+      right:18px;
+      bottom:16px;
+      font-size:0.85rem;
+      color:var(--muted);
+    }
+
     @media (min-width: 768px) {
-      h1 {
-        font-size: 1.9rem;
-      }
-      .page {
-        padding: 2rem 1.25rem 3rem;
-      }
+      .page { padding: 96px 16px 32px; }
     }
   </style>
 
-  <!-- MathJax 設定（インライン数式: $...$ や \( ... \) を利用可能に） -->
+  <!-- MathJax 設定 -->
   <script>
     window.MathJax = {
-      tex: {
-        inlineMath: [["$", "$"], ["\\(", "\\)"]]
-      },
-      svg: {
-        fontCache: "global"
-      }
+      tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] },
+      svg: { fontCache: "global" }
     };
   </script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
-<body>
-  <div class="page">
-    <header>
-      <h1>数学 フラッシュカード</h1>
-      <div class="meta">EXP: <span id="expDisplay">0</span> ｜ カードをタップで「解答表示 → 次の問題」。カード1つ完了で EXP +1</div>
-    </header>
 
-    <main>
-      <section class="flashcard" id="flashcard">
-        <div class="card-header">
-          <span id="problemIndex">1</span> / <span id="problemTotal">3</span>
-        </div>
-        <!-- タイトルは UI には出さないが、要素自体は残しておく -->
-        <div class="card-title" id="problemTitle">第1問</div>
-        <div class="card-body">
-          <div class="card-face" id="problemQuestion">
-            2 + 3 = ?
-          </div>
-          <div class="card-face card-answer is-hidden" id="problemAnswer">
-            5
-          </div>
-        </div>
-      </section>
-    </main>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="app-title">数学 フラッシュカード</div>
+      <div class="spacer"></div>
+      <a class="back-link" href="../index.html" aria-label="戻る">← 戻る</a>
+    </div>
+  </div>
+
+  <div class="page">
+    <section class="flashcard" id="flashcard">
+      <div class="category-row" aria-label="カテゴリ">
+        <div class="category-label">カテゴリ</div>
+        <div id="categoryLabel" class="category-name">数学</div>
+        <div id="totalCount" class="category-count">全0問</div>
+        <div class="category-spacer"></div>
+        <div id="countLabel" class="progress">0 / 0</div>
+      </div>
+
+      <div class="card-title" id="problemTitle">第1問</div>
+
+      <div class="qa">
+        <div class="card-face" id="problemQuestion"></div>
+        <div class="card-face card-answer is-hidden" id="problemAnswer"></div>
+      </div>
+
+      <div class="exp-corner">EXP: <span id="expLabel">0</span></div>
+    </section>
   </div>
 
   <script>
-    // EXP 用の設定
+    // ---------- EXP ----------
     const EXP_KEY = "midunohi.exam.exp";
     let exp = 0;
-    const expDisplayEl = document.getElementById("expDisplay");
+
+    const expDisplayEl = document.getElementById("expLabel");
+    const countLabelEl = document.getElementById("countLabel");
+    const totalCountEl = document.getElementById("totalCount");
 
     function loadExp() {
       try {
         const stored = localStorage.getItem(EXP_KEY);
-        if (stored == null) {
-          exp = 0;
-        } else {
+        if (stored == null) exp = 0;
+        else {
           const n = Number(stored);
           exp = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
         }
@@ -187,8 +226,7 @@
       if (expDisplayEl) expDisplayEl.textContent = String(exp);
     }
 
-    // フラッシュカードのデータ（MathJax でレンダリングされるように LaTeX 形式を使用）
-    // 問題データ（JS 文字列内なのでバックスラッシュは必ず \\ でエスケープ）
+    // ---------- Problems ----------
     const problems = [
       { title: "第1問（微分）", question: "関数 $y = x^3$ の導関数は？", answer: "$$\\dfrac{dy}{dx} = 3x^2$$" },
       { title: "第2問（積分）", question: "$\\displaystyle \\int 2x\\,dx$ を求めよ。", answer: "$$x^2 + C$$" },
@@ -202,8 +240,6 @@
       { title: "第10問（数列）", question: "等差数列 $a_1 = 1,\\ d = 2$ の第2項 $a_2$ を求めよ。", answer: "$$a_2 = 1 + 2 = 3$$" }
     ];
 
-    const problemIndexEl = document.getElementById("problemIndex");
-    const problemTotalEl = document.getElementById("problemTotal");
     const problemTitleEl = document.getElementById("problemTitle");
     const problemQuestionEl = document.getElementById("problemQuestion");
     const problemAnswerEl = document.getElementById("problemAnswer");
@@ -211,68 +247,95 @@
 
     let currentIndex = 0;
     let showingAnswer = false;
+    let cycleCount = 0;
+    let busy = false;
 
-    function typesetCurrentCard() {
-      // MathJax 読み込み後であれば、現在の問題・解答を再度タイプセット
-      if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([problemQuestionEl, problemAnswerEl]).catch(err => console.error(err.message));
+    // ---------- MathJax helpers ----------
+    function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    async function waitForMathJax(maxMs = 5000) {
+      const t0 = performance.now();
+      while (performance.now() - t0 < maxMs) {
+        const mj = window.MathJax;
+        if (mj && mj.typesetPromise && mj.startup && mj.startup.promise) {
+          await mj.startup.promise; // 完全起動待ち
+          return mj;
+        }
+        await delay(25);
       }
+      return null; // MathJax来ない場合も落ちないようにする
     }
 
-    function renderProblem() {
+    async function typesetElements(els) {
+      const mj = await waitForMathJax();
+      if (!mj) return; // MathJax未到着なら素表示で進む
+      if (mj.typesetClear) mj.typesetClear(els);
+      await mj.typesetPromise(els);
+    }
+
+    // ---------- Render ----------
+    async function renderProblem() {
       const p = problems[currentIndex];
-      // タイトルは UI では非表示だが、念のため更新だけはしておく
+
+      // まず普通に表示（MathJax待ちの間も文字が出る）
       problemTitleEl.textContent = p.title;
-      // LaTeX を含むので innerHTML を使う
       problemQuestionEl.innerHTML = p.question;
       problemAnswerEl.innerHTML = p.answer;
-      problemIndexEl.textContent = String(currentIndex + 1);
-      problemTotalEl.textContent = String(problems.length);
+
       problemAnswerEl.classList.add("is-hidden");
       showingAnswer = false;
 
-      typesetCurrentCard();
+      if (totalCountEl) totalCountEl.textContent = `全${problems.length}問`;
+      if (countLabelEl) countLabelEl.textContent = `${cycleCount} / 10`;
+
+      // その後にMathJaxで整える（準備できた時点で反映）
+      await typesetElements([problemQuestionEl, problemAnswerEl]);
     }
 
-    // 簡単な自己テスト（既存テストは変更せずそのまま維持）
+    // ---------- Self test ----------
     function runSelfTests() {
       console.assert(Array.isArray(problems), "problems は配列である必要があります");
       console.assert(problems.length >= 1, "少なくとも 1 問は登録してください");
-      console.assert(typeof problems[0].title === "string", "第1問に title が必要です");
-      console.assert(typeof problems[0].question === "string", "第1問に question が必要です");
-      console.assert(typeof problems[0].answer === "string", "第1問に answer が必要です");
       problems.forEach((p, i) => {
         console.assert(typeof p.title === "string" && p.title.length > 0, `問題${i + 1} に title が必要です`);
         console.assert(typeof p.question === "string" && p.question.length > 0, `問題${i + 1} に question が必要です`);
         console.assert(typeof p.answer === "string" && p.answer.length > 0, `問題${i + 1} に answer が必要です`);
       });
-      // 追加の簡単テスト: EXP の初期値が数値か
       console.assert(typeof exp === "number", "exp は数値である必要があります");
     }
 
-    // タップ（クリック）で「解答表示 → 次の問題」
-    flashcardEl.addEventListener("click", () => {
-      if (!showingAnswer) {
-        // まだ解答を見ていない状態 → 解答を表示
-        problemAnswerEl.classList.remove("is-hidden");
-        showingAnswer = true;
+    // ---------- Click behavior ----------
+    flashcardEl.addEventListener("click", async () => {
+      if (busy) return;
+      busy = true;
+      try {
+        if (!showingAnswer) {
+          problemAnswerEl.classList.remove("is-hidden");
+          showingAnswer = true;
+          await typesetElements([problemAnswerEl]);
+        } else {
+          exp += 1;
+          saveExp();
 
-        typesetCurrentCard();
-      } else {
-        // 解答表示中 → 次の問題へ
-        exp += 1;
-        saveExp();
-        console.log("EXP +1:", exp);
-        currentIndex = (currentIndex + 1) % problems.length;
-        renderProblem();
+          cycleCount = Math.min(cycleCount + 1, 10);
+          if (countLabelEl) countLabelEl.textContent = `${cycleCount} / 10`;
+
+          currentIndex = (currentIndex + 1) % problems.length;
+          if (currentIndex === 0) cycleCount = 0;
+
+          await renderProblem();
+        }
+      } finally {
+        busy = false;
       }
     });
 
-    // 初期表示 & テスト実行
-    loadExp();
-    console.log("初期 EXP:", exp);
-    runSelfTests();
-    renderProblem();
+    // ---------- Boot ----------
+    (async () => {
+      loadExp();
+      runSelfTests();
+      await renderProblem();
+    })();
   </script>
 </body>
 </html>
