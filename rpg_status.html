@@ -27,9 +27,16 @@
     background-position:center;
     background-repeat:no-repeat;
   }
-  #wrap{
+  .page{
     width:100%;
-    max-width:720px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+  }
+  #panel{
+    width:min(560px, 92vw);
     background:rgba(15,23,42,.88);
     border-radius:16px;
     border:1px solid rgba(148,163,184,.35);
@@ -37,13 +44,19 @@
     padding:16px;
   }
   header{
+    width:100%;
+    max-width:560px;
     display:flex;
+    flex-direction:row;
     align-items:center;
     justify-content:space-between;
     gap:8px;
-    margin-bottom:12px;
   }
-  h1{font-size:18px;margin:0}
+  h1{
+    font-size:28px;
+    letter-spacing:.06em;
+    margin:0;
+  }
   #backBtn{
     padding:4px 10px;
     border-radius:999px;
@@ -57,13 +70,6 @@
     gap:4px;
   }
   #backBtn span{font-size:14px}
-
-  .card{
-    background:radial-gradient(circle at top,#111827,#020617 70%);
-    border-radius:14px;
-    border:1px solid rgba(55,65,81,.9);
-    padding:12px;
-  }
 
   /* 上部ステータス */
   .meta{
@@ -112,11 +118,17 @@
     font-variant-numeric:tabular-nums
   }
 
+  .avatarRow{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    margin-top:10px;
+  }
   /* キャラ画像：中央・大きめ（正方形想定） */
   .avatarWrap{
     display:flex;
     justify-content:center;
-    margin-top:10px;
+    flex:1;
   }
   .avatar{
     width:min(320px, 72vw);
@@ -133,23 +145,28 @@
     object-fit:cover;
     display:block;
   }
+  .atkBox{
+    min-width:96px;
+    height:fit-content;
+    align-self:flex-start;
+  }
 </style>
 </head>
 
 <body>
-<div id="wrap">
+<div class="page">
   <header>
     <h1>キャラステータス</h1>
     <button id="backBtn" type="button"><span>◀</span> ゲームにもどる</button>
   </header>
 
-  <section class="card">
+  <section id="panel">
 
     <!-- ステータス（キャラの上部） -->
     <div class="meta">
       <div class="pill"><span>Lv</span><span id="lv">1</span></div>
-      <div class="pill"><span>ATK</span><span id="atk">5</span></div>
       <div class="pill"><span>総EXP</span><span id="totalExp">0</span></div>
+      <div class="pill"><span>次Lvまで</span><span id="toNext">20</span></div>
     </div>
 
     <div class="row">
@@ -164,16 +181,14 @@
       <span id="hpText" class="barText">30 / 30</span>
     </div>
 
-    <div class="row" style="margin-bottom:0;">
-      <span class="label">次Lv</span>
-      <div style="flex:1;opacity:.85;font-size:12px;">あと <b id="toNext">20</b></div>
-    </div>
-
     <!-- キャラ（中央） -->
-    <div class="avatarWrap">
-      <div class="avatar">
-        <img src="img/rpg_player_character.png" alt="player character">
+    <div class="avatarRow">
+      <div class="avatarWrap">
+        <div class="avatar">
+          <img src="img/rpg_player_character.png" alt="player character">
+        </div>
       </div>
+      <div class="pill atkBox"><span>ATK</span><span id="atk">5</span></div>
     </div>
 
   </section>
