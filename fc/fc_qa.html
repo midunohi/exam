@@ -2,39 +2,57 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>フラッシュカード</title>
+  <title>フラッシュカード 各科目・暗記事項</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --answer:#7CFFB2; }
     html, body{ height:100%; margin:0; background: linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("../img/bg_fc_enExamples.png"); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; font-family: system-ui,-apple-system,Segoe UI,Roboto, "Hiragino Kaku Gothic ProN",Meiryo,sans-serif; color: var(--fg); }
-    #card {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 1.5rem 1.25rem 2rem;
-      box-sizing: border-box;
+    .page{
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      cursor: pointer;
+      width: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 80px 16px 24px;
+      box-sizing:border-box;
     }
     .card-panel {
+      width: min(960px, 96vw);
       background: linear-gradient(180deg,#0a1322,#0a0f1a);
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 22px 24px 24px;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      cursor: pointer;
+      position:relative;
     }
-    .page-top{
-      margin-bottom: 14px;
+    .exp-corner{
+      position:absolute;
+      right:20px;
+      bottom:18px;
+      font-size:0.85rem;
+      color:var(--muted);
     }
-    .page-header{
+    .topbar{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      z-index:10;
+      padding: 8px 16px;
+      display:flex;
+      justify-content:center;
+      background: linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,.4) 60%, transparent);
+      backdrop-filter: blur(6px);
+    }
+    .topbar-inner{
+      width: min(960px, 96vw);
       display:flex;
       align-items:center;
       gap:14px;
       flex-wrap: wrap;
     }
-    .page-header .spacer{ flex:1; }
+    .topbar-inner .spacer{ flex:1; }
     .app-title{
       font-size: clamp(18px,3.6vw,22px);
       font-weight: 800;
@@ -54,15 +72,6 @@
       background: #0a1322;
     }
     .back-link:hover{ border-color:#2b3a55; }
-    .category-chip{
-      font-size:0.8rem;
-      color: var(--muted);
-      border:1px solid var(--border);
-      border-radius:999px;
-      padding: 4px 10px;
-      background:#0b1220;
-      white-space:nowrap;
-    }
     .category-row{
       display:flex;
       align-items:center;
@@ -75,15 +84,6 @@
       color: var(--muted);
       text-transform: uppercase;
     }
-    .category-group{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 8px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background:#0a1322;
-    }
     .category-name{
       font-size: clamp(16px,3.2vw,20px);
       font-weight: 800;
@@ -91,6 +91,15 @@
       color: var(--fg);
       min-width: 12ch;
       text-align: left;
+    }
+    .category-count{
+      font-size:0.85rem;
+      color:var(--muted);
+    }
+    .progress{
+      font-size:0.85rem;
+      color:var(--muted);
+      margin: 6px 0 0;
     }
     button {
       background: #0a1322;
@@ -109,33 +118,36 @@
   </style>
 </head>
 <body>
-  <div id="card">
-    <div class="page-top">
-      <div class="page-header">
-        <div class="app-title">フラッシュカード</div>
-        <div class="category-row">
-          <div class="category-group" aria-label="カテゴリと切り替え">
-            <div class="category-label">カテゴリ</div>
-            <div id="categoryLabel" class="category-name">--</div>
-            <button id="randomBtn" type="button">切り替え</button>
-          </div>
-        </div>
-        <div class="spacer"></div>
-        <a class="back-link" href="../index.html" aria-label="戻る">← 戻る</a>
-      </div>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="app-title">フラッシュカード 各科目・暗記事項</div>
+      <div class="spacer"></div>
+      <a class="back-link" href="../index.html" aria-label="戻る">← 戻る</a>
     </div>
+  </div>
+
+  <div class="page">
     <div class="card-panel">
-      <div id="counter"><span id="countLabel">0 / 0</span> ｜ EXP: <span id="expLabel">0</span></div>
+      <div class="category-row" aria-label="カテゴリと切り替え">
+        <div class="category-label">カテゴリ</div>
+        <div id="categoryLabel" class="category-name">--</div>
+        <div id="totalCount" class="category-count">全0問</div>
+        <button id="randomBtn" type="button">切り替え</button>
+      </div>
+      <div id="countLabel" class="progress">0 / 10</div>
+      <div id="counter"></div>
       <div id="question"></div>
       <div id="answer"></div>
       <div id="hint">タップ：答え表示 → 次のカード</div>
+      <div class="exp-corner">EXP: <span id="expLabel">0</span></div>
     </div>
   </div>
 
   <script src="../qa/files.js"></script>
   <script>
-    const cardEl = document.getElementById("card");
+    const cardEl = document.querySelector(".card-panel");
     const countLabelEl = document.getElementById("countLabel");
+    const totalCountEl = document.getElementById("totalCount");
     const expLabelEl = document.getElementById("expLabel");
     const qEl = document.getElementById("question");
     const aEl = document.getElementById("answer");
@@ -148,7 +160,9 @@
     let index = 0;
     let shown = false;
     let currentCategory = "--";
-    let drawCount = 0;
+    let cycleCount = 0;
+    let answeredCount = 0;
+    let currentFileIndex = -1;
 
     function loadExp() {
       try {
@@ -180,7 +194,8 @@
         qEl.textContent = "(カードが読み込まれていません)";
         aEl.textContent = "";
         aEl.style.visibility = "hidden";
-        countLabelEl.textContent = "0 / 0";
+        countLabelEl.textContent = "0 / 10";
+        if (totalCountEl) totalCountEl.textContent = "全0問";
         return;
       }
       index = (n + len) % len;
@@ -189,7 +204,8 @@
       aEl.textContent = c.answer || "(answer がありません)";
       aEl.style.visibility = "hidden";
       shown = false;
-      countLabelEl.textContent = `${drawCount} / ${len}`;
+      countLabelEl.textContent = `${cycleCount} / 10`;
+      if (totalCountEl) totalCountEl.textContent = `全${len}問`;
     }
 
     function showRandomCard(exceptIndex = -1) {
@@ -204,11 +220,12 @@
       aEl.textContent = c.answer || "(answer がありません)";
       aEl.style.visibility = "hidden";
       shown = false;
-      drawCount += 1;
-      countLabelEl.textContent = `${drawCount} / ${len}`;
+      cycleCount = Math.min(cycleCount + 1, 10);
+      countLabelEl.textContent = `${cycleCount} / 10`;
+      if (totalCountEl) totalCountEl.textContent = `全${len}問`;
     }
 
-    cardEl.addEventListener("click", () => {
+    cardEl.addEventListener("click", async () => {
       if (!cards.length) return;
       if (!shown) {
         aEl.style.visibility = "visible";
@@ -216,7 +233,16 @@
       } else {
         exp += 1;
         saveExp();
-        showRandomCard(index);
+        answeredCount += 1;
+        if (answeredCount % 10 === 0) {
+          try {
+            currentFileIndex = await loadRandomCategory(currentFileIndex);
+          } catch (err) {
+            console.error(err);
+          }
+        } else {
+          showRandomCard(index);
+        }
       }
     });
 
@@ -286,7 +312,8 @@
         if (!data.length) throw new Error(`qa/${base}.js にカードが見つかりません`);
         cards = data;
         currentCategory = base;
-        drawCount = 0;
+        cycleCount = 0;
+        answeredCount = 0;
         updateRandomButton();
         showRandomCard(-1);
       } catch (e) {
@@ -298,6 +325,7 @@
       const files = getFiles();
       const idx = pickRandomIndex(files.length, exceptIndex);
       await loadCategory(files[idx]);
+      currentFileIndex = idx;
       return idx;
     }
 
