@@ -4,48 +4,64 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>フラッシュ暗算</title>
 <style>
-  body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("img/bg_fc_enExamples.png");background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;color:#eef2ff}
-  .box{width:min(520px,92vw);padding:18px;border:1px solid #ffffff22;border-radius:16px;background:#121a33cc}
+  body{margin:0;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("img/bg_fc_enExamples.png");background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;color:#eef2ff}
+  .page{position:relative;width:100%;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-top:4px}
+  .topbar{width:min(500px,90vw);display:flex;align-items:center;justify-content:space-between}
+  .center{flex:1;width:100%;display:flex;align-items:center;justify-content:center}
+  .frame{width:min(500px,90vw)}
+  #backBtn{padding:6px 12px;border-radius:999px;border:1px solid #ffffff22;background:#0c1226;color:#eef2ff;cursor:pointer}
+  .box{width:100%;padding:18px;border:1px solid #ffffff22;border-radius:16px;background:#121a33cc}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   input,button{font:inherit;border-radius:12px;border:1px solid #ffffff22;background:#0c1226;color:#eef2ff;padding:10px 12px}
   input{width:110px}
   button{cursor:pointer;background:#2a3a66}
   button:disabled{opacity:.5;cursor:not-allowed}
-  #n{font-size:72px;font-weight:900;letter-spacing:.02em;text-align:center;padding:18px 0}
-  #title{font-size:32px;font-weight:900;letter-spacing:.08em;text-align:center;margin-bottom:12px}
+  #n{font-size:72px;font-weight:900;letter-spacing:.02em;text-align:center;min-height:120px;display:flex;align-items:center;justify-content:center}
+  #title{font-size:32px;font-weight:900;letter-spacing:.08em}
   #hint{font-size:12px;color:#b8c3ea;text-align:center}
-  #msg{margin-top:10px;font-weight:700;text-align:center}
-  #choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;min-height:98px}
-  #choices.is-hidden{visibility:hidden;pointer-events:none}
+  #msg{margin-top:10px;font-weight:700;text-align:center;min-height:22px}
+  .actionArea{position:relative;margin-top:10px;min-height:98px}
+  #choices{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:center}
+  #start{position:absolute;inset:0;margin:auto;height:44px;min-width:120px}
+  .is-hidden{display:none}
   .choice{background:#1a2446}
   .choice.correct{background:#1f7a3a;border-color:#2aa84f}
   .choice.wrong{background:#7a1f1f;border-color:#a82a2a}
   .exp{font-size:12px;color:#b8c3ea;text-align:right}
+  .startRow{min-height:44px}
 </style>
 
-<div id="title">フラッシュ暗算</div>
-<div class="box">
-  <div class="exp">EXP: <span id="expLabel">0</span></div>
-  <div class="row" style="flex-wrap:nowrap;overflow:auto">
-    <label>個数 <input id="k" type="number" min="2" max="200" value="5"></label>
-    <label>桁 <input id="d" type="number" min="1" max="6" value="1"></label>
-    <label>間隔ms <input id="ms" type="number" min="50" max="3000" value="1000"></label>
+<div class="page">
+  <div class="topbar">
+    <div id="title">フラッシュ暗算</div>
+    <button id="backBtn" type="button">戻る</button>
   </div>
+  <div class="center">
+    <div class="frame">
+      <div class="box">
+        <div class="exp">EXP: <span id="expLabel">0</span></div>
+        <div class="row" style="flex-wrap:nowrap;overflow:auto">
+          <label>個数 <input id="k" type="number" min="2" max="200" value="5"></label>
+          <label>桁 <input id="d" type="number" min="1" max="6" value="1"></label>
+          <label>間隔ms <input id="ms" type="number" min="50" max="3000" value="1000"></label>
+        </div>
 
-  <div id="n"></div>
+        <div id="n"></div>
 
-  <div id="choices" class="is-hidden">
-    <button class="choice" data-idx="0"></button>
-    <button class="choice" data-idx="1"></button>
-    <button class="choice" data-idx="2"></button>
-    <button class="choice" data-idx="3"></button>
+        <div class="actionArea">
+          <div id="choices" class="is-hidden">
+            <button class="choice" data-idx="0"></button>
+            <button class="choice" data-idx="1"></button>
+            <button class="choice" data-idx="2"></button>
+            <button class="choice" data-idx="3"></button>
+          </div>
+          <button id="start" class="is-hidden">開始</button>
+        </div>
+        <div id="msg"></div>
+        <div id="hint">開始 → 数字が次々表示 → 最後に4択で答える</div>
+      </div>
+    </div>
   </div>
-  <div id="msg"></div>
-
-  <div class="row" style="justify-content:center;margin-top:12px">
-    <button id="start">開始</button>
-  </div>
-  <div id="hint">開始 → 数字が次々表示 → 最後に4択で答える</div>
 </div>
 
 <script>
@@ -81,8 +97,7 @@
     nEl.textContent='';
     msgEl.textContent='';
     readyForChoice=false;
-    choicesEl.classList.add('is-hidden');
-    startBtn.hidden=false;
+    showStart();
     choiceBtns.forEach(b=>{
       b.textContent='';
       b.disabled=true;
@@ -94,7 +109,6 @@
   function showNext(){
     if(i>=seq.length){
       nEl.textContent='?';
-      showChoices();
       setRunning(false);
       return;
     }
@@ -130,8 +144,13 @@
       b.disabled=false;
       b.classList.remove('correct','wrong');
     });
+    startBtn.classList.add('is-hidden');
     choicesEl.classList.remove('is-hidden');
     readyForChoice=true;
+  }
+  function showStart(){
+    choicesEl.classList.add('is-hidden');
+    startBtn.classList.remove('is-hidden');
   }
 
   function addExp(n){
@@ -164,9 +183,8 @@
     sum=seq.reduce((a,b)=>a+b,0);
     i=0;
     msgEl.textContent='';
-    startBtn.hidden=true;
-    choicesEl.classList.add('is-hidden');
     choiceBtns.forEach(b=>{ b.disabled=true; b.textContent=''; b.classList.remove('correct','wrong'); });
+    showChoices();
     setRunning(true);
     showNext();
   }
@@ -179,6 +197,12 @@
   });
 
   startBtn.addEventListener('click', start);
+  const backBtn = $('backBtn');
+  if(backBtn){
+    backBtn.addEventListener('click', ()=>{
+      location.href = 'index.html';
+    });
+  }
 
   (function initExp(){
     try{
