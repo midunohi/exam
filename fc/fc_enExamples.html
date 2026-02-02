@@ -6,21 +6,48 @@
   <title>英単語・例文 フラッシュカード</title>
   <style>
     :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --answer:#7CFFB2; }
-    html, body{ height:100%; margin:0; background: linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("../img/bg_fc_enExamples.png"); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; font-family: system-ui,-apple-system,Segoe UI,Roboto, "Hiragino Kaku Gothic ProN",Meiryo,sans-serif; }
-    .container{max-width:960px; margin:0 auto; padding:16px 16px 64px;}
-    .page-top{margin-top:12px;}
-    .page-header{display:flex; gap:14px; align-items:center; color:var(--fg); flex-wrap:wrap}
-    .page-header .spacer{flex:1;}
-    .title{font-weight:800; letter-spacing:.3px; white-space:normal; word-break:break-word; line-height:1.15; font-size:clamp(22px,4vw,30px)}
+    html, body{ height:100%; margin:0; background: linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("../img/bg_fc_enExamples.png"); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; font-family: system-ui,-apple-system,Segoe UI,Roboto, "Hiragino Kaku Gothic ProN",Meiryo,sans-serif; color:var(--fg); }
+    .page{
+      min-height:100vh;
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:80px 16px 24px;
+      box-sizing:border-box;
+    }
+    .topbar{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      z-index:10;
+      padding:8px 16px;
+      display:flex;
+      justify-content:center;
+      background: linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,.4) 60%, transparent);
+      backdrop-filter: blur(6px);
+    }
+    .topbar-inner{
+      width:min(960px,96vw);
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .topbar-inner .spacer{flex:1;}
+    .title{font-weight:800; letter-spacing:.3px; white-space:normal; word-break:break-word; line-height:1.15; font-size:clamp(18px,3.6vw,22px)}
     .meta{margin-top:8px; color:var(--muted); font-size:13px}
     .category-row{display:flex; align-items:center; gap:10px;}
     .category-label{font-size:0.75rem; font-weight:700; letter-spacing:0.08em; color:var(--muted); text-transform:uppercase;}
-    .category-group{display:inline-flex; align-items:center; gap:8px; padding:6px 8px; border:1px solid var(--border); border-radius:999px; background:#0a1322;}
-    .category-name{font-size:clamp(16px,3.2vw,20px); font-weight:800; letter-spacing:0.01em; color:var(--fg); min-width:12ch; text-align:left;}
+    .category-name{font-size:clamp(16px,3.2vw,20px); font-weight:800; letter-spacing:0.01em; color:var(--fg); text-align:left;}
+    .category-count{font-size:0.85rem; color:var(--muted);}
+    .progress{font-size:0.85rem; color:var(--muted);}
+    .category-spacer{flex:1;}
     button{background:#0a1322; color:var(--fg); border:1px solid var(--border); border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer}
     button:hover{border-color:#2b3a55}
 
-    .card{margin-top:14px; background:linear-gradient(180deg,#0a1322,#0a0f1a); border:1px solid var(--border); border-radius:20px; padding:24px; display:grid; grid-template-columns:1fr; gap:16px; align-items:start; box-shadow:0 10px 30px rgba(0,0,0,.35); position:relative;}    
+    .card{width:min(960px,96vw); background:linear-gradient(180deg,#0a1322,#0a0f1a); border:1px solid var(--border); border-radius:20px; padding:24px; display:grid; grid-template-columns:1fr; gap:16px; align-items:start; box-shadow:0 10px 30px rgba(0,0,0,.35); position:relative;}
     .term-mean{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
     .term{line-height:1.2;}
     .phrases{display:flex; flex-direction:column; gap:8px}
@@ -34,7 +61,7 @@
 
     a.back{color:var(--fg); text-decoration:none; font-size:14px; border:1px solid var(--border); border-radius:999px; padding:6px 12px; font-weight:700; background:#0a1322;}
     a.back:hover{border-color:#2b3a55}
-    .exp-badge{position:absolute; right:18px; bottom:16px; font-size:12px; color:var(--muted); border:1px solid var(--border); border-radius:999px; padding:4px 10px; background:#0a1322;}
+    .exp-badge{position:absolute; right:18px; bottom:16px; font-size:12px; color:var(--muted);}
 
     @media (max-width: 640px){
       .container{padding:12px 12px 56px;}
@@ -47,23 +74,24 @@
   <script src="../en_examples/files.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="page-top">
-      <div class="page-header">
-        <div class="title">英単語・例文 フラッシュカード</div>
-        <div class="category-row">
-          <div class="category-group" aria-label="カテゴリと切り替え">
-            <div class="category-label">カテゴリ</div>
-            <div id="categoryLabel" class="category-name">--</div>
-            <button id="randomBtn" type="button">切り替え</button>
-          </div>
-        </div>
-        <div class="spacer"></div>
-        <a class="back" href="../index.html">← 戻る</a>
-      </div>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="title">英単語・例文 フラッシュカード</div>
+      <div class="spacer"></div>
+      <a class="back" href="../index.html">← 戻る</a>
     </div>
+  </div>
 
+  <div class="page">
     <section class="card" aria-live="polite" id="card" tabindex="0">
+      <div class="category-row" aria-label="カテゴリと切り替え">
+        <div class="category-label">カテゴリ</div>
+        <div id="categoryLabel" class="category-name">--</div>
+        <div id="totalCount" class="category-count">全0問</div>
+        <div class="category-spacer"></div>
+        <button id="randomBtn" type="button">切り替え</button>
+      </div>
+      <div id="countLabel" class="progress">0 / 10</div>
       <div class="term-mean">
         <div class="term question q-text" id="term">...</div>
         <div class="mean answer a-text is-hidden" id="meaning"></div>
@@ -111,6 +139,9 @@
 
   let exp = loadExp();
   let currentCategory = '--';
+  let cycleCount = 0;
+  let answeredCount = 0;
+  let currentFileIndex = -1;
 
   function safeGlobalEval(name){
     // グローバルレキシカル環境（const）から取り出すための global eval
@@ -201,6 +232,8 @@
     phrases: document.getElementById('phrases'),
     card: document.getElementById('card'),
     categoryLabel: document.getElementById('categoryLabel'),
+    countLabel: document.getElementById('countLabel'),
+    totalCount: document.getElementById('totalCount'),
     expLabel: document.getElementById('expLabel'),
     randomBtn: document.getElementById('randomBtn')
   };
@@ -209,6 +242,8 @@
   function updateMeta(){
     els.categoryLabel.textContent = `${currentCategory}`;
     els.expLabel.textContent = `EXP: ${exp}`;
+    if(els.totalCount) els.totalCount.textContent = `全${dataset.length}問`;
+    if(els.countLabel) els.countLabel.textContent = `${cycleCount} / 10`;
   }
 
   function render(){
@@ -275,6 +310,7 @@
   function nextCard(){
     idx = pickRandomIndex(dataset.length, idx);
     revealStep = 0;
+    cycleCount = Math.min(cycleCount + 1, 10);
     render();
   }
 
@@ -296,6 +332,11 @@
     }
 
     gainExp(1);
+    answeredCount += 1;
+    if(answeredCount % 10 === 0){
+      loadRandomCategory(currentFileIndex);
+      return;
+    }
     nextCard();
   }
 
@@ -311,9 +352,10 @@
   // Boot
   // ============================
 
-  async function loadRandomCategory(){
+  async function loadRandomCategory(exceptIndex = -1){
     const files = getFiles();
-    const filename = files[Math.floor(Math.random() * files.length)];
+    const idxFile = pickRandomIndex(files.length, exceptIndex);
+    const filename = files[idxFile];
     currentCategory = filename.replace(/\.js$/,'');
 
     els.term.textContent = 'loading…';
@@ -329,12 +371,15 @@
 
     idx = pickRandomIndex(dataset.length, -1);
     revealStep = 0;
+    cycleCount = 1;
+    answeredCount = 0;
+    currentFileIndex = idxFile;
     render();
   }
 
   function boot(){
-    els.randomBtn.addEventListener('click', loadRandomCategory);
-    loadRandomCategory();
+    els.randomBtn.addEventListener('click', ()=>loadRandomCategory(currentFileIndex));
+    loadRandomCategory(-1);
   }
 
   boot();
