@@ -24,22 +24,25 @@
     }
     .title {
       position: absolute;
+    .frame {
+      position: relative;
+    }
     .back-btn {
       position: absolute;
-      top: 14px;
-      left: 12px;
-      padding: 6px 12px;
+      top: -40px;
+      right: 0;
+      padding: 6px 14px;
       font-size: 12px;
       border-radius: 999px;
-      background: rgba(2, 6, 23, 0.65);
+      background: #2563eb;
       color: #fff;
       text-decoration: none;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(6px);
+      border: none;
+      display: inline-block;
+      line-height: 1;
     }
     .back-btn:hover {
-      background: rgba(37, 99, 235, 0.9);
-      border-color: transparent;
+      background: #1d4ed8;
     }
 
       top: 10px;
@@ -128,9 +131,9 @@
 <body>
   <h1 class="title">英語スピードリーディング</h1>
 
-  <a class="back-btn" href="index.html">戻る</a>
-
   <div class="frame">
+    <a class="back-btn" href="index.html">戻る</a>
+
     <div class="word-box">
       <div class="top-controls">
         <div class="play-group">
