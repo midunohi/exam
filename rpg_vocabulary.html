@@ -125,8 +125,8 @@ const EXP_GROW = 1.35;   // 必要EXP成長率
 
 // fallback
 const FALLBACK_WORDS=[
-  {en:'increase',ja:'増える、増やす'},{en:'reduce',ja:'減らす'},{en:'gather',ja:'集める'},{en:'explore',ja:'探索する'},
-  {en:'defeat',ja:'打ち倒す'},{en:'guard',ja:'守る'},{en:'release',ja:'解放する'},{en:'vanish',ja:'消える'}
+  ['increase','増える、増やす'],['reduce','減らす'],['gather','集める'],['explore','探索する'],
+  ['defeat','打ち倒す'],['guard','守る'],['release','解放する'],['vanish','消える']
 ];
 const FALLBACK_MONSTERS=[
   {id:'ash_wyrm',ja:'アッシュ・ワーム'},{id:'dust_lizard',ja:'ダスト・リザード'},{id:'ember_golem',ja:'エンバー・ゴーレム'},{id:'night_siren',ja:'ナイト・サイレン'}
@@ -244,8 +244,9 @@ async function loadWords(){
     const files=Array.isArray(c?.files)?c.files:[];
     if(!files.length) throw 0;
     const all=(await Promise.all(files.map(n=>fetch(`en_ja/${n}.json`,{cache:'no-store'}).then(r=>r.json())))).flat();
-    if(!all.length || !('en'in all[0]) || !('ja'in all[0])) throw 0;
-    words=all;
+    const normalized=all.filter(v=>Array.isArray(v) && typeof v[0]==='string' && typeof v[1]==='string');
+    if(!normalized.length) throw 0;
+    words=normalized;
   }catch(e){ words=FALLBACK_WORDS; }
 }
 
@@ -265,11 +266,11 @@ function nextQuestion(){
   state.used.add(pick);
   const q=words[pick];
 
-  const correct=q.en;
+  const correct=q[0];
   const set=new Set([correct]);
-  while(set.size<4 && set.size<words.length) set.add(words[R(words.length)].en);
+  while(set.size<4 && set.size<words.length) set.add(words[R(words.length)][0]);
 
-  Q={ja:q.ja, ans:correct, ch:shuffle([...set])};
+  Q={ja:q[1], ans:correct, ch:shuffle([...set])};
 
   $('question').textContent=`「${Q.ja}」の英語は？`;
   const box=$('choices'); box.innerHTML='';

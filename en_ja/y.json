@@ -1,21 +1,28 @@
 [
-  { "en": "yield", "ja": "生み出す" },
-  { "en": "youth", "ja": "若者" },
-
-  { "en": "yearn", "ja": "切望する" },
-  { "en": "yet", "ja": "しかしながら" },
-  { "en": "yielding", "ja": "従順な" },
-  { "en": "yoke", "ja": "束縛する" },
-  { "en": "yell", "ja": "叫ぶ" },
-  { "en": "yawn", "ja": "あくびをする" },
-
-  { "en": "yard", "ja": "庭" },
-  { "en": "yesterday", "ja": "昨日" },
-
-  { "en": "yoke", "ja": "くびき、束縛" },
-  { "en": "yearly", "ja": "毎年の" },
-  { "en": "youthful", "ja": "若々しい" },
-
-  { "en": "yieldingly", "ja": "従順に" },
-  { "en": "yourselves", "ja": "あなた方自身" }
+["yard","庭"],
+["yarn","作り話"],
+["yawn","あくびをする"],
+["yearbook","年鑑"],
+["year-end","年度末の"],
+["yearlong","1年にわたる"],
+["yearn","切望する"],
+["yearning","切望/憧れ"],
+["yearly","毎年の"],
+["year-round","通年の"],
+["yeast","酵母"],
+["yell","叫ぶ"],
+["yelp","悲鳴を上げる"],
+["yesterday","昨日"],
+["yesteryear","往年/昔"],
+["yet","しかしながら/まだ"],
+["yield","産出する/譲る"],
+["yielding","従順な"],
+["yieldingly","従順に"],
+["yoke","くびき/束縛する"],
+["yonder","向こうの"],
+["yore","昔"],
+["yourselves","あなた方自身"],
+["youth","若者"],
+["youthful","若々しい"],
+["youthfulness","若々しさ"]
 ]

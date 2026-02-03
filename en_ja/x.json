@@ -1,29 +1,9 @@
 [
-  { "en": "xenophobia", "ja": "外国人嫌悪" },
-  { "en": "xenophile", "ja": "外国文化愛好者" },
-  { "en": "xenophobic", "ja": "外国人嫌悪の" },
-
-  { "en": "xerophyte", "ja": "乾生植物" },
-  { "en": "xeric", "ja": "乾燥した（環境の）" },
-  { "en": "xeroderma", "ja": "皮膚乾燥症" },
-
-  { "en": "xenon", "ja": "キセノン" },
-  { "en": "xylene", "ja": "キシレン" },
-  { "en": "x-ray", "ja": "X線" },
-
-  { "en": "xenogenesis", "ja": "異種発生" },
-  { "en": "xenograft", "ja": "異種移植" },
-
-  { "en": "xenial", "ja": "友好的な（客に対して）" },
-  { "en": "xenodochy", "ja": "客人へのもてなし" },
-
-  { "en": "xenocracy", "ja": "外国人支配" },
-
-  { "en": "xylophone", "ja": "木琴" },
-  { "en": "xylitol", "ja": "キシリトール" },
-
-  { "en": "xenotropic", "ja": "異種に作用する" },
-  { "en": "xenobiotic", "ja": "外来性物質" },
-
-  { "en": "xerography", "ja": "乾式複写法" }
+["x-ray","X線"],
+["xenobiotic","外来性物質"],
+["xenophobia","外国人嫌悪"],
+["xenophobic","外国人嫌悪の"],
+["xenophile","外国文化愛好者"],
+["xenon","キセノン"],
+["xeric","乾燥した（環境の）"]
 ]
