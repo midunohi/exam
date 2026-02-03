@@ -107,6 +107,16 @@
     .category-count{ font-size:0.85rem; color:var(--muted); }
     .progress{ font-size:0.85rem; color:var(--muted); }
     .category-spacer{ flex:1; }
+    button{
+      background: #0a1322;
+      color: var(--fg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover{ border-color:#2b3a55; }
 
     .card-title { display:none; }
 
@@ -228,6 +238,11 @@
     }
 
     // ---------- Problems ----------
+    const fallbackProblems = [
+      ["\\(x^2\\) の微分は？", "\\(2x\\)"],
+      ["\\(\\int_0^1 x\\,dx\\) は？", "\\(\\frac{1}{2}\\)"],
+      ["\\(\\sin^2 x + \\cos^2 x\\) は？", "\\(1\\)"]
+    ];
     let problems = [];
     let currentCategory = "--";
     let currentFileIndex = -1;
@@ -317,6 +332,25 @@
       await typesetElements([problemQuestionEl, problemAnswerEl]);
     }
 
+    function safeGlobalEval(name) {
+      try {
+        return (0, eval)(name);
+      } catch (_e) {
+        return undefined;
+      }
+    }
+
+    function injectScript(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = src;
+        s.async = true;
+        s.onload = () => resolve(true);
+        s.onerror = () => reject(new Error(`load failed: ${src}`));
+        document.head.appendChild(s);
+      });
+    }
+
     function toCards(raw) {
       if (!Array.isArray(raw)) return [];
       return raw.map((row, i) => {
@@ -335,6 +369,17 @@
       }).filter(c => c.question || c.answer);
     }
 
+    async function useFallback(reason) {
+      console.warn(reason);
+      problems = toCards(fallbackProblems);
+      currentCategory = "stub";
+      answeredCount = 0;
+      cycleCount = 0;
+      lastIndex = -1;
+      updateRandomButton();
+      await showRandomProblem(-1);
+    }
+
     async function loadFilesList() {
       if (filesCache) return filesCache;
       const res = await fetch("../qa_math/files.json", { cache: "no-store" });
@@ -345,13 +390,27 @@
     }
 
     async function loadCategory(name) {
-      const base = String(name || "").replace(/\.json$/i, "");
-      const url = encodeURI(`../qa_math/${base}.json`);
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) throw new Error(`qa_math/${base}.json を読み込めませんでした`);
-      const raw = await res.json();
-      const data = toCards(raw);
-      if (!data.length) throw new Error(`qa_math/${base}.json にカードがありません`);
+      const base = String(name || "").replace(/\.json$/i, "").replace(/\.js$/i, "");
+      let data = [];
+      const jsSrc = encodeURI(`../qa_math/${base}.js`);
+      const jsonUrl = encodeURI(`../qa_math/${base}.json`);
+
+      try {
+        await injectScript(jsSrc);
+        const raw = safeGlobalEval(`qa_${base}`);
+        data = toCards(raw);
+      } catch (_e) {
+        data = [];
+      }
+
+      if (!data.length) {
+        const res = await fetch(jsonUrl, { cache: "no-store" });
+        if (!res.ok) throw new Error(`qa_math/${base}.json を読み込めませんでした`);
+        const raw = await res.json();
+        data = toCards(raw);
+      }
+
+      if (!data.length) throw new Error(`qa_math/${base}.js / ${base}.json にカードがありません`);
       problems = data;
       currentCategory = base;
       answeredCount = 0;
@@ -363,11 +422,19 @@
 
     async function loadRandomCategory(exceptIndex = -1) {
       const files = await loadFilesList();
-      if (!files.length) throw new Error("qa_math/files.json にカテゴリがありません");
+      if (!files.length) {
+        await useFallback("qa_math/files.json にカテゴリがありません");
+        return -1;
+      }
       const idx = pickRandomIndex(files.length, exceptIndex);
-      await loadCategory(files[idx]);
-      currentFileIndex = idx;
-      return idx;
+      try {
+        await loadCategory(files[idx]);
+        currentFileIndex = idx;
+        return idx;
+      } catch (e) {
+        await useFallback(e);
+        return -1;
+      }
     }
 
     function updateRandomButton() {
@@ -377,11 +444,7 @@
 
     async function showRandomProblem(exceptIndex = -1) {
       if (!problems.length) {
-        problemQuestionEl.textContent = "(カードが読み込まれていません)";
-        problemAnswerEl.textContent = "";
-        problemAnswerEl.classList.add("is-hidden");
-        if (countLabelEl) countLabelEl.textContent = "0 / 10";
-        if (totalCountEl) totalCountEl.textContent = "全0問";
+        await useFallback("カードが読み込まれていないためスタブを表示します");
         return;
       }
       currentIndex = pickRandomIndex(problems.length, exceptIndex);
@@ -440,11 +503,7 @@
         await loadRandomCategory(-1);
         runSelfTests();
       } catch (e) {
-        console.error(e);
-        problemQuestionEl.textContent = "カード一覧の読み込みに失敗しました";
-        problemAnswerEl.textContent = "qa_math/files.json と qa_math/*.json を確認してください";
-        problemAnswerEl.classList.remove("is-hidden");
-        if (countLabelEl) countLabelEl.textContent = "0 / 0";
+        await useFallback(e);
       }
     })();
 
