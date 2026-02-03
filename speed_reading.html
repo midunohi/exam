@@ -22,15 +22,25 @@
       align-items: center;
       justify-content: center;
     }
-    .title {
+    .top-bar {
       position: absolute;
-    .frame {
-      position: relative;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(600px, 90vw);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-align: left;
+      margin: 0;
     }
     .back-btn {
-      position: absolute;
-      top: -40px;
-      right: 0;
       padding: 6px 14px;
       font-size: 12px;
       border-radius: 999px;
@@ -40,20 +50,10 @@
       border: none;
       display: inline-block;
       line-height: 1;
+      white-space: nowrap;
     }
     .back-btn:hover {
       background: #1d4ed8;
-    }
-
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(600px, 90vw);
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-align: left;
-      margin: 0;
     }
     .frame {
       width: min(600px, 90vw);
@@ -129,11 +129,12 @@
   </style>
 </head>
 <body>
-  <h1 class="title">英語スピードリーディング</h1>
+  <div class="top-bar">
+    <h1 class="title">英語スピードリーディング</h1>
+    <a class="back-btn" href="index.html">戻る</a>
+  </div>
 
   <div class="frame">
-    <a class="back-btn" href="index.html">戻る</a>
-
     <div class="word-box">
       <div class="top-controls">
         <div class="play-group">
