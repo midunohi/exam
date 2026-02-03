@@ -390,27 +390,14 @@
     }
 
     async function loadCategory(name) {
-      const base = String(name || "").replace(/\.json$/i, "").replace(/\.js$/i, "");
-      let data = [];
+      const base = String(name || "").replace(/\.js$/i, "");
       const jsSrc = encodeURI(`../qa_math/${base}.js`);
-      const jsonUrl = encodeURI(`../qa_math/${base}.json`);
 
-      try {
-        await injectScript(jsSrc);
-        const raw = safeGlobalEval(`qa_${base}`);
-        data = toCards(raw);
-      } catch (_e) {
-        data = [];
-      }
+      await injectScript(jsSrc);
+      const raw = safeGlobalEval(`qa_${base}`);
+      const data = toCards(raw);
 
-      if (!data.length) {
-        const res = await fetch(jsonUrl, { cache: "no-store" });
-        if (!res.ok) throw new Error(`qa_math/${base}.json を読み込めませんでした`);
-        const raw = await res.json();
-        data = toCards(raw);
-      }
-
-      if (!data.length) throw new Error(`qa_math/${base}.js / ${base}.json にカードがありません`);
+      if (!data.length) throw new Error(`qa_math/${base}.js にカードがありません`);
       problems = data;
       currentCategory = base;
       answeredCount = 0;
