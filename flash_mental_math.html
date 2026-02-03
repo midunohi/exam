@@ -41,7 +41,7 @@
       <div class="box">
         <div class="exp">EXP: <span id="expLabel">0</span></div>
         <div class="row" style="flex-wrap:nowrap;overflow:auto">
-          <label>個数 <input id="k" type="number" min="2" max="200" value="5"></label>
+          <label>個数 <input id="k" type="number" min="2" max="200" value="10"></label>
           <label>桁 <input id="d" type="number" min="1" max="6" value="1"></label>
           <label>間隔ms <input id="ms" type="number" min="50" max="3000" value="1000"></label>
         </div>
@@ -80,7 +80,7 @@
   const randInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
   const rangeForDigits=(d)=>{
     d=Math.max(1,Math.min(6,Number(d)||1));
-    return d===1 ? [0,9] : [10**(d-1), 10**d-1];
+    return d===1 ? [1,9] : [10**(d-1), 10**d-1];
   };
 
   function setRunning(on){
@@ -126,7 +126,7 @@
   }
 
   function makeChoices(correct){
-    const deltas=[-9,-5,-3,-2,-1,1,2,3,5,7,8,9,10,12,15,20];
+    const deltas=[-5,-4,-3,-2,-1,1,2,3,4,5];
     const picks=new Set([correct]);
     while(picks.size<4){
       const delta=deltas[randInt(0,deltas.length-1)];
@@ -179,7 +179,14 @@
     reset();
     const k=Math.max(2, Math.min(200, Number(kEl.value)||10));
     const [lo,hi]=rangeForDigits(dEl.value);
-    seq=Array.from({length:k},()=>randInt(lo,hi));
+    seq=[];
+    for(let idx=0; idx<k; idx++){
+      let next = randInt(lo, hi);
+      while(seq.length>0 && next===seq[seq.length-1]){
+        next = randInt(lo, hi);
+      }
+      seq.push(next);
+    }
     sum=seq.reduce((a,b)=>a+b,0);
     i=0;
     msgEl.textContent='';
