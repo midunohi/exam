@@ -66,22 +66,8 @@
     cursor:pointer;
   }
   button.choice:disabled{opacity:.55;cursor:default}
-
-  /* 次へスロット：常にスペース確保（visibilityで切替） */
-  #nextSlot{height:var(--next-h);display:flex;align-items:center}
-  #nextBtn{
-    padding:var(--next-pad-y) var(--next-pad-x);
-    font-size:var(--next-size);
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,.10);
-    background:rgba(17,24,39,.86);
-    color:inherit;
-    cursor:pointer;
-
-    visibility:hidden;
-    pointer-events:none;
-  }
-  #nextBtn.show{visibility:visible;pointer-events:auto}
+  button.choice.correct{background:rgba(34,197,94,.28);border-color:rgba(34,197,94,.9)}
+  button.choice.wrong{background:rgba(239,68,68,.28);border-color:rgba(239,68,68,.9)}
 
   #logWrap{min-height:96px;max-height:30vh;display:flex;flex-direction:column;padding-top:2px;background:rgba(0,0,0,.35);border-radius:8px}
   #log{flex:1;overflow:auto;font-size:13px;padding:4px 6px}
@@ -112,7 +98,6 @@
     <section id="qaBox" class="panel">
       <p id="question">—</p>
       <div id="choices"></div>
-      <div id="nextSlot"><button id="nextBtn">次の敵 ▶</button></div>
     </section>
 
     <section id="enemyView" class="panel">
@@ -132,7 +117,7 @@ const R=n=>(Math.random()*n)|0;
 const clamp=(x,a,b)=>x<a?a:x>b?b:x;
 const bar=(id,r)=>{const e=$(id); if(e) e.style.width=(100*clamp(r,0,1)).toFixed(1)+'%';};
 const log=s=>{const e=$('log'); if(!e) return; e.insertAdjacentHTML('beforeend',`<p>${s}</p>`); e.scrollTop=e.scrollHeight;};
-const showNext=f=>$('nextBtn').classList.toggle('show',!!f);
+const clearLog=()=>{const e=$('log'); if(e) e.innerHTML='';};
 
 // ---- EXP曲線（ここだけ好みで調整） ----
 const EXP0 = 20;         // Lv1->2 必要EXP
@@ -156,7 +141,7 @@ const state={
 
   // モンスター順
   mi:0,
-  // 敵Lv：初期は max(1, lv-10)
+  // 敵Lv：初期は常に1
   enemyLv:1,
 
   used:new Set()
@@ -179,8 +164,6 @@ function recalcFromTotal(){
   state.atk   = 5  + Math.floor(state.lv*1.2);
   state.hp = clamp(state.hp,0,state.maxHP);
 
-  // 敵Lvは「最小で適正-10」：初期値は常にこれ
-  state.enemyLv = Math.max(1, state.lv - 10);
 }
 
 function render(){
@@ -233,7 +216,7 @@ function updateEnemy(){
 }
 
 // 敵の初期出現Lv：max(1, lv-10)
-// 倒すごとに enemyLv++（ただし最大で lv まで）
+// 倒すごとに enemyLv++（常に1ずつ上昇）
 function spawnEnemy(){
   const mon = MONSTERS[state.mi % MONSTERS.length] || FALLBACK_MONSTERS[0];
   state.mi = (state.mi+1) % MONSTERS.length;
@@ -249,10 +232,10 @@ function spawnEnemy(){
     xp: 6 + Math.floor(L*1.2)
   };
 
-  $('enemyName').textContent=`${enemy.name} Lv${enemy.level}`;
+  $('enemyName').textContent=`Lv${enemy.level}`;
   setEnemyImage(mon);
   updateEnemy();
-  log(`👾 Lv${enemy.level} ${enemy.name} が現れた！`);
+  log(`👾 モンスターが現れた！`);
 }
 
 async function loadWords(){
@@ -272,7 +255,7 @@ function shuffle(a){
 }
 
 function nextQuestion(){
-  if(state.hp<=0){ $('question').textContent='☠️ GAME OVER'; $('choices').innerHTML=''; showNext(false); return; }
+  if(state.hp<=0){ $('question').textContent='☠️ GAME OVER'; $('choices').innerHTML=''; return; }
   if(!words.length){ $('question').textContent='単語データがありません'; $('choices').innerHTML=''; return; }
 
   const idxs=words.map((_,i)=>i).filter(i=>!state.used.has(i));
@@ -320,6 +303,11 @@ function disableChoices(){
 function answer(choice){
   if(!Q || !enemy || state.hp<=0) return;
   disableChoices();
+  clearLog();
+
+  const btns = Array.from(document.querySelectorAll('button.choice'));
+  const correctBtn = btns.find(b=>b.textContent===Q.ans);
+  if(correctBtn) correctBtn.classList.add('correct');
 
   if(choice===Q.ans){
     const d=playerDmg();
@@ -334,6 +322,8 @@ function answer(choice){
     const d=fatalWrongDmg();
     state.hp=clamp(state.hp-d,0,state.maxHP);
     log(`❌ 不正解… <span class="bad">${d} ダメージ</span>`);
+    const wrongBtn = btns.find(b=>b.textContent===choice);
+    if(wrongBtn) wrongBtn.classList.add('wrong');
   }
 
   render();
@@ -354,17 +344,13 @@ function answer(choice){
 
     render();
     gainExp(enemy.xp);
-    showNext(true);
-    return;
   }
 
-  setTimeout(nextQuestion, 180);
-}
-
-function nextEnemy(){
-  showNext(false);
-  spawnEnemy();
-  nextQuestion();
+  setTimeout(()=>{
+    if(state.hp<=0) return;
+    if(enemy.hp<=0) spawnEnemy();
+    nextQuestion();
+  }, 1000);
 }
 
 function init(){
@@ -372,6 +358,7 @@ function init(){
   if(!Number.isFinite(state.total) || state.total<0) state.total=0;
 
   recalcFromTotal();
+  state.enemyLv = 1;
   state.hp = state.maxHP; // HPは開始時全快（保存しない）
   render();
 
@@ -382,7 +369,6 @@ function init(){
     loadWords().then(()=>{
       spawnEnemy();
       nextQuestion();
-      $('nextBtn').onclick=nextEnemy;
     });
   });
 }
