@@ -1,0 +1,13 @@
+[
+  [["mammal", "哺乳類"], ["A human is a mammal.", "人間は哺乳類だ。"], ["A whale is a mammal.", "クジラも哺乳類だ。"], ["Most mammal species give birth to live young.", "多くの哺乳類は胎生である。"]],
+  [["amphibian", "両生類"], ["A frog is an amphibian.", "カエルは両生類だ。"], ["A salamander is an amphibian.", "サンショウウオも両生類だ。"], ["An amphibian lives both in water and on land.", "両生類は水中と陸上の両方で生活する。"]],
+  [["reptile", "爬虫類"], ["A snake is a reptile.", "ヘビは爬虫類だ。"], ["A lizard is a reptile.", "トカゲは爬虫類だ。"], ["A reptile is a cold-blooded animal.", "爬虫類は変温動物だ。"]],
+  [["insect", "昆虫"], ["A bee is an insect.", "ハチは昆虫だ。"], ["A butterfly is a colorful insect.", "チョウは色鮮やかな昆虫だ。"], ["An insect has six legs.", "昆虫は6本の脚を持つ。"]],
+  [["predator", "捕食者"], ["The tiger is a top predator.", "トラは頂点捕食者だ。"], ["A predator hunts prey.", "捕食者は獲物を狩る。"], ["A shark is an ocean predator.", "サメは海の捕食者だ。"]],
+  [["leaf", "葉"], ["This leaf is broad.", "この葉は幅広い。"], ["A leaf performs photosynthesis.", "葉は光合成を行う。"], ["In autumn, a leaf can turn red.", "秋には葉が赤くなる。"]],
+  [["root", "根"], ["A root absorbs water.", "根は水を吸収する。"], ["A tree can have a deep root.", "その木は深い根を持っている。"], ["A root supports the plant.", "根は植物を支える。"]],
+  [["stem", "茎"], ["The stem is thin.", "茎は細い。"], ["A stem transports water.", "茎は水を運ぶ。"], ["This stem is strong.", "この茎は丈夫だ。"]],
+  [["flower", "花"], ["This flower is beautiful.", "この花は美しい。"], ["A flower blooms in spring.", "花は春に咲く。"], ["The flower has many petals.", "その花は多くの花びらを持つ。"]],
+  [["ecosystem", "生態系"], ["An ecosystem is complex.", "生態系は複雑だ。"], ["A forest is an important ecosystem.", "森林は重要な生態系だ。"], ["Pollution damages an ecosystem.", "汚染は生態系を破壊する。"]],
+  [["conservation", "保全・保護"], ["Conservation protects nature.", "保全は自然を守る。"], ["Wildlife conservation is vital.", "野生動物の保護は重要だ。"], ["We must work on conservation.", "私たちは保全に取り組まなければならない。"]]
+]

@@ -1,0 +1,11 @@
+[
+  [["amount", "量"], ["A large amount of information is available online.", "大量の情報がオンラインで利用可能だ。"], ["We need to measure the amount of sugar in this recipe.", "このレシピの砂糖の量を測る必要がある。"], ["The amount of time required is less than an hour.", "必要な時間の量は1時間未満だ。"]],
+  [["quantity", "量"], ["The quantity of water on Earth is limited.", "地球上の水の量は限られている。"], ["A large quantity of data was collected during the experiment.", "実験中に大量のデータが収集された。"], ["The quantity of available seats is small.", "利用可能な座席の量は少ない。"]],
+  [["degree", "程度"], ["To some degree, the plan was successful.", "ある程度、その計画は成功した。"], ["The degree of freedom is limited.", "自由の程度は限られている。"], ["The degree of risk depends on the situation.", "リスクの程度は状況によって異なる。"]],
+  [["extent", "範囲、程度"], ["To a great extent, health depends on lifestyle.", "健康は大きな程度で生活習慣に左右される。"], ["The extent of the damage was worse than expected.", "被害の程度は予想より深刻だった。"], ["I didn’t realize the extent of the problem.", "その問題の程度（深刻さ）を理解していなかった。"]],
+  [["scale", "規模"], ["The company expanded its business on a global scale.", "その会社は事業を世界規模で拡大した。"], ["The scale of the project increased rapidly.", "そのプロジェクトの規模は急速に大きくなった。"], ["We need to estimate the scale of the impact.", "影響の規模を見積もる必要がある。"]],
+  [["proportion", "割合、比率"], ["A large proportion of students use smartphones.", "多くの学生がスマートフォンを使っている。"], ["The proportion of elderly people is rising.", "高齢者の割合は増加している。"], ["A small proportion of the budget goes to research.", "予算のうち研究に回る割合は少ない。"]],
+  [["ratio", "比率"], ["The ratio of teachers to students is low.", "教師と生徒の比率は低い。"], ["The ratio of salt to water is important.", "塩と水の比率が重要だ。"], ["Keep the ratio of work to rest balanced.", "仕事と休憩の比率をバランスよく保とう。"]],
+  [["level", "水準、レベル"], ["The noise level in the city is very high.", "その都市の騒音レベルは非常に高い。"], ["The level of stress increased during the exam.", "試験中にストレスのレベルが上がった。"], ["The water level rose after the storm.", "嵐のあと水位（レベル）が上がった。"]],
+  [["intensity", "強さ、強度"], ["The intensity of the earthquake surprised scientists.", "地震の強度は科学者たちを驚かせた。"], ["The intensity of the light hurts my eyes.", "光の強さが目にしみる。"], ["The intensity of the workout was too high for me.", "そのトレーニングの強度は私には高すぎた。"]]
+]

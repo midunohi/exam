@@ -1,0 +1,22 @@
+[
+  [["diagnosis", "診断"], ["arrive at a diagnosis", "診断に至る"], ["a preliminary diagnosis", "暫定診断"], ["a definitive diagnosis", "確定診断"]],
+  [["symptom", "症状"], ["display a symptom", "症状を示す"], ["a mild symptom", "軽い症状"], ["the symptom persists", "症状が続く"]],
+  [["treatment", "治療"], ["undergo treatment", "治療を受ける"], ["seek medical treatment", "治療を求める"], ["respond to treatment", "治療に反応する"]],
+  [["therapy", "療法"], ["physical therapy", "理学療法"], ["cognitive therapy", "認知療法"], ["a course of therapy", "一連の療法"]],
+  [["surgery", "手術"], ["undergo surgery", "手術を受ける"], ["require emergency surgery", "緊急手術が必要だ"], ["post-surgery recovery", "術後の回復"]],
+  [["operation", "手術／作業"], ["a surgical operation", "外科手術"], ["the operation was successful", "手術は成功した"], ["resume normal operation", "通常稼働に戻る"]],
+  [["prescription", "処方箋"], ["write a prescription", "処方箋を書く"], ["fill a prescription", "処方箋で薬を受け取る"], ["prescription-only medicine", "処方薬"]],
+  [["medicine", "薬；医学"], ["take medicine", "薬を飲む"], ["modern medicine", "現代医学"], ["over-the-counter medicine", "市販薬"]],
+  [["vaccine", "ワクチン"], ["receive a vaccine", "ワクチン接種を受ける"], ["vaccine efficacy", "ワクチン有効性"], ["a booster vaccine", "追加接種（ブースター）"]],
+  [["infection", "感染"], ["prevent infection", "感染を予防する"], ["contract an infection", "感染する"], ["a secondary infection", "二次感染"]],
+  [["epidemic", "流行病、疫病"], ["an epidemic outbreak", "流行の発生"], ["the epidemic spreads", "流行が広がる"], ["contain an epidemic", "流行を封じ込める"]],
+  [["pandemic", "世界的流行"], ["a global pandemic", "世界的パンデミック"], ["declare a pandemic", "パンデミックを宣言する"], ["in the wake of a pandemic", "パンデミック後に"]],
+  [["immunity", "免疫"], ["build immunity", "免疫をつける"], ["acquire immunity", "免疫を獲得する"], ["herd immunity", "集団免疫"]],
+  [["immune", "免疫のある"], ["be immune to the virus", "ウイルスに免疫がある"], ["immune response", "免疫反応"], ["immune system", "免疫系"]],
+  [["allergy", "アレルギー"], ["have an allergy", "アレルギーがある"], ["trigger an allergy", "アレルギーを引き起こす"], ["a severe allergy reaction", "重いアレルギー反応"]],
+  [["obesity", "肥満"], ["combat obesity", "肥満と闘う"], ["childhood obesity", "小児肥満"], ["obesity-related risks", "肥満関連リスク"]],
+  [["nutrition", "栄養"], ["adequate nutrition", "十分な栄養"], ["poor nutrition", "栄養状態が悪い"], ["a nutrition deficiency", "栄養欠乏"]],
+  [["malnutrition", "栄養失調"], ["suffer from malnutrition", "栄養失調に苦しむ"], ["chronic malnutrition", "慢性的栄養失調"], ["address malnutrition", "栄養失調に対処する"]],
+  [["mental health", "精神的健康"], ["mental health care", "メンタルヘルスケア"], ["mental health stigma", "精神疾患への偏見"], ["support mental health", "精神的健康を支える"]],
+  [["therapy session", "治療セッション"], ["attend a therapy session", "治療セッションに通う"], ["a weekly therapy session", "週1回の治療セッション"], ["in a therapy session", "治療セッションで"]]
+]

@@ -1,0 +1,12 @@
+[
+  [["atom", "原子"], ["an atom is the smallest unit of matter", "原子は物質の最小単位である"], ["electrons orbit the nucleus of an atom", "電子は原子の原子核の周りを回る"], ["atoms form a metallic lattice", "原子は金属格子を作る"]],
+  [["molecule", "分子"], ["matter can be made up of molecules", "物質は分子からできている"], ["a molecule consists of atoms bonded together", "分子は結合した原子から成る"], ["an oxygen molecule (O₂) is a molecule", "酸素分子（O₂）は分子である"]],
+  [["gravity", "重力"], ["gravity pulls objects toward Earth", "重力は物体を地球に引き寄せる"], ["gravity is weaker in orbit", "重力は軌道上では弱い"], ["gravity depends on mass and distance", "重力は質量と距離に依存する"]],
+  [["energy", "エネルギー"], ["plants convert sunlight into energy", "植物は太陽光をエネルギーに変換する"], ["energy cannot be created or destroyed", "エネルギーは生成も消滅もしない"], ["kinetic energy increases with speed", "運動エネルギーは速度とともに増加する"]],
+  [["experiment", "実験"], ["conduct an experiment", "実験を行う"], ["verify the results of the experiment", "実験の結果を検証する"], ["use a control group in the experiment", "実験で対照群を用いる"]],
+  [["hypothesis", "仮説"], ["propose a new hypothesis", "新しい仮説を提案する"], ["a testable hypothesis", "検証可能な仮説"], ["test the hypothesis", "仮説を検証する"]],
+  [["reaction", "反応"], ["a chemical reaction", "化学反応"], ["a catalyst speeds up the reaction", "触媒は反応を速める"], ["observe a color change during the reaction", "反応中の色の変化を観察する"]],
+  [["observation", "観察"], ["careful observation", "注意深い観察"], ["record observations", "観察結果を記録する"], ["use observations to find patterns", "観察結果からパターンを見つける"]],
+  [["theory", "理論"], ["a theory is supported by evidence", "理論は証拠によって支えられる"], ["challenge the current theory", "現在の理論に疑問を投げかける"], ["the theory of evolution", "進化論"]],
+  [["variable", "変数"], ["the independent variable", "独立変数"], ["control other variables", "他の変数を制御する"], ["the dependent variable", "従属変数"]]
+]
