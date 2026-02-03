@@ -247,7 +247,6 @@
     let currentCategory = "--";
     let currentFileIndex = -1;
 
-    const problemTitleEl = document.getElementById("problemTitle");
     const problemQuestionEl = document.getElementById("problemQuestion");
     const problemAnswerEl = document.getElementById("problemAnswer");
     const flashcardEl = document.getElementById("flashcard");
@@ -258,7 +257,6 @@
     let showingAnswer = false;
     let cycleCount = 0;
     let busy = false;
-    let lastIndex = -1;
     let answeredCount = 0;
     let filesCache = null;
 
@@ -293,34 +291,14 @@
     }
 
     // ---------- Render ----------
-    function normalizeProblem(p, index) {
-      if (Array.isArray(p)) {
-        return {
-          title: `第${index + 1}問`,
-          question: String(p[0] ?? ""),
-          answer: String(p[1] ?? "")
-        };
-      }
-      if (p && typeof p === "object") {
-        const question = p.question ?? p.q ?? "";
-        const answer = p.answer ?? p.a ?? "";
-        const title = p.title ?? `第${index + 1}問`;
-        return {
-          title: String(title),
-          question: String(question),
-          answer: String(answer)
-        };
-      }
-      return { title: `第${index + 1}問`, question: "", answer: "" };
-    }
-
     async function renderProblem() {
-      const p = normalizeProblem(problems[currentIndex], currentIndex);
+      const row = problems[currentIndex] || [];
+      const question = row[0] ?? "";
+      const answer = row[1] ?? "";
 
       // まず普通に表示（MathJax待ちの間も文字が出る）
-      problemTitleEl.textContent = p.title;
-      problemQuestionEl.innerHTML = p.question;
-      problemAnswerEl.innerHTML = p.answer;
+      problemQuestionEl.innerHTML = String(question);
+      problemAnswerEl.innerHTML = String(answer);
 
       problemAnswerEl.classList.add("is-hidden");
       showingAnswer = false;
@@ -351,31 +329,12 @@
       });
     }
 
-    function toCards(raw) {
-      if (!Array.isArray(raw)) return [];
-      return raw.map((row, i) => {
-        if (Array.isArray(row)) {
-          const [question, answer] = row;
-          return { title: `第${i + 1}問`, question, answer };
-        }
-        if (row && typeof row === "object") {
-          return {
-            title: row.title ?? `第${i + 1}問`,
-            question: row.question ?? row.q ?? "",
-            answer: row.answer ?? row.a ?? ""
-          };
-        }
-        return { title: `第${i + 1}問`, question: "", answer: "" };
-      }).filter(c => c.question || c.answer);
-    }
-
     async function useFallback(reason) {
       console.warn(reason);
-      problems = toCards(fallbackProblems);
+      problems = fallbackProblems;
       currentCategory = "stub";
       answeredCount = 0;
       cycleCount = 0;
-      lastIndex = -1;
       updateRandomButton();
       await showRandomProblem(-1);
     }
@@ -395,14 +354,13 @@
 
       await injectScript(jsSrc);
       const raw = safeGlobalEval(`qa_${base}`);
-      const data = toCards(raw);
+      const data = Array.isArray(raw) ? raw : [];
 
       if (!data.length) throw new Error(`qa_math/${base}.js にカードがありません`);
       problems = data;
       currentCategory = base;
       answeredCount = 0;
       cycleCount = 0;
-      lastIndex = -1;
       updateRandomButton();
       await showRandomProblem(-1);
     }
@@ -439,19 +397,6 @@
       await renderProblem();
     }
 
-    // ---------- Self test ----------
-    function runSelfTests() {
-      console.assert(Array.isArray(problems), "problems は配列である必要があります");
-      console.assert(problems.length >= 1, "少なくとも 1 問は登録してください");
-      problems.forEach((p, i) => {
-        const n = normalizeProblem(p, i);
-        console.assert(typeof n.title === "string" && n.title.length > 0, `問題${i + 1} に title が必要です`);
-        console.assert(typeof n.question === "string" && n.question.length > 0, `問題${i + 1} に question が必要です`);
-        console.assert(typeof n.answer === "string" && n.answer.length > 0, `問題${i + 1} に answer が必要です`);
-      });
-      console.assert(typeof exp === "number", "exp は数値である必要があります");
-    }
-
     // ---------- Click behavior ----------
     flashcardEl.addEventListener("click", async () => {
       if (busy) return;
@@ -473,7 +418,6 @@
               console.error(err);
             }
           } else {
-            lastIndex = currentIndex;
             await showRandomProblem(currentIndex);
           }
         }
@@ -488,7 +432,6 @@
       try {
         updateRandomButton();
         await loadRandomCategory(-1);
-        runSelfTests();
       } catch (e) {
         await useFallback(e);
       }
