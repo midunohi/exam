@@ -15,29 +15,69 @@
       background-repeat: no-repeat;
       background-attachment: fixed;
       color: #fff;
+      min-height: 100vh;
+      position: relative;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .title {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(600px, 90vw);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-align: left;
+      margin: 0;
+    }
+    .frame {
+      width: min(600px, 90vw);
+    }
+    .word-box {
+      width: 100%;
+      height: min(55vh, 260px);
+      border-radius: 16px;
+      border: 1px solid #222;
+      background: #020617;
+      position: relative;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
+      padding: 10px 12px 12px;
+      gap: 6px;
     }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 16px;
-      text-align: center;
-      font-weight: 600;
-    }
-    .controls {
+    .top-controls {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 12px;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
       font-size: 12px;
     }
+    .play-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 72px;
+    }
+    .progress {
+      font-size: 11px;
+      opacity: .75;
+    }
+    .speed {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
     .exp {
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
       color: #9ca3af;
       font-size: 12px;
     }
@@ -45,25 +85,19 @@
     button {
       border: none;
       border-radius: 999px;
-      padding: 6px 12px;
+      padding: 6px 14px;
       font-size: 12px;
       cursor: pointer;
       background: #2563eb;
       color: #fff;
       user-select: none;
     }
-    button.secondary { background:#111; border:1px solid #333; }
-    .word-box {
-      width: 100%;
-      max-width: 600px;
-      height: min(55vh, 260px);
-      border-radius: 16px;
-      border: 1px solid #222;
-      background: #020617;
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .word-area {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 8px 12px;
     }
     .word {
       font-size: clamp(24px, 5vw, 40px);
@@ -71,50 +105,88 @@
       letter-spacing: 0.04em;
       white-space: nowrap;
     }
-    .status {
-      margin-top: 6px;
-      font-size: 11px;
-      text-align: center;
-      opacity: .7;
-    }
   </style>
 </head>
 <body>
-  <div>
-    <h1>英語スピードリーディング</h1>
+  <h1 class="title">英語スピードリーディング</h1>
 
-    <div class="controls">
-      <button id="playPauseBtn">▶︎</button>
-      <button id="randomBtn" class="secondary">🎲 例文ランダム</button>
-
-      <label>
-        速度
-        <!-- デフォルトを「ネイティブより速くない」範囲の学習向けに調整 -->
-        <input type="range" id="speedSlider" min="120" max="500" step="10" value="240" />
-        <span id="speedLabel">240 wpm</span>
-      </label>
-      <span class="exp">EXP: <span id="expLabel">0</span></span>
-    </div>
-
+  <div class="frame">
     <div class="word-box">
-      <div id="wordDisplay" class="word">準備中…</div>
+      <div class="top-controls">
+        <div class="play-group">
+          <button id="playBtn">開始</button>
+          <div class="progress" id="progressLabel">0 / 0</div>
+        </div>
+
+        <label class="speed">
+          速度
+          <!-- デフォルトを「ネイティブより速くない」範囲の学習向けに調整 -->
+          <input type="range" id="speedSlider" min="120" max="500" step="10" value="240" />
+          <span id="speedLabel">240 wpm</span>
+        </label>
+      </div>
+
+      <div class="word-area">
+        <div id="wordDisplay" class="word"></div>
+      </div>
+
+      <div class="exp">EXP: <span id="expLabel">0</span></div>
     </div>
-    <div class="status" id="statusLabel">0 / 0　停止中</div>
   </div>
 
   <script>
-    const passages = [
-      "Reading is a skill that you can improve through practice. When you read English every day, you gradually get used to common phrases and sentence patterns. This makes it easier to understand long passages in entrance exams. Try to focus on the meaning of each group of words rather than translating word by word.",
-      "Technology has changed the way we communicate with each other. In the past, people had to write letters and wait many days for a reply. Today, we can send messages instantly by email or social media. However, some researchers say that we may be losing deep conversations because we are always online.",
-      "Many students believe that they must study for long hours without a break. In fact, short and focused study sessions are often more effective. When you review important points regularly, the information moves from short term memory to long term memory. This method is useful when you prepare for university entrance exams."
-    ];
+const passages = [
+  "Reading complex articles trains you to recognize how ideas are connected, so instead of translating word by word, you can follow the writer’s logic and answer inference questions confidently.",
+  "Although social media lets us share information instantly, it can also distract us from careful thinking, so some educators argue that students should limit screen time during exam season.",
+  "Many learners take it for granted that long study hours guarantee success, yet concentrated practice with clear goals often produces better results because attention declines when you keep forcing yourself.",
+  "If you keep a vocabulary notebook and review it regularly, unfamiliar words become familiar, and you will be less likely to panic when a passage includes academic terms in a university exam.",
+  "Some people claim that artificial intelligence will replace most jobs, whereas others insist it will create new opportunities, so society must prepare by improving education and retraining systems.",
+  "When you encounter an unknown word, try to guess its meaning from context, because entrance exam passages frequently provide hints through examples, contrasts, or cause-and-effect relationships.",
+  "In contrast to the past, when local communities were tightly connected, modern life often feels isolated, so volunteering can help individuals build relationships and regain a sense of belonging.",
+  "Because climate change affects agriculture and water resources, governments are under pressure to reduce emissions, yet international cooperation is difficult when economic interests conflict.",
+  "Scientific discoveries rarely happen overnight; rather, researchers test hypotheses repeatedly, learn from failures, and gradually refine their methods until their results are reliable enough to publish.",
+  "Some students memorize grammar rules but cannot read smoothly, so they should practice chunking phrases, which helps them process long sentences quickly and understand the author’s main point.",
+  "Even if a product is convenient, consumers may hesitate to buy it when privacy is at risk, so companies must explain how they protect personal data and provide transparent policies.",
+  "While globalization has expanded trade and lowered prices, it has also increased competition, so workers need adaptable skills to avoid being left behind in rapidly changing industries.",
+  "If you set small daily targets, such as learning ten words and reading one paragraph, the habit becomes sustainable, and progress accumulates without requiring extreme motivation every day.",
+  "Many historical conflicts were caused not only by ideology but also by scarcity of resources, so understanding economic conditions can clarify why societies made seemingly irrational decisions.",
+  "It is often argued that failure is necessary for growth, because mistakes reveal weak points, and once you analyze them calmly, you can adjust your strategy and improve efficiently.",
+  "When people move to big cities for work, rural areas may lose young residents, so local governments try to attract newcomers by improving infrastructure and supporting remote employment.",
+  "Because advertisements shape our preferences subtly, we should evaluate products based on evidence rather than impressions, especially when companies use emotional stories to influence our choices.",
+  "Some scientists warn that antibiotics are losing effectiveness, so hospitals must use them carefully and promote hygiene, otherwise minor infections could become life-threatening again in the future.",
+  "Even though online classes offer flexibility, students can struggle to stay motivated, so building routines and interacting with classmates are essential to prevent learning from becoming passive.",
+  "If you read editorials from different viewpoints, you will notice how writers use persuasive techniques, such as statistics and rhetorical questions, which helps you answer tone questions accurately.",
+  "Because economic inequality can lead to social tension, policymakers debate whether to raise taxes on the wealthy, yet opponents claim that such policies reduce investment and innovation.",
+  "Although studying abroad broadens perspectives, cultural misunderstandings can occur, so learners should observe local customs carefully and ask questions politely rather than making quick judgments.",
+  "When you practice summarizing paragraphs in one sentence, you learn to identify topic sentences and supporting details, which makes it easier to choose the best title in reading tasks.",
+  "Some people prefer renewable energy, yet they worry about stability, so engineers are developing better batteries that store power efficiently and reduce dependence on fossil fuels.",
+  "Because smartphones are always within reach, many teenagers check notifications constantly, and this habit can weaken concentration, so some schools require devices to be kept in lockers.",
+  "Even if a nation becomes wealthy, happiness does not automatically increase, because relationships, health, and purpose matter, so measuring well-being requires more than economic indicators alone.",
+  "When you encounter a long relative clause, do not lose track of the main verb; instead, locate the core sentence first, and then attach extra information step by step.",
+  "Some critics say that modern art is meaningless, whereas supporters argue that it reflects social change, so debates about art often reveal deeper differences in values and identity.",
+  "Because tourism brings money to local communities, cities promote famous landmarks, yet excessive crowds can damage nature, so sustainable travel requires rules and responsible behavior.",
+  "Although teamwork is emphasized in workplaces, individuals still need independence, so successful employees balance cooperation with initiative and communicate clearly when responsibilities overlap.",
+  "If you learn common collocations, such as pay attention or play a role, your reading speed improves, because you recognize phrases as units instead of decoding them word by word.",
+  "Some researchers suggest that sleep strengthens memory, so staying up all night before an exam may be counterproductive, even if you feel you studied more hours.",
+  "Because misinformation spreads quickly online, people should verify sources and compare reports, otherwise they may share false claims that cause unnecessary fear or unfair discrimination.",
+  "Even though many products are cheaper today, waste has increased, so some communities encourage repairing items and sharing tools, which reduces environmental burden and saves money over time.",
+  "If you are preparing for difficult questions, practice eliminating wrong choices logically, because distractors often contain extreme expressions, vague claims, or details that contradict the passage.",
+  "Some people insist that competition motivates students, yet too much pressure can harm mental health, so schools are trying to create environments that reward effort as well as results.",
+  "Because language reflects culture, learning idioms and metaphors helps you understand subtle meanings, so advanced vocabulary study should include usage, not only definitions in isolation.",
+  "Although scientific progress has improved life expectancy, it has also created ethical dilemmas, so societies must discuss how technologies should be regulated and who should benefit from them.",
+  "When companies focus only on short-term profits, they may neglect long-term trust, so building a strong reputation requires consistent quality and honest communication with customers.",
+  "Some historians argue that individual leaders change history, whereas others emphasize social structures, so reading multiple interpretations teaches you to evaluate evidence and avoid simplistic explanations.",
+  "Because public transportation reduces traffic and pollution, investing in trains and buses can improve city life, yet funding is limited, so priorities must be chosen carefully.",
+  "Even if you feel bored by a passage, treat it as training, because entrance exams test your ability to read unfamiliar topics and extract necessary information without relying on interest.",
+  "If you practice paraphrasing sentences, you can handle synonym questions more easily, because the same idea is often expressed with different words and structures throughout the text.",
+  "Although the internet provides endless information, not all of it is accurate, so critical thinking is required to distinguish reliable research from persuasive but unsupported claims."
+];
 
-    const playPauseBtn = document.getElementById('playPauseBtn');
-    const randomBtn    = document.getElementById('randomBtn');
+    const playBtn      = document.getElementById('playBtn');
     const speedSlider  = document.getElementById('speedSlider');
     const speedLabel   = document.getElementById('speedLabel');
     const wordDisplay  = document.getElementById('wordDisplay');
-    const statusLabel  = document.getElementById('statusLabel');
+    const progressLabel = document.getElementById('progressLabel');
 
     const EXP_KEY = "midunohi.exam.exp";
     let exp = 0;
@@ -162,13 +234,13 @@
 
     function updateDisplay() {
       if (!words.length) {
-        wordDisplay.textContent = "例文をランダム選択してください";
-        statusLabel.textContent = "0 / 0　停止中";
+        wordDisplay.textContent = "";
+        progressLabel.textContent = "0 / 0";
         return;
       }
       const current = Math.min(index + 1, words.length);
       wordDisplay.textContent = words[index] || "";
-      statusLabel.textContent = current + " / " + words.length + (running ? "　再生中" : "　停止中");
+      progressLabel.textContent = current + " / " + words.length;
     }
 
     function setWordsFromText(text) {
@@ -189,11 +261,6 @@
       return passages[k];
     }
 
-    function randomizePassage() {
-      pause();                 // 再選択時は停止して最初からにする
-      setWordsFromText(pickRandomPassage());
-    }
-
     function advance() {
       if (!running || !words.length) return;
       index++;
@@ -203,7 +270,7 @@
           expAwarded = true;
           saveExp();
         }
-        pause();
+        stop();
         index = Math.max(0, words.length - 1);
       }
       updateDisplay();
@@ -226,11 +293,12 @@
     }
 
     function play() {
-      if (!words.length) randomizePassage();
+      if (running) return;
+      setWordsFromText(pickRandomPassage());
       if (!words.length) return;
 
       running = true;
-      playPauseBtn.textContent = "⏸";
+      playBtn.disabled = true;
       if (index >= words.length) {
         index = 0;
         expAwarded = false;
@@ -239,9 +307,9 @@
       startTimer();
     }
 
-    function pause() {
+    function stop() {
       running = false;
-      playPauseBtn.textContent = "▶︎";
+      playBtn.disabled = false;
       if (timerId) {
         clearTimeout(timerId);
         timerId = null;
@@ -250,25 +318,16 @@
     }
 
     // UI events
-    playPauseBtn.addEventListener("click", () => {
-      running ? pause() : play();
-    });
-
-    randomBtn.addEventListener("click", () => {
-      randomizePassage();
-    });
+    playBtn.addEventListener("click", play);
 
     speedSlider.addEventListener("input", updateSpeedLabel);
 
     // Key controls
     document.addEventListener("keydown", (e) => {
-      // Space: play/pause, R: randomize, ↑↓: speed
+      // Space: play, ↑↓: speed
       if (e.code === "Space") {
         e.preventDefault();
-        running ? pause() : play();
-      } else if (e.key === "r" || e.key === "R") {
-        e.preventDefault();
-        randomizePassage();
+        play();
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         const v = Math.min(Number(speedSlider.max), Number(speedSlider.value) + 20);
@@ -282,10 +341,10 @@
       }
     });
 
-    // 初期化：起動時にランダム例文をセット（停止状態）
+    // 初期化
     loadExp();
     updateSpeedLabel();
-    randomizePassage();
+    updateDisplay();
   </script>
 </body>
 </html>
