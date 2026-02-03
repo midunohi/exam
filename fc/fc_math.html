@@ -175,6 +175,7 @@
         <div id="categoryLabel" class="category-name">数学</div>
         <div id="totalCount" class="category-count">全0問</div>
         <div class="category-spacer"></div>
+        <button id="randomBtn" type="button">切り替え</button>
         <div id="countLabel" class="progress">0 / 0</div>
       </div>
 
@@ -227,137 +228,29 @@
     }
 
     // ---------- Problems ----------
-const problems=[
-["$(x^n)'は?$","$nx^{n-1}$"],
-["$(\\sin x)'は?$","$\\cos x$"],
-["$(\\cos x)'は?$","$-\\sin x$"],
-["$(\\tan x)'は?$","$\\frac1{\\cos^2x}$"],
-["$(e^x)'は?$","$e^x$"],
-["$(a^x)'(a>0,a\\ne1)は?$","$a^x\\ln a$"],
-["$(\\ln x)'は?$","$\\frac1x$"],
-["$(\\log_a x)'は?$","$\\frac1{x\\ln a}$"],
-["$(uv)'は?$","$u'v+uv'$"],
-["$(f(g(x)))'は?$","$f'(g(x))g'(x)$"],
-
-["$\\int x^n\\,dxは?$","$\\frac{x^{n+1}}{n+1}+C$"],
-["$\\int \\frac1x\\,dxは?$","$\\ln|x|+C$"],
-["$\\int e^x\\,dxは?$","$e^x+C$"],
-["$\\int a^x\\,dxは?$","$\\frac{a^x}{\\ln a}+C$"],
-["$\\int \\sin x\\,dxは?$","$-\\cos x+C$"],
-["$\\int \\cos x\\,dxは?$","$\\sin x+C$"],
-["$\\int \\frac1{\\cos^2x}\\,dxは?$","$\\tan x+C$"],
-["$\\int \\frac1{1+x^2}\\,dxは?$","$\\arctan x+C$"],
-
-["$\\lim_{x\\to0}\\frac{\\sin x}{x}は?$","$1$"],
-["$\\lim_{n\\to\\infty}(1+\\frac1n)^nは?$","$e$"],
-["$\\lim_{x\\to0}\\frac{e^x-1}{x}は?$","$1$"],
-["$\\lim_{x\\to0}\\frac{\\ln(1+x)}xは?$","$1$"],
-["$\\lim_{x\\to0}\\frac{1-\\cos x}{x^2}は?$","$\\frac12$"],
-
-["$\\sin^2x+\\cos^2xは?$","$1$"],
-["$1+\\tan^2xは?$","$\\frac1{\\cos^2x}$"],
-["$\\sin(\\alpha+\\beta)は?$","$\\sin\\alpha\\cos\\beta+\\cos\\alpha\\sin\\beta$"],
-["$\\cos(\\alpha+\\beta)は?$","$\\cos\\alpha\\cos\\beta-\\sin\\alpha\\sin\\beta$"],
-["$\\sin2xは?$","$2\\sin x\\cos x$"],
-["$\\cos2xは?$","$\\cos^2x-\\sin^2x$"],
-["$\\tan2xは?$","$\\frac{2\\tan x}{1-\\tan^2x}$"],
-["$\\sin\\frac\\pi6は?$","$\\frac12$"],
-["$\\cos\\frac\\pi3は?$","$\\frac12$"],
-["$\\tan\\frac\\pi4は?$","$1$"],
-["$\\sin\\frac\\pi3は?$","$\\frac{\\sqrt3}2$"],
-["$\\cos\\frac\\pi6は?$","$\\frac{\\sqrt3}2$"],
-["$\\tan\\frac\\pi6は?$","$\\frac1{\\sqrt3}$"],
-
-["$a^0(a\\ne0)は?$","$1$"],
-["$a^{-n}は?$","$\\frac1{a^n}$"],
-["$a^ma^nは?$","$a^{m+n}$"],
-["$\\frac{a^m}{a^n}は?$","$a^{m-n}$"],
-["$(a^m)^nは?$","$a^{mn}$"],
-["$\\log_a(bc)は?$","$\\log_ab+\\log_ac$"],
-["$\\log_a\\frac bcは?$","$\\log_ab-\\log_ac$"],
-["$\\log_a(b^c)は?$","$c\\log_ab$"],
-["$\\log_a1は?$","$0$"],
-["$\\log_aaは?$","$1$"],
-["$\\log_abは?$","$\\frac{\\ln b}{\\ln a}$"],
-
-["$(a+b)^2は?$","$a^2+2ab+b^2$"],
-["$(a-b)^2は?$","$a^2-2ab+b^2$"],
-["$a^2-b^2は?$","$(a-b)(a+b)$"],
-["$(a+b)^3は?$","$a^3+3a^2b+3ab^2+b^3$"],
-["$a^3-b^3は?$","$(a-b)(a^2+ab+b^2)$"],
-["$a^3+b^3は?$","$(a+b)(a^2-ab+b^2)$"],
-["$(x+a)(x+b)は?$","$x^2+(a+b)x+ab$"],
-["$x^2+2px+p^2は?$","$(x+p)^2$"],
-["$x^2-(a+b)x+abは?$","$(x-a)(x-b)$"],
-["$ax^2+bx+c=0は?$","$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}$"],
-["$\\Deltaは?$","$b^2-4ac$"],
-["$x_1+x_2は?$","$-\\frac ba$"],
-["$x_1x_2は?$","$\\frac ca$"],
-["$y=ax^2+bx+c\\ \\text{軸}は?$","$x=-\\frac b{2a}$"],
-["$ax^2+bx+c\\ \\text{平方完成}は?$","$a(x+\\frac b{2a})^2-\\frac{b^2-4ac}{4a}$"],
-
-["$\\text{等差 }a_nは?$","$a_1+(n-1)d$"],
-["$\\text{等差 }S_nは?$","$\\frac n2(a_1+a_n)$"],
-["$\\text{等比 }a_nは?$","$a_1r^{n-1}$"],
-["$\\text{等比 }S_n(r\\ne1)は?$","$a_1\\frac{1-r^n}{1-r}$"],
-["$\\sum_{k=1}^n kは?$","$\\frac{n(n+1)}2$"],
-["$\\sum_{k=1}^n k^2は?$","$\\frac{n(n+1)(2n+1)}6$"],
-["$\\sum_{k=1}^n k^3は?$","$\\left(\\frac{n(n+1)}2\\right)^2$"],
-["$\\sum_{k=0}^{\\infty}ar^k(|r|<1)は?$","$\\frac a{1-r}$"],
-
-["$n!は?$","$1\\cdot2\\cdots n$"],
-["${}_nP_rは?$","$\\frac{n!}{(n-r)!}$"],
-["${}_nC_rは?$","$\\frac{n!}{r!(n-r)!}$"],
-["${}_nH_rは?$","${}_{n+r-1}C_r$"],
-
-["$P(A\\cup B)は?$","$P(A)+P(B)-P(A\\cap B)$"],
-["$P(A\\mid B)は?$","$\\frac{P(A\\cap B)}{P(B)}$"],
-["$A\\perp B\\ (\\text{独立})は?$","$P(A\\cap B)=P(A)P(B)$"],
-["$X\\sim\\text{Bin}(n,p),\\ P(X=k)は?$","${}_nC_kp^k(1-p)^{n-k}$"],
-["$X\\sim\\text{Bin}(n,p),\\ E[X]は?$","$np$"],
-["$X\\sim\\text{Bin}(n,p),\\ V[X]は?$","$np(1-p)$"],
-
-["$\\langle a,b\\rangle\\cdot\\langle c,d\\rangleは?$","$ac+bd$"],
-["$\\vec a\\cdot\\vec bは?$","$|a||b|\\cos\\theta$"],
-["$|\\langle a,b\\rangle|は?$","$\\sqrt{a^2+b^2}$"],
-["$\\langle a,b\\rangle\\times\\langle c,d\\rangleは?$","$ad-bc$"],
-["$\\begin{vmatrix}a&b\\\\c&d\\end{vmatrix}は?$","$ad-bc$"],
-
-["$A(x_1,y_1),B(x_2,y_2)\\ \\text{距離}は?$","$\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$"],
-["$A(x_1,y_1),B(x_2,y_2)\\ \\text{中点}は?$","$(\\frac{x_1+x_2}2,\\frac{y_1+y_2}2)$"],
-["$A(x_1,y_1),B(x_2,y_2)\\ \\text{傾き}は?$","$\\frac{y_2-y_1}{x_2-x_1}$"],
-["$\\text{点}(x_1,y_1),\\text{傾き}m\\ \\text{直線}は?$","$y-y_1=m(x-x_1)$"],
-["$(x-a)^2+(y-b)^2=r^2\\ \\text{中心}は?$","$(a,b)$"],
-
-["$i^2は?$","$-1$"],
-["$(a+bi)(c+di)は?$","$(ac-bd)+(ad+bc)i$"],
-["$|a+bi|は?$","$\\sqrt{a^2+b^2}$"],
-["$(\\cos\\theta+i\\sin\\theta)^nは?$","$\\cos n\\theta+i\\sin n\\theta$"],
-
-["$\\int xe^x\\,dxは?$","$e^x(x-1)+C$"],
-["$\\triangle\\ \\text{面積}(a,b,C)は?$","$\\frac12ab\\sin C$"],
-["$\\text{正弦定理}は?$","$\\frac a{\\sin A}=\\frac b{\\sin B}=\\frac c{\\sin C}=2R$"],
-["$\\text{余弦定理}は?$","$a^2=b^2+c^2-2bc\\cos A$"]
-];
-
+    let problems = [];
+    let currentCategory = "--";
+    let currentFileIndex = -1;
 
     const problemTitleEl = document.getElementById("problemTitle");
     const problemQuestionEl = document.getElementById("problemQuestion");
     const problemAnswerEl = document.getElementById("problemAnswer");
     const flashcardEl = document.getElementById("flashcard");
+    const randomBtnEl = document.getElementById("randomBtn");
+    const categoryLabelEl = document.getElementById("categoryLabel");
 
     let currentIndex = 0;
     let showingAnswer = false;
     let cycleCount = 0;
     let busy = false;
     let lastIndex = -1;
+    let answeredCount = 0;
+    let filesCache = null;
 
-    function pickRandomIndex() {
-      if (problems.length <= 1) return 0;
-      let i = Math.floor(Math.random() * problems.length);
-      while (i === lastIndex) {
-        i = Math.floor(Math.random() * problems.length);
-      }
+    function pickRandomIndex(len, except) {
+      if (len <= 1) return 0;
+      let i = 0;
+      do { i = Math.floor(Math.random() * len); } while (i === except);
       return i;
     }
 
@@ -424,6 +317,78 @@ const problems=[
       await typesetElements([problemQuestionEl, problemAnswerEl]);
     }
 
+    function toCards(raw) {
+      if (!Array.isArray(raw)) return [];
+      return raw.map((row, i) => {
+        if (Array.isArray(row)) {
+          const [question, answer] = row;
+          return { title: `第${i + 1}問`, question, answer };
+        }
+        if (row && typeof row === "object") {
+          return {
+            title: row.title ?? `第${i + 1}問`,
+            question: row.question ?? row.q ?? "",
+            answer: row.answer ?? row.a ?? ""
+          };
+        }
+        return { title: `第${i + 1}問`, question: "", answer: "" };
+      }).filter(c => c.question || c.answer);
+    }
+
+    async function loadFilesList() {
+      if (filesCache) return filesCache;
+      const res = await fetch("../qa_math/files.json", { cache: "no-store" });
+      if (!res.ok) throw new Error("qa_math/files.json を読み込めませんでした");
+      const data = await res.json();
+      filesCache = Array.isArray(data) ? data : [];
+      return filesCache;
+    }
+
+    async function loadCategory(name) {
+      const base = String(name || "").replace(/\.json$/i, "");
+      const url = encodeURI(`../qa_math/${base}.json`);
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`qa_math/${base}.json を読み込めませんでした`);
+      const raw = await res.json();
+      const data = toCards(raw);
+      if (!data.length) throw new Error(`qa_math/${base}.json にカードがありません`);
+      problems = data;
+      currentCategory = base;
+      answeredCount = 0;
+      cycleCount = 0;
+      lastIndex = -1;
+      updateRandomButton();
+      await showRandomProblem(-1);
+    }
+
+    async function loadRandomCategory(exceptIndex = -1) {
+      const files = await loadFilesList();
+      if (!files.length) throw new Error("qa_math/files.json にカテゴリがありません");
+      const idx = pickRandomIndex(files.length, exceptIndex);
+      await loadCategory(files[idx]);
+      currentFileIndex = idx;
+      return idx;
+    }
+
+    function updateRandomButton() {
+      if (randomBtnEl) randomBtnEl.textContent = "切り替え";
+      if (categoryLabelEl) categoryLabelEl.textContent = currentCategory;
+    }
+
+    async function showRandomProblem(exceptIndex = -1) {
+      if (!problems.length) {
+        problemQuestionEl.textContent = "(カードが読み込まれていません)";
+        problemAnswerEl.textContent = "";
+        problemAnswerEl.classList.add("is-hidden");
+        if (countLabelEl) countLabelEl.textContent = "0 / 10";
+        if (totalCountEl) totalCountEl.textContent = "全0問";
+        return;
+      }
+      currentIndex = pickRandomIndex(problems.length, exceptIndex);
+      cycleCount = Math.min(cycleCount + 1, 10);
+      await renderProblem();
+    }
+
     // ---------- Self test ----------
     function runSelfTests() {
       console.assert(Array.isArray(problems), "problems は配列である必要があります");
@@ -449,15 +414,18 @@ const problems=[
         } else {
           exp += 1;
           saveExp();
+          answeredCount += 1;
 
-          cycleCount = Math.min(cycleCount + 1, 10);
-          if (countLabelEl) countLabelEl.textContent = `${cycleCount} / 10`;
-
-          lastIndex = currentIndex;
-          currentIndex = pickRandomIndex();
-          if (cycleCount === 10) cycleCount = 0;
-
-          await renderProblem();
+          if (answeredCount % 10 === 0) {
+            try {
+              currentFileIndex = await loadRandomCategory(currentFileIndex);
+            } catch (err) {
+              console.error(err);
+            }
+          } else {
+            lastIndex = currentIndex;
+            await showRandomProblem(currentIndex);
+          }
         }
       } finally {
         busy = false;
@@ -467,10 +435,30 @@ const problems=[
     // ---------- Boot ----------
     (async () => {
       loadExp();
-      runSelfTests();
-      currentIndex = pickRandomIndex();
-      await renderProblem();
+      try {
+        updateRandomButton();
+        await loadRandomCategory(-1);
+        runSelfTests();
+      } catch (e) {
+        console.error(e);
+        problemQuestionEl.textContent = "カード一覧の読み込みに失敗しました";
+        problemAnswerEl.textContent = "qa_math/files.json と qa_math/*.json を確認してください";
+        problemAnswerEl.classList.remove("is-hidden");
+        if (countLabelEl) countLabelEl.textContent = "0 / 0";
+      }
     })();
+
+    let lastFileIndex = -1;
+    if (randomBtnEl) {
+      randomBtnEl.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        try {
+          lastFileIndex = await loadRandomCategory(lastFileIndex);
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
   </script>
 </body>
 </html>
