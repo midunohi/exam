@@ -186,7 +186,7 @@
         <div id="totalCount" class="category-count">全0問</div>
         <div class="category-spacer"></div>
         <button id="randomBtn" type="button">切り替え</button>
-        <div id="countLabel" class="progress">0 / 0</div>
+        <div id="countLabel" class="progress">0 / 5</div>
       </div>
 
       <div class="card-title" id="problemTitle">第1問</div>
@@ -203,6 +203,7 @@
   <script>
     // ---------- EXP ----------
     const EXP_KEY = "midunohi.exam.exp";
+    const CYCLE_MAX = 5;
     let exp = 0;
 
     const expDisplayEl = document.getElementById("expLabel");
@@ -304,7 +305,7 @@
       showingAnswer = false;
 
       if (totalCountEl) totalCountEl.textContent = `全${problems.length}問`;
-      if (countLabelEl) countLabelEl.textContent = `${cycleCount} / 10`;
+      if (countLabelEl) countLabelEl.textContent = `${cycleCount} / ${CYCLE_MAX}`;
 
       // その後にMathJaxで整える（準備できた時点で反映）
       await typesetElements([problemQuestionEl, problemAnswerEl]);
@@ -393,7 +394,7 @@
         return;
       }
       currentIndex = pickRandomIndex(problems.length, exceptIndex);
-      cycleCount = Math.min(cycleCount + 1, 10);
+      cycleCount = Math.min(cycleCount + 1, CYCLE_MAX);
       await renderProblem();
     }
 
@@ -411,7 +412,7 @@
           saveExp();
           answeredCount += 1;
 
-          if (answeredCount % 10 === 0) {
+          if (answeredCount % CYCLE_MAX === 0) {
             try {
               currentFileIndex = await loadRandomCategory(currentFileIndex);
             } catch (err) {

@@ -91,7 +91,7 @@
         <div class="category-spacer"></div>
         <button id="randomBtn" type="button">切り替え</button>
       </div>
-      <div id="countLabel" class="progress">0 / 10</div>
+      <div id="countLabel" class="progress">0 / 5</div>
       <div class="term-mean">
         <div class="term question q-text" id="term">...</div>
         <div class="mean answer a-text is-hidden" id="meaning"></div>
@@ -123,6 +123,7 @@
   ];
 
   const EXP_KEY = "midunohi.exam.exp";
+  const CYCLE_MAX = 5;
 
   function loadExp(){
     try{
@@ -256,7 +257,7 @@
     els.categoryLabel.textContent = `${currentCategory}`;
     els.expLabel.textContent = `EXP: ${exp}`;
     if(els.totalCount) els.totalCount.textContent = `全${dataset.length}問`;
-    if(els.countLabel) els.countLabel.textContent = `${cycleCount} / 10`;
+    if(els.countLabel) els.countLabel.textContent = `${cycleCount} / ${CYCLE_MAX}`;
   }
 
   function render(){
@@ -323,7 +324,7 @@
   function nextCard(){
     idx = pickRandomIndex(dataset.length, idx);
     revealStep = 0;
-    cycleCount = Math.min(cycleCount + 1, 10);
+    cycleCount = Math.min(cycleCount + 1, CYCLE_MAX);
     render();
   }
 
@@ -346,7 +347,7 @@
 
     gainExp(1);
     answeredCount += 1;
-    if(answeredCount % 10 === 0){
+    if(answeredCount % CYCLE_MAX === 0){
       loadRandomCategory(currentFileIndex);
       return;
     }

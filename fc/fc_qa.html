@@ -139,7 +139,7 @@
         <div class="category-spacer"></div>
         <button id="randomBtn" type="button">切り替え</button>
       </div>
-      <div id="countLabel" class="progress">0 / 10</div>
+      <div id="countLabel" class="progress">0 / 5</div>
       <div id="counter"></div>
       <div class="qa">
         <div id="question"></div>
@@ -162,6 +162,7 @@
     const categoryLabelEl = document.getElementById("categoryLabel");
 
     const EXP_KEY = "midunohi.exam.exp";
+    const CYCLE_MAX = 5;
     let exp = 0;
     let cards = [];   // qa/ 以下の .js から読み込む
     let index = 0;
@@ -201,7 +202,7 @@
         qEl.textContent = "(カードが読み込まれていません)";
         aEl.textContent = "";
         aEl.style.visibility = "hidden";
-        countLabelEl.textContent = "0 / 10";
+        countLabelEl.textContent = `0 / ${CYCLE_MAX}`;
         if (totalCountEl) totalCountEl.textContent = "全0問";
         return;
       }
@@ -211,7 +212,7 @@
       aEl.textContent = c.answer || "(answer がありません)";
       aEl.style.visibility = "hidden";
       shown = false;
-      countLabelEl.textContent = `${cycleCount} / 10`;
+      countLabelEl.textContent = `${cycleCount} / ${CYCLE_MAX}`;
       if (totalCountEl) totalCountEl.textContent = `全${len}問`;
     }
 
@@ -227,8 +228,8 @@
       aEl.textContent = c.answer || "(answer がありません)";
       aEl.style.visibility = "hidden";
       shown = false;
-      cycleCount = Math.min(cycleCount + 1, 10);
-      countLabelEl.textContent = `${cycleCount} / 10`;
+      cycleCount = Math.min(cycleCount + 1, CYCLE_MAX);
+      countLabelEl.textContent = `${cycleCount} / ${CYCLE_MAX}`;
       if (totalCountEl) totalCountEl.textContent = `全${len}問`;
     }
 
@@ -241,7 +242,7 @@
         exp += 1;
         saveExp();
         answeredCount += 1;
-        if (answeredCount % 10 === 0) {
+        if (answeredCount % CYCLE_MAX === 0) {
           try {
             currentFileIndex = await loadRandomCategory(currentFileIndex);
           } catch (err) {
