@@ -24,6 +24,24 @@
     }
     .title {
       position: absolute;
+    .back-btn {
+      position: absolute;
+      top: 14px;
+      left: 12px;
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 999px;
+      background: rgba(2, 6, 23, 0.65);
+      color: #fff;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(6px);
+    }
+    .back-btn:hover {
+      background: rgba(37, 99, 235, 0.9);
+      border-color: transparent;
+    }
+
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
@@ -109,6 +127,8 @@
 </head>
 <body>
   <h1 class="title">英語スピードリーディング</h1>
+
+  <a class="back-btn" href="index.html">戻る</a>
 
   <div class="frame">
     <div class="word-box">
