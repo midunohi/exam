@@ -144,11 +144,6 @@
   let answeredCount = 0;
   let currentFileIndex = -1;
 
-  function safeGlobalEval(name){
-    // グローバルレキシカル環境（const）から取り出すための global eval
-    try{ return (0, eval)(name); }catch(_){ return undefined; }
-  }
-
   function ensureMinPhrases(phrases, n=3){
     const out = Array.isArray(phrases) ? phrases.slice(0) : [];
     while(out.length < n) out.push({en:"", ja:""});
@@ -204,29 +199,13 @@
   async function loadEnExamplesFile(name){
     const base = normalizeBaseName(name);
     const jsonSrc = `../en_examples/${base}.json`;
-    const jsSrc = `../en_examples/${base}.js`;
 
     try{
       const obj = await fetchJson(jsonSrc);
       return { ok:true, name:base, obj };
     }catch(err){
-      try{
-        await new Promise((resolve, reject)=>{
-          const s = document.createElement('script');
-          s.src = jsSrc;
-          s.async = true;
-          s.onload = ()=>resolve(true);
-          s.onerror = ()=>reject(new Error('load failed: '+jsSrc));
-          document.head.appendChild(s);
-        });
-        const globalName = `enExamples_${base}`;
-        const obj = safeGlobalEval(globalName);
-        if(!obj) throw new Error(`global not found: ${globalName}`);
-        return { ok:true, name:base, obj };
-      }catch(err2){
-        console.warn(err2);
-        return { ok:false, name:base, obj:STUB_EN_EXAMPLES, err:err2 };
-      }
+      console.warn(err);
+      return { ok:false, name:base, obj:STUB_EN_EXAMPLES, err };
     }
   }
 
