@@ -354,7 +354,7 @@ const problems=[
 
     function pickRandomIndex() {
       if (problems.length <= 1) return 0;
-      let i = currentIndex;
+      let i = Math.floor(Math.random() * problems.length);
       while (i === lastIndex) {
         i = Math.floor(Math.random() * problems.length);
       }
@@ -468,6 +468,7 @@ const problems=[
     (async () => {
       loadExp();
       runSelfTests();
+      currentIndex = pickRandomIndex();
       await renderProblem();
     })();
   </script>
