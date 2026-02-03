@@ -350,6 +350,16 @@ const problems=[
     let showingAnswer = false;
     let cycleCount = 0;
     let busy = false;
+    let lastIndex = -1;
+
+    function pickRandomIndex() {
+      if (problems.length <= 1) return 0;
+      let i = currentIndex;
+      while (i === lastIndex) {
+        i = Math.floor(Math.random() * problems.length);
+      }
+      return i;
+    }
 
     // ---------- MathJax helpers ----------
     function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
@@ -443,8 +453,9 @@ const problems=[
           cycleCount = Math.min(cycleCount + 1, 10);
           if (countLabelEl) countLabelEl.textContent = `${cycleCount} / 10`;
 
-          currentIndex = (currentIndex + 1) % problems.length;
-          if (currentIndex === 0) cycleCount = 0;
+          lastIndex = currentIndex;
+          currentIndex = pickRandomIndex();
+          if (cycleCount === 10) cycleCount = 0;
 
           await renderProblem();
         }
