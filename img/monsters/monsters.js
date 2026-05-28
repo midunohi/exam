@@ -1,4 +1,4 @@
-export const MONSTERS = [
+window.MONSTER_DATA = [
   { id: "ash_wyrm",    ja: "アッシュ・ワーム" },
   { id: "dust_lizard", ja: "ダスト・リザード" },
   { id: "ember_golem", ja: "エンバー・ゴーレム" },

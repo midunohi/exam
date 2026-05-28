@@ -1,0 +1,24 @@
+const enJa_q = [
+["qualitative","質的な"],
+["qualify","資格を与える／制限する"],
+["qualify as","〜と見なされる"],
+["qualification","資格"],
+["quality","質"],
+["quantitative","量的な"],
+["quantity","量"],
+["quarrel","口論する"],
+["query","質問／疑問"],
+["quest","探求"],
+["questionnaire","質問票"],
+["queue","列（に並ぶ）"],
+["quickly","素早く"],
+["quietly","静かに"],
+["quintessential","典型的な"],
+["quite","かなり／全く"],
+["quota","割当量"],
+["quota system","割当制度"],
+["quotation","引用文"],
+["quote","引用する"]
+]
+
+
