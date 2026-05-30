@@ -9,4 +9,3 @@ const files_qaMath = [
   "物理_原子物理",
   "化学の計算"
 ]
-
