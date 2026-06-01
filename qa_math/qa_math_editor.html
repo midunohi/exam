@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QAMS QA Editor</title>
+  <style>
+    :root {
+      --bg: #111827;
+      --panel: #1f2937;
+      --panel2: #374151;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: #4b5563;
+      --accent: #60a5fa;
+      --danger: #f87171;
+      --ok: #34d399;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    header h1 {
+      font-size: 18px;
+      margin: 0 12px 0 0;
+      font-weight: 700;
+    }
+    button, label.fileButton {
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      padding: 8px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover, label.fileButton:hover { filter: brightness(1.1); }
+    button.primary, label.fileButton.primary { border-color: var(--accent); }
+    button.danger { border-color: var(--danger); color: #fecaca; }
+    button.ok { border-color: var(--ok); color: #bbf7d0; }
+    input[type="file"] { display: none; }
+    main {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 0;
+      height: calc(100vh - 62px);
+      min-height: 0;
+    }
+    aside {
+      border-right: 1px solid var(--border);
+      background: var(--panel);
+      padding: 12px;
+      overflow: hidden;
+      display: flex;
+      min-height: 0;
+      flex-direction: column;
+    }
+    section.editor {
+      padding: 14px;
+      overflow: auto;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 6px 0 12px;
+      line-height: 1.5;
+    }
+    .search {
+      width: 100%;
+      padding: 9px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #111827;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .qaList {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .qaItem {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      background: #111827;
+      cursor: pointer;
+    }
+    .qaItem.active { border-color: var(--accent); outline: 1px solid var(--accent); }
+    .qaItem .q {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .qaItem .a {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    .field {
+      margin-bottom: 12px;
+    }
+    .field label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #030712;
+      color: var(--text);
+      padding: 10px;
+      font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    textarea { min-height: 180px; resize: vertical; }
+    .previewGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .previewBox {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #030712;
+      min-height: 120px;
+      padding: 12px;
+      overflow: auto;
+      line-height: 1.7;
+    }
+    .previewBox .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .small { font-size: 12px; color: var(--muted); }
+    .empty {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .status {
+      color: var(--muted);
+      font-size: 13px;
+      margin-left: auto;
+    }
+    @media (max-width: 820px) {
+      main { grid-template-columns: 1fr; height: auto; min-height: calc(100vh - 62px); }
+      aside { border-right: 0; border-bottom: 1px solid var(--border); max-height: 45vh; }
+      .previewGrid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\\(", "\\)"], ["$", "$"]], displayMath: [["\\[", "\\]"], ["$$", "$$"]] },
+      options: { skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <header>
+    <h1>QAMS QA Editor</h1>
+    <label class="fileButton primary">
+      JSファイルを開く
+      <input id="fileInput" type="file" accept=".js" />
+    </label>
+    <button id="download" class="ok">編集済みJSを保存</button>
+    <span id="status" class="status">未読み込み</span>
+  </header>
+
+  <main>
+    <aside>
+      <input id="search" class="search" type="text" placeholder="検索: 問題・回答" />
+      <div class="row">
+        <button id="add">QA追加</button>
+        <button id="duplicate">複製</button>
+        <button id="remove" class="danger">削除</button>
+      </div>
+      <div id="meta" class="meta"></div>
+      <div id="qaList" class="qaList"></div>
+    </aside>
+
+    <section class="editor">
+      <div id="empty" class="empty">
+        QA MathのJSファイルを開いてください。<br />
+        対応形式は <code>const qa_名前 = [["問題","回答"], ...];</code> のみです。<br />
+        編集後は「編集済みJSを保存」でダウンロードします。
+      </div>
+      <div id="editArea" hidden>
+        <div class="row">
+          <span class="small" id="currentIndex"></span>
+        </div>
+        <div class="field">
+          <label for="question">問題</label>
+          <textarea id="question"></textarea>
+        </div>
+        <div class="field">
+          <label for="answer">回答</label>
+          <textarea id="answer"></textarea>
+        </div>
+        <div class="previewGrid">
+          <div class="previewBox">
+            <div class="label">問題プレビュー</div>
+            <div id="questionPreview"></div>
+          </div>
+          <div class="previewBox">
+            <div class="label">回答プレビュー</div>
+            <div id="answerPreview"></div>
+          </div>
+        </div>
+        <div class="small">
+          保存形式は現行JSと同じ、2要素配列 <code>["問題", "回答"]</code> の一覧です。
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  let qas = [];
+  let selected = -1;
+  let fileName = "qa_math.js";
+  let variableName = "qa_math";
+  let leadingComment = "";
+  let dirty = false;
+
+  const state = {
+    fileInput: $("fileInput"), download: $("download"),
+    status: $("status"), meta: $("meta"), search: $("search"), qaList: $("qaList"),
+    add: $("add"), duplicate: $("duplicate"), remove: $("remove"),
+    empty: $("empty"), editArea: $("editArea"), question: $("question"), answer: $("answer"),
+    questionPreview: $("questionPreview"), answerPreview: $("answerPreview"), currentIndex: $("currentIndex")
+  };
+
+  function setStatus(text) { state.status.textContent = text + (dirty ? " *" : ""); }
+
+  function markDirty() {
+    dirty = true;
+    setStatus(`${fileName} / ${qas.length}件`);
+  }
+
+  function normalizeNewlines(s) { return String(s || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n"); }
+
+  function parseText(text) {
+    const source = normalizeNewlines(text);
+    const match = source.match(/^\s*((?:(?:\/\/[^\n]*|\/\*[\s\S]*?\*\/)\s*)*)const\s+([^\s=]+)\s*=\s*/);
+    if (!match) {
+      throw new Error("対応形式ではありません: const qa_名前 = [[\"問題\", \"回答\"], ...]; のJSファイルを開いてください。");
+    }
+
+    const arrayStart = match[0].length;
+    const arrayEnd = findMatchingBracket(source, arrayStart);
+    if (arrayEnd < 0) {
+      throw new Error("QA配列の終端が見つかりません。");
+    }
+
+    const arrayLiteral = source.slice(arrayStart, arrayEnd + 1);
+    const value = Function(`"use strict"; return (${arrayLiteral});`)();
+    if (!Array.isArray(value)) {
+      throw new Error("const の右辺が配列ではありません。");
+    }
+
+    return {
+      variableName: match[2],
+      leadingComment: match[1] || "",
+      items: value.map((row, index) => {
+        if (!Array.isArray(row) || row.length < 2) {
+          throw new Error(`${index + 1}件目が ["問題", "回答"] 形式ではありません。`);
+        }
+        return { q: String(row[0] ?? ""), a: String(row[1] ?? "") };
+      })
+    };
+  }
+
+  function findMatchingBracket(source, start) {
+    while (/\s/.test(source[start] || "")) start++;
+    if (source[start] !== "[") return -1;
+
+    let depth = 0;
+    let quote = "";
+    let escaped = false;
+    let lineComment = false;
+    let blockComment = false;
+
+    for (let i = start; i < source.length; i++) {
+      const ch = source[i];
+      const next = source[i + 1];
+
+      if (lineComment) {
+        if (ch === "\n") lineComment = false;
+        continue;
+      }
+      if (blockComment) {
+        if (ch === "*" && next === "/") {
+          blockComment = false;
+          i++;
+        }
+        continue;
+      }
+      if (quote) {
+        if (escaped) {
+          escaped = false;
+        } else if (ch === "\\") {
+          escaped = true;
+        } else if (ch === quote) {
+          quote = "";
+        }
+        continue;
+      }
+
+      if (ch === "/" && next === "/") {
+        lineComment = true;
+        i++;
+      } else if (ch === "/" && next === "*") {
+        blockComment = true;
+        i++;
+      } else if (ch === "\"" || ch === "'" || ch === "`") {
+        quote = ch;
+      } else if (ch === "[") {
+        depth++;
+      } else if (ch === "]") {
+        depth--;
+        if (depth === 0) return i;
+      }
+    }
+    return -1;
+  }
+
+  function serialize() {
+    const rows = qas.map(x => `  [${jsString(x.q)}, ${jsString(x.a)}]`).join(",\n");
+    return `${leadingComment}const ${variableName} = [\n${rows}\n];\n`;
+  }
+
+  function jsString(value) {
+    return JSON.stringify(normalizeNewlines(value));
+  }
+
+  function firstLine(s) { return normalizeNewlines(s).split("\n")[0].trim(); }
+
+  function renderList() {
+    const word = state.search.value.trim().toLowerCase();
+    state.qaList.innerHTML = "";
+    const filtered = qas.map((qa, i) => ({ qa, i })).filter(({ qa }) => {
+      if (!word) return true;
+      return (qa.q + "\n" + qa.a).toLowerCase().includes(word);
+    });
+    for (const { qa, i } of filtered) {
+      const el = document.createElement("div");
+      el.className = "qaItem" + (i === selected ? " active" : "");
+      el.innerHTML = `<div class="q">${i + 1}. ${html(firstLine(qa.q) || "（問題なし）")}</div><div class="a">${html(firstLine(qa.a) || "（回答なし）")}</div>`;
+      el.onclick = () => select(i);
+      state.qaList.appendChild(el);
+    }
+    state.meta.textContent = `${qas.length}件 / 表示 ${filtered.length}件 / 変数: ${variableName}`;
+  }
+
+  function html(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  function renderPreview() {
+    state.questionPreview.innerHTML = html(state.question.value).replace(/\n/g, "<br>");
+    state.answerPreview.innerHTML = html(state.answer.value).replace(/\n/g, "<br>");
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise([state.questionPreview, state.answerPreview]).catch(() => {});
+    }
+  }
+
+  function select(i, shouldCommit = true) {
+    if (shouldCommit) commitCurrent();
+    selected = i;
+    const qa = qas[selected];
+    if (!qa) {
+      state.empty.hidden = false;
+      state.editArea.hidden = true;
+      renderList();
+      return;
+    }
+    state.empty.hidden = true;
+    state.editArea.hidden = false;
+    state.question.value = qa.q || "";
+    state.answer.value = qa.a || "";
+    state.currentIndex.textContent = `${selected + 1} / ${qas.length}`;
+    renderPreview();
+    renderList();
+  }
+
+  function commitCurrent() {
+    if (selected < 0 || !qas[selected]) return;
+    const qa = qas[selected];
+    const nq = state.question.value;
+    const na = state.answer.value;
+    if (qa.q !== nq || qa.a !== na) {
+      qa.q = nq;
+      qa.a = na;
+      markDirty();
+    }
+  }
+
+  async function loadFromFile(file) {
+    fileName = file.name || "qa_math.js";
+    const text = await file.text();
+    const parsed = parseText(text);
+    qas = parsed.items;
+    variableName = parsed.variableName;
+    leadingComment = parsed.leadingComment;
+    selected = -1;
+    dirty = false;
+    setStatus(`${fileName} / ${qas.length}件`);
+    select(qas.length ? 0 : -1, false);
+  }
+
+  function download() {
+    commitCurrent();
+    const blob = new Blob([serialize()], { type: "text/plain;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName.replace(/(\.js)?$/, "_edited.js");
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(a.href);
+    a.remove();
+    dirty = false;
+    setStatus(`${fileName} / ${qas.length}件 ダウンロード済み`);
+  }
+
+  function addQa() {
+    commitCurrent();
+    const insertAt = selected >= 0 ? selected + 1 : qas.length;
+    qas.splice(insertAt, 0, { q: "新しい問題", a: "" });
+    markDirty();
+    select(insertAt, false);
+  }
+
+  function duplicateQa() {
+    commitCurrent();
+    if (selected < 0) return;
+    const qa = qas[selected];
+    qas.splice(selected + 1, 0, { q: qa.q, a: qa.a });
+    markDirty();
+    select(selected + 1, false);
+  }
+
+  function removeQa() {
+    if (selected < 0) return;
+    if (!confirm("選択中のQAを削除しますか？")) return;
+    commitCurrent();
+    const next = Math.min(selected, qas.length - 2);
+    qas.splice(selected, 1);
+    markDirty();
+    selected = -1;
+    select(next, false);
+  }
+
+  function handleEditInput() {
+    if (selected >= 0 && qas[selected]) {
+      qas[selected].q = state.question.value;
+      qas[selected].a = state.answer.value;
+    }
+    markDirty();
+    renderPreview();
+    renderList();
+  }
+
+  state.fileInput.onchange = e => {
+    const file = e.target.files && e.target.files[0];
+    if (file) loadFromFile(file).catch(err => alert(err.message || String(err)));
+  };
+  state.download.onclick = download;
+  state.add.onclick = addQa;
+  state.duplicate.onclick = duplicateQa;
+  state.remove.onclick = removeQa;
+  state.search.oninput = renderList;
+  state.question.oninput = handleEditInput;
+  state.answer.oninput = handleEditInput;
+
+  window.addEventListener("beforeunload", e => {
+    commitCurrent();
+    if (dirty) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+})();
+</script>
+</body>
+</html>
