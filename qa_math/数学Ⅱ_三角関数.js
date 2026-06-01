@@ -1,5 +1,5 @@
 // 数学Ⅱ: 三角関数
-const qa_数学II_三角関数 = [
+const qa_数学Ⅱ_三角関数 = [
   ["\\(\\sin^2 x+\\cos^2 xは？\\)","\\(1\\)"],
   ["\\(1+\\tan^2 xは？\\)","\\(\\frac{1}{\\cos^2 x}\\)"],
   ["\\(\\sin(\\alpha+\\beta)は？\\)","\\(\\sin\\alpha\\cos\\beta+\\cos\\alpha\\sin\\beta\\)"],
