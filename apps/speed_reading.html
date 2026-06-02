@@ -9,13 +9,14 @@
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("img/bg_fc_enExamples.png");
+      background: linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("../img/bg_fc_enExamples.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       background-attachment: fixed;
       color: #fff;
       min-height: 100vh;
+      min-height: 100dvh;
       position: relative;
       padding: 12px;
       display: flex;
@@ -51,6 +52,7 @@
       display: inline-block;
       line-height: 1;
       white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
     }
     .back-btn:hover {
       background: #1d4ed8;
@@ -112,6 +114,16 @@
       background: #2563eb;
       color: #fff;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:active, .back-btn:active {
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+      filter: brightness(1.04);
+    }
+    button:focus, .back-btn:focus { outline: none; }
+    button:focus-visible, .back-btn:focus-visible {
+      outline: 2px solid rgba(255,255,255,.42);
+      outline-offset: 2px;
     }
     button:disabled { opacity: .6; cursor: not-allowed; }
     .word-area {
@@ -131,7 +143,7 @@
 <body>
   <div class="top-bar">
     <h1 class="title">英語スピードリーディング</h1>
-    <a class="back-btn" href="index.html">戻る</a>
+    <a class="back-btn" href="../index.html">戻る</a>
   </div>
 
   <div class="frame">

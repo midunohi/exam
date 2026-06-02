@@ -4,8 +4,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>フラッシュ暗算</title>
 <style>
-  body{margin:0;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("img/bg_fc_enExamples.png");background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;color:#eef2ff}
-  .page{position:relative;width:100%;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-top:4px}
+  body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:linear-gradient( rgba(5, 8, 20, 0.75), rgba(5, 8, 20, 0.9)), url("../img/bg_fc_enExamples.png");background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;color:#eef2ff}
+  .page{position:relative;width:100%;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;padding-top:4px}
   .topbar{width:min(500px,90vw);display:flex;align-items:center;justify-content:space-between}
   .center{flex:1;width:100%;display:flex;align-items:center;justify-content:center}
   .frame{width:min(500px,90vw)}
@@ -14,7 +14,10 @@
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   input,button{font:inherit;border-radius:12px;border:1px solid #ffffff22;background:#0c1226;color:#eef2ff;padding:10px 12px}
   input{width:110px}
-  button{cursor:pointer;background:#2a3a66}
+  button{cursor:pointer;background:#2a3a66;-webkit-tap-highlight-color:transparent}
+  button:active{border-color:#ffffff33;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  button:focus{outline:none}
+  button:focus-visible{outline:2px solid rgba(148,163,184,.45);outline-offset:2px}
   button:disabled{opacity:.5;cursor:not-allowed}
   #n{font-size:72px;font-weight:900;letter-spacing:.02em;text-align:center;height:150px;display:flex;align-items:center;justify-content:center}
   #title{font-size:32px;font-weight:900;letter-spacing:.08em}
@@ -223,7 +226,7 @@
   const backBtn = $('backBtn');
   if(backBtn){
     backBtn.addEventListener('click', ()=>{
-      location.href = 'index.html';
+      location.href = '../index.html';
     });
   }
 

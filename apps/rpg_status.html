@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>キャラステータス</title>
 <style>
   :root{
@@ -18,34 +19,36 @@
   }
   body{
     min-height:100vh;
+    min-height:100dvh;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:12px;
-    background-image:url('img/bg_rpg_status.png');
+    padding:8px;
+    background-image:url('../img/bg_rpg_status.png');
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
   }
   .page{
     width:100%;
+    min-height:calc(100dvh - 16px);
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:12px;
+    gap:8px;
   }
   #panel{
-    width:min(560px, 92vw);
+    width:min(720px, calc(100vw - 16px));
     background:rgba(15,23,42,.88);
     border-radius:16px;
     border:1px solid rgba(148,163,184,.35);
     box-shadow:0 18px 45px rgba(0,0,0,.8);
-    padding:16px;
+    padding:clamp(12px, 2.4vw, 18px);
   }
   header{
     width:100%;
-    max-width:560px;
+    max-width:min(720px, calc(100vw - 16px));
     display:flex;
     flex-direction:row;
     align-items:center;
@@ -53,7 +56,7 @@
     gap:8px;
   }
   h1{
-    font-size:28px;
+    font-size:clamp(22px, 6vw, 32px);
     letter-spacing:.06em;
     margin:0;
   }
@@ -131,7 +134,7 @@
     flex:1;
   }
   .avatar{
-    width:min(320px, 72vw);
+    width:clamp(220px, min(520px, 82vw, calc(100dvh - 214px)), 520px);
     aspect-ratio:1/1;
     border-radius:16px;
     overflow:hidden;
@@ -149,6 +152,19 @@
     min-width:96px;
     height:fit-content;
     align-self:flex-start;
+  }
+  @media (max-width: 520px){
+    .avatarRow{
+      flex-direction:column;
+      align-items:center;
+    }
+    .avatarWrap{
+      width:100%;
+    }
+    .atkBox{
+      min-width:120px;
+      align-self:center;
+    }
   }
 </style>
 </head>
@@ -185,7 +201,7 @@
     <div class="avatarRow">
       <div class="avatarWrap">
         <div class="avatar">
-          <img src="img/rpg_player_character.png" alt="player character">
+          <img src="../img/rpg_player_character.png" alt="player character">
         </div>
       </div>
       <div class="pill atkBox"><span>ATK</span><span id="atk">5</span></div>
@@ -236,7 +252,7 @@
   const init = ()=>{
     load(); render();
     $('backBtn').addEventListener('click', ()=>{
-      location.href = 'index.html';
+      location.href = '../index.html';
     });
   };
   init();

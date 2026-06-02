@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>モンスター狩り 英単語</title>
 <style>
   :root{
@@ -32,11 +33,11 @@
   html,body{
     margin:0;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
-    background:#0b1a33 url('img/bg_rpg_field.png') no-repeat center top/cover;
+    background:#0b1a33 url('../img/bg_rpg_field.png') no-repeat center top/cover;
     color:#fff;
   }
 
-  #wrap{min-height:100vh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:8px}
+  #wrap{min-height:100vh;min-height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:8px}
   #appTop{display:flex;align-items:center;justify-content:space-between}
   #pageTitle{font-size:28px;font-weight:900;letter-spacing:.06em}
   #backBtn{padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(17,24,39,.86);color:#fff;cursor:pointer}
@@ -67,7 +68,11 @@
     font-size:var(--choice-size);
     font-weight:700;
     cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
   }
+  button.choice:active{border-color:rgba(255,255,255,.22);box-shadow:inset 0 0 0 1px rgba(255,255,255,.10)}
+  button.choice:focus{outline:none}
+  button.choice:focus-visible{outline:2px solid rgba(255,255,255,.36);outline-offset:2px}
   button.choice:disabled{opacity:.55;cursor:default}
   button.choice.correct{background:rgba(34,197,94,.28);border-color:rgba(34,197,94,.9)}
   button.choice.wrong{background:rgba(239,68,68,.28);border-color:rgba(239,68,68,.9)}
@@ -227,7 +232,7 @@ function gainExp(x){
 
 async function loadMonsters(){
   try{
-    await injectScript('img/monsters/monsters.js');
+    await injectScript('../img/monsters/monsters.js');
     const arr=window.MONSTER_DATA;
     if(!Array.isArray(arr) || !arr[0]?.id || !arr[0]?.ja) throw 0;
     MONSTERS=arr;
@@ -237,7 +242,7 @@ async function loadMonsters(){
 function setEnemyImage(mon){
   const img=$('enemyImg');
   img.style.display='block';
-  img.src=`img/monsters/${mon.id}.png`;
+  img.src=`../img/monsters/${mon.id}.png`;
   img.alt=mon.ja;
   img.onerror=()=>img.style.display='none';
 }
@@ -272,11 +277,11 @@ function spawnEnemy(){
 
 async function loadWords(){
   try{
-    await injectScript('en_ja/categories.js');
+    await injectScript('../en_ja/categories.js');
     const filesRaw=safeGlobalEval('files_enJa');
     const files=Array.isArray(filesRaw)?filesRaw:[];
     if(!files.length) throw 0;
-    await Promise.all(files.map(n=>injectScript(encodeURI(`en_ja/${n}.js`))));
+    await Promise.all(files.map(n=>injectScript(encodeURI(`../en_ja/${n}.js`))));
     const all=files.flatMap(n=>{
       const data=safeGlobalEval(`enJa_${String(n).replace(/[^A-Za-z0-9_$]/g,'_')}`);
       return Array.isArray(data)?data:[];
@@ -414,7 +419,7 @@ function init(){
 const backBtn=$('backBtn');
 if(backBtn){
   backBtn.addEventListener('click', ()=>{
-    location.href='index.html';
+    location.href='../index.html';
   });
 }
 
