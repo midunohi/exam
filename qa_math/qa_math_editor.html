@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>QAMS QA Editor</title>
+  <title>qa math editor</title>
   <style>
     :root {
       --bg: #111827;
@@ -23,19 +23,6 @@
       background: var(--bg);
       color: var(--text);
     }
-    header {
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    header h1 {
-      font-size: 18px;
-      margin: 0 12px 0 0;
-      font-weight: 700;
-    }
     button, label.fileButton {
       border: 1px solid var(--border);
       background: var(--panel2);
@@ -54,7 +41,7 @@
       display: grid;
       grid-template-columns: 380px 1fr;
       gap: 0;
-      height: calc(100vh - 62px);
+      height: 100vh;
       min-height: 0;
     }
     aside {
@@ -75,15 +62,6 @@
       font-size: 13px;
       margin: 6px 0 12px;
       line-height: 1.5;
-    }
-    .search {
-      width: 100%;
-      padding: 9px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #111827;
-      color: var(--text);
-      margin-bottom: 10px;
     }
     .qaList {
       display: flex;
@@ -142,26 +120,20 @@
       padding: 10px;
       font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
-    textarea { min-height: 180px; resize: vertical; }
-    .previewGrid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 12px;
+    textarea {
+      height: 48px;
+      min-height: 48px;
+      resize: vertical;
     }
     .previewBox {
       border: 1px solid var(--border);
       border-radius: 10px;
       background: #030712;
-      min-height: 120px;
-      padding: 12px;
-      overflow: auto;
-      line-height: 1.7;
-    }
-    .previewBox .label {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 8px;
+      min-height: 48px;
+      padding: 10px;
+      overflow: visible;
+      line-height: 1.5;
+      font-size: 15px;
     }
     .small { font-size: 12px; color: var(--muted); }
     .empty {
@@ -174,12 +146,10 @@
     .status {
       color: var(--muted);
       font-size: 13px;
-      margin-left: auto;
     }
     @media (max-width: 820px) {
-      main { grid-template-columns: 1fr; height: auto; min-height: calc(100vh - 62px); }
+      main { grid-template-columns: 1fr; height: auto; min-height: 100vh; }
       aside { border-right: 0; border-bottom: 1px solid var(--border); max-height: 45vh; }
-      .previewGrid { grid-template-columns: 1fr; }
     }
   </style>
   <script>
@@ -191,33 +161,30 @@
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
 <body>
-  <header>
-    <h1>QAMS QA Editor</h1>
-    <label class="fileButton primary">
-      JSファイルを開く
-      <input id="fileInput" type="file" accept=".js" />
-    </label>
-    <button id="download" class="ok">編集済みJSを保存</button>
-    <span id="status" class="status">未読み込み</span>
-  </header>
-
   <main>
     <aside>
-      <input id="search" class="search" type="text" placeholder="検索: 問題・回答" />
+      <div class="row">
+        <label class="fileButton primary">
+          JSファイルを開く
+          <input id="fileInput" type="file" accept=".js" />
+        </label>
+        <button id="download" class="ok">保存</button>
+      </div>
+      <div id="status" class="status">未読み込み</div>
+      <div id="meta" class="meta"></div>
       <div class="row">
         <button id="add">QA追加</button>
         <button id="duplicate">複製</button>
         <button id="remove" class="danger">削除</button>
       </div>
-      <div id="meta" class="meta"></div>
       <div id="qaList" class="qaList"></div>
     </aside>
 
     <section class="editor">
       <div id="empty" class="empty">
         QA MathのJSファイルを開いてください。<br />
-        対応形式は <code>const qa_名前 = [["問題","回答"], ...];</code> のみです。<br />
-        編集後は「編集済みJSを保存」でダウンロードします。
+        対応形式は <code>const qa_名前 = [["問題","解答"], ...];</code> のみです。<br />
+        編集後は「保存」でダウンロードします。
       </div>
       <div id="editArea" hidden>
         <div class="row">
@@ -228,21 +195,19 @@
           <textarea id="question"></textarea>
         </div>
         <div class="field">
-          <label for="answer">回答</label>
+          <label for="answer">解答</label>
           <textarea id="answer"></textarea>
         </div>
-        <div class="previewGrid">
-          <div class="previewBox">
-            <div class="label">問題プレビュー</div>
-            <div id="questionPreview"></div>
-          </div>
-          <div class="previewBox">
-            <div class="label">回答プレビュー</div>
-            <div id="answerPreview"></div>
-          </div>
+        <div class="field">
+          <label>問題TeX</label>
+          <div class="previewBox" id="questionPreview"></div>
+        </div>
+        <div class="field">
+          <label>解答TeX</label>
+          <div class="previewBox" id="answerPreview"></div>
         </div>
         <div class="small">
-          保存形式は現行JSと同じ、2要素配列 <code>["問題", "回答"]</code> の一覧です。
+          保存形式は現行JSと同じ、2要素配列 <code>["問題", "解答"]</code> の一覧です。
         </div>
       </div>
     </section>
@@ -261,17 +226,21 @@
 
   const state = {
     fileInput: $("fileInput"), download: $("download"),
-    status: $("status"), meta: $("meta"), search: $("search"), qaList: $("qaList"),
+    status: $("status"), meta: $("meta"), qaList: $("qaList"),
     add: $("add"), duplicate: $("duplicate"), remove: $("remove"),
     empty: $("empty"), editArea: $("editArea"), question: $("question"), answer: $("answer"),
     questionPreview: $("questionPreview"), answerPreview: $("answerPreview"), currentIndex: $("currentIndex")
   };
 
-  function setStatus(text) { state.status.textContent = text + (dirty ? " *" : ""); }
+  function renderFileState(note = "") {
+    const dirtyMark = dirty ? " *" : "";
+    state.status.textContent = note || (fileName ? `${fileName}${dirtyMark}` : "未読み込み");
+    state.meta.textContent = qas.length ? `${qas.length}件 / 変数: ${variableName}` : "";
+  }
 
   function markDirty() {
     dirty = true;
-    setStatus(`${fileName} / ${qas.length}件`);
+    renderFileState();
   }
 
   function normalizeNewlines(s) { return String(s || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n"); }
@@ -280,7 +249,7 @@
     const source = normalizeNewlines(text);
     const match = source.match(/^\s*((?:(?:\/\/[^\n]*|\/\*[\s\S]*?\*\/)\s*)*)const\s+([^\s=]+)\s*=\s*/);
     if (!match) {
-      throw new Error("対応形式ではありません: const qa_名前 = [[\"問題\", \"回答\"], ...]; のJSファイルを開いてください。");
+      throw new Error("対応形式ではありません: const qa_名前 = [[\"問題\", \"解答\"], ...]; のJSファイルを開いてください。");
     }
 
     const arrayStart = match[0].length;
@@ -300,7 +269,7 @@
       leadingComment: match[1] || "",
       items: value.map((row, index) => {
         if (!Array.isArray(row) || row.length < 2) {
-          throw new Error(`${index + 1}件目が ["問題", "回答"] 形式ではありません。`);
+          throw new Error(`${index + 1}件目が ["問題", "解答"] 形式ではありません。`);
         }
         return { q: String(row[0] ?? ""), a: String(row[1] ?? "") };
       })
@@ -373,20 +342,15 @@
   function firstLine(s) { return normalizeNewlines(s).split("\n")[0].trim(); }
 
   function renderList() {
-    const word = state.search.value.trim().toLowerCase();
     state.qaList.innerHTML = "";
-    const filtered = qas.map((qa, i) => ({ qa, i })).filter(({ qa }) => {
-      if (!word) return true;
-      return (qa.q + "\n" + qa.a).toLowerCase().includes(word);
-    });
-    for (const { qa, i } of filtered) {
+    qas.forEach((qa, i) => {
       const el = document.createElement("div");
       el.className = "qaItem" + (i === selected ? " active" : "");
-      el.innerHTML = `<div class="q">${i + 1}. ${html(firstLine(qa.q) || "（問題なし）")}</div><div class="a">${html(firstLine(qa.a) || "（回答なし）")}</div>`;
+      el.innerHTML = `<div class="q">${i + 1}. ${html(firstLine(qa.q) || "（問題なし）")}</div><div class="a">${html(firstLine(qa.a) || "（解答なし）")}</div>`;
       el.onclick = () => select(i);
       state.qaList.appendChild(el);
-    }
-    state.meta.textContent = `${qas.length}件 / 表示 ${filtered.length}件 / 変数: ${variableName}`;
+    });
+    renderFileState();
   }
 
   function html(s) {
@@ -441,7 +405,7 @@
     leadingComment = parsed.leadingComment;
     selected = -1;
     dirty = false;
-    setStatus(`${fileName} / ${qas.length}件`);
+    renderFileState();
     select(qas.length ? 0 : -1, false);
   }
 
@@ -456,7 +420,7 @@
     URL.revokeObjectURL(a.href);
     a.remove();
     dirty = false;
-    setStatus(`${fileName} / ${qas.length}件 ダウンロード済み`);
+    renderFileState(`${fileName} / ダウンロード済み`);
   }
 
   function addQa() {
@@ -505,7 +469,6 @@
   state.add.onclick = addQa;
   state.duplicate.onclick = duplicateQa;
   state.remove.onclick = removeQa;
-  state.search.oninput = renderList;
   state.question.oninput = handleEditInput;
   state.answer.oninput = handleEditInput;
 
