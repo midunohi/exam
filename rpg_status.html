@@ -236,8 +236,7 @@
   const init = ()=>{
     load(); render();
     $('backBtn').addEventListener('click', ()=>{
-      if(document.referrer) history.back();
-      else alert('ゲーム画面から開くと「戻る」で帰れます。');
+      location.href = 'index.html';
     });
   };
   init();
