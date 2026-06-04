@@ -10,5 +10,6 @@ const files_enExamples = [
   "nature",
   "psych",
   "quantity_degrees",
-  "science"
+  "science",
+  "electromagnetism",
 ];
