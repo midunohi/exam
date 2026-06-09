@@ -78,7 +78,7 @@
   </style>
 
   <!-- files.js を「普通の script」として先に読み込む（export無しでも使えるように） -->
-  <script src="../en_examples/files.js"></script>
+  <script src="../qa_en_examples/files.js"></script>
 </head>
 <body>
   <div class="topbar">
@@ -110,7 +110,7 @@
 
   <script>
   // ============================
-  // Loader: en_examples/* を読み込んで dataset[] に変換
+  // Loader: qa_en_examples/* を読み込んで dataset[] に変換
   // 期待する各ファイルの形式（例）：
   //   [
   //     [["planet","惑星"],["a rocky planet","岩石惑星"],["...","..."],["...","..."]],
@@ -231,7 +231,7 @@
 
   async function loadEnExamplesFile(name){
     const base = normalizeBaseName(name);
-    const jsSrc = encodeURI(`../en_examples/${base}.js`);
+    const jsSrc = encodeURI(`../qa_en_examples/${base}.js`);
 
     try{
       await injectScript(jsSrc);

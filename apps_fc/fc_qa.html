@@ -165,7 +165,7 @@
     </div>
   </div>
 
-  <script src="../qa/files.js"></script>
+  <script src="../qa_text/files.js"></script>
   <script>
     const cardEl = document.querySelector(".card-panel");
     const countLabelEl = document.getElementById("countLabel");
@@ -179,7 +179,7 @@
     const EXP_KEY = "midunohi.exam.exp";
     const CYCLE_MAX = 5;
     let exp = 0;
-    let cards = [];   // qa/ 以下の .js から読み込む
+    let cards = [];   // qa_text/ 以下の .js から読み込む
     let index = 0;
     let shown = false;
     let currentCategory = "--";
@@ -325,14 +325,14 @@
 
     async function loadCategory(name) {
       const base = String(name || "").replace(/\.js$/i, "");
-      const src = `../qa/${base}.js`;
+      const src = `../qa_text/${base}.js`;
       const globalName = `qa_${base}`;
 
       try {
         await injectScript(src);
         const raw = safeGlobalEval(globalName);
         const data = toCards(raw);
-        if (!data.length) throw new Error(`qa/${base}.js にカードが見つかりません`);
+        if (!data.length) throw new Error(`qa_text/${base}.js にカードが見つかりません`);
         cards = data;
         currentCategory = base;
         cycleCount = 0;
@@ -340,7 +340,7 @@
         updateRandomButton();
         showRandomCard(-1);
       } catch (e) {
-        throw new Error(`qa/${base}.js を読み込めませんでした`);
+        throw new Error(`qa_text/${base}.js を読み込めませんでした`);
       }
     }
 
@@ -359,7 +359,7 @@
       } catch (e) {
         console.error(e);
         qEl.textContent = "カード一覧の読み込みに失敗しました";
-        aEl.textContent = "qa/files.js と qa/*.js を確認してください";
+        aEl.textContent = "qa_text/files.js と qa_text/*.js を確認してください";
         aEl.style.visibility = "visible";
         countLabelEl.textContent = "0 / 0";
       }

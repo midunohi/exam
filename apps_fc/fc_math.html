@@ -182,7 +182,7 @@
   </script>
   <script id="MathJax-script" async
     src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-  <script src="../qa_math/files.js"></script>
+  <script src="../qa_tex/files.js"></script>
 </head>
 
 <body>
@@ -372,13 +372,13 @@
 
     async function loadCategory(name) {
       const base = String(name || "").replace(/\.js$/i, "");
-      const jsSrc = encodeURI(`../qa_math/${base}.js`);
+      const jsSrc = encodeURI(`../qa_tex/${base}.js`);
 
       await injectScript(jsSrc);
       const raw = safeGlobalEval(`qa_${base}`);
       const data = Array.isArray(raw) ? raw : [];
 
-      if (!data.length) throw new Error(`qa_math/${base}.js にカードがありません`);
+      if (!data.length) throw new Error(`qa_tex/${base}.js にカードがありません`);
       problems = data;
       currentCategory = base;
       answeredCount = 0;
@@ -390,7 +390,7 @@
     async function loadRandomCategory(exceptIndex = -1) {
       const files = await loadFilesList();
       if (!files.length) {
-        await useFallback("qa_math/files.js にカテゴリがありません");
+        await useFallback("qa_tex/files.js にカテゴリがありません");
         return -1;
       }
       const idx = pickRandomIndex(files.length, exceptIndex);

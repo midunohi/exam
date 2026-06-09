@@ -277,11 +277,11 @@ function spawnEnemy(){
 
 async function loadWords(){
   try{
-    await injectScript('../en_ja/categories.js');
+    await injectScript('../qa_en_ja/categories.js');
     const filesRaw=safeGlobalEval('files_enJa');
     const files=Array.isArray(filesRaw)?filesRaw:[];
     if(!files.length) throw 0;
-    await Promise.all(files.map(n=>injectScript(encodeURI(`../en_ja/${n}.js`))));
+    await Promise.all(files.map(n=>injectScript(encodeURI(`../qa_en_ja/${n}.js`))));
     const all=files.flatMap(n=>{
       const data=safeGlobalEval(`enJa_${String(n).replace(/[^A-Za-z0-9_$]/g,'_')}`);
       return Array.isArray(data)?data:[];
