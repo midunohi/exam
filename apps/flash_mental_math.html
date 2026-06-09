@@ -22,7 +22,7 @@
   button:focus{outline:none}
   button:focus-visible{outline:2px solid rgba(148,163,184,.45);outline-offset:2px}
   button:disabled{opacity:.5;cursor:not-allowed}
-  #n{font-size:72px;font-weight:900;letter-spacing:.02em;text-align:center;height:150px;display:flex;align-items:center;justify-content:center}
+  #n{font-size:72px;font-weight:900;letter-spacing:.02em;text-align:center;height:190px;display:flex;align-items:center;justify-content:center}
   #title{font-size:32px;font-weight:900;letter-spacing:.08em}
   #hint{display:flex;gap:6px;flex-wrap:wrap;align-content:flex-start;justify-content:flex-start;font-size:13px;font-weight:900;height:52px;overflow:hidden}
   #hint div{padding:3px 8px;border-radius:999px;background:#0c1226}
@@ -36,6 +36,8 @@
   .choice.correct{background:#1f7a3a;border-color:#2aa84f}
   .choice.wrong{background:#7a1f1f;border-color:#a82a2a}
   .exp{position:absolute;right:14px;bottom:8px;font-size:12px;color:#b8c3ea;text-align:right}
+  .start-guide{position:absolute;left:18px;right:18px;bottom:30px;text-align:center;font-size:13px;font-weight:700;color:#b8c3ea;opacity:.52;pointer-events:none}
+  .start-guide.is-hidden{display:none}
   .startRow{min-height:44px}
 </style>
 
@@ -66,6 +68,7 @@
         </div>
         <div id="msg"></div>
         <div id="hint"></div>
+        <div id="startGuide" class="start-guide">枠をクリックして開始</div>
       </div>
     </div>
   </div>
@@ -76,7 +79,7 @@
   const $ = (id) => document.getElementById(id);
   const kEl=$('k'), dEl=$('d'), msEl=$('ms');
   const boxEl=$('box');
-  const nEl=$('n'), msgEl=$('msg'), expLabelEl=$('expLabel');
+  const nEl=$('n'), msgEl=$('msg'), expLabelEl=$('expLabel'), startGuideEl=$('startGuide');
   const choicesEl=$('choices');
   const choiceBtns=Array.from(choicesEl.querySelectorAll('.choice'));
 
@@ -98,6 +101,7 @@
 
   function updateStartable(){
     if(boxEl) boxEl.classList.toggle('is-startable', !running && !readyForChoice);
+    if(startGuideEl) startGuideEl.classList.toggle('is-hidden', running || readyForChoice);
   }
 
   function clearTimer(){ if(t){ clearTimeout(t); t=null; } }
@@ -163,7 +167,7 @@
   function showStart(){
     choicesEl.classList.add('is-hidden');
     nEl.textContent='開始';
-    msgEl.textContent='枠をクリックして開始';
+    msgEl.textContent='';
     updateStartable();
   }
 

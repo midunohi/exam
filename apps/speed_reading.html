@@ -134,6 +134,19 @@
       color: var(--muted);
       font-size: 12px;
     }
+    .start-guide {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 18px;
+      color: var(--muted);
+      opacity: .52;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      pointer-events: none;
+    }
+    .start-guide.is-hidden { display: none; }
     input[type="range"] { font-size: 12px; }
     button {
       border: 1px solid var(--border);
@@ -233,6 +246,11 @@
         border-radius: 16px;
         gap: 14px;
       }
+      .start-guide {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+      }
       .speed {
         width: 100%;
         justify-content: space-between;
@@ -261,7 +279,7 @@
     <div class="frame">
       <section class="word-box" aria-live="polite">
       <div class="top-controls">
-        <div class="progress" id="progressLabel">枠をクリックして開始</div>
+        <div class="progress" id="progressLabel">0 / 0</div>
 
         <label class="speed">
           速度
@@ -282,6 +300,7 @@
       </div>
 
       <div class="exp">EXP: <span id="expLabel">0</span></div>
+      <div id="startGuide" class="start-guide">枠をクリックして開始</div>
       </section>
     </div>
   </main>
@@ -475,6 +494,7 @@ const passages = [
     const wordDisplay  = document.getElementById('wordDisplay');
     const progressLabel = document.getElementById('progressLabel');
     const wordBox = document.querySelector('.word-box');
+    const startGuideEl = document.getElementById('startGuide');
     const wordArea = document.querySelector('.word-area');
     const quizArea = document.getElementById('quizArea');
     const choicesEl = document.getElementById('choices');
@@ -530,7 +550,7 @@ const passages = [
     function updateDisplay() {
       if (!words.length) {
         wordDisplay.textContent = "開始";
-        progressLabel.textContent = "枠をクリックして開始";
+        progressLabel.textContent = "0 / 0";
         return;
       }
       const current = Math.min(index + 1, words.length);
@@ -545,6 +565,7 @@ const passages = [
     function updateStartable() {
       const canStart = !running && !answered && !isQuizVisible();
       if (wordBox) wordBox.classList.toggle("is-startable", canStart);
+      if (startGuideEl) startGuideEl.classList.toggle("is-hidden", !canStart);
     }
 
     function shuffle(list) {
