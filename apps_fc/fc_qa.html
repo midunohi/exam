@@ -307,7 +307,8 @@
 
     function getFiles() {
       const files = (typeof files_qa !== "undefined" && Array.isArray(files_qa)) ? files_qa : [];
-      return files.length ? files : ["daily"];
+      const normalized = normalizeFileEntries(files);
+      return normalized.length ? normalized : normalizeFileEntries(["daily"]);
     }
 
     function pickRandomIndex(len, except) {
@@ -315,6 +316,35 @@
       let n = 0;
       do { n = Math.floor(Math.random() * len); } while (n === except);
       return n;
+    }
+
+    function normalizeFileEntries(files) {
+      return files.map((entry) => {
+        if (Array.isArray(entry)) {
+          const name = String(entry[0] ?? "").trim();
+          const weight = Number(entry[1]);
+          return {
+            name,
+            weight: Number.isFinite(weight) && weight > 0 ? weight : 0,
+          };
+        }
+        return { name: String(entry ?? "").trim(), weight: 1 };
+      }).filter(file => file.name && file.weight > 0);
+    }
+
+    function pickWeightedFileIndex(files, except) {
+      const candidates = files
+        .map((file, index) => ({ file, index }))
+        .filter(({ index }) => files.length <= 1 || index !== except);
+      const pool = candidates.length ? candidates : files.map((file, index) => ({ file, index }));
+      const total = pool.reduce((sum, item) => sum + item.file.weight, 0);
+      if (total <= 0) return pickRandomIndex(files.length, except);
+      let r = Math.random() * total;
+      for (const item of pool) {
+        r -= item.file.weight;
+        if (r < 0) return item.index;
+      }
+      return pool[pool.length - 1].index;
     }
 
     function updateRandomButton() {
@@ -346,8 +376,8 @@
 
     async function loadRandomCategory(exceptIndex = -1) {
       const files = getFiles();
-      const idx = pickRandomIndex(files.length, exceptIndex);
-      await loadCategory(files[idx]);
+      const idx = pickWeightedFileIndex(files, exceptIndex);
+      await loadCategory(files[idx].name);
       currentFileIndex = idx;
       return idx;
     }

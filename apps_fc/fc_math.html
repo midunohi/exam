@@ -284,6 +284,35 @@
       return i;
     }
 
+    function normalizeFileEntries(files) {
+      return files.map((entry) => {
+        if (Array.isArray(entry)) {
+          const name = String(entry[0] ?? "").trim();
+          const weight = Number(entry[1]);
+          return {
+            name,
+            weight: Number.isFinite(weight) && weight > 0 ? weight : 0,
+          };
+        }
+        return { name: String(entry ?? "").trim(), weight: 1 };
+      }).filter(file => file.name && file.weight > 0);
+    }
+
+    function pickWeightedFileIndex(files, except) {
+      const candidates = files
+        .map((file, index) => ({ file, index }))
+        .filter(({ index }) => files.length <= 1 || index !== except);
+      const pool = candidates.length ? candidates : files.map((file, index) => ({ file, index }));
+      const total = pool.reduce((sum, item) => sum + item.file.weight, 0);
+      if (total <= 0) return pickRandomIndex(files.length, except);
+      let r = Math.random() * total;
+      for (const item of pool) {
+        r -= item.file.weight;
+        if (r < 0) return item.index;
+      }
+      return pool[pool.length - 1].index;
+    }
+
     // ---------- MathJax helpers ----------
     function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
 
@@ -366,7 +395,8 @@
 
     async function loadFilesList() {
       if (filesCache) return filesCache;
-      filesCache = (typeof files_qaMath !== "undefined" && Array.isArray(files_qaMath)) ? files_qaMath : [];
+      const files = (typeof files_qaMath !== "undefined" && Array.isArray(files_qaMath)) ? files_qaMath : [];
+      filesCache = normalizeFileEntries(files);
       return filesCache;
     }
 
@@ -393,9 +423,9 @@
         await useFallback("qa_tex/files.js にカテゴリがありません");
         return -1;
       }
-      const idx = pickRandomIndex(files.length, exceptIndex);
+      const idx = pickWeightedFileIndex(files, exceptIndex);
       try {
-        await loadCategory(files[idx]);
+        await loadCategory(files[idx].name);
         currentFileIndex = idx;
         return idx;
       } catch (e) {
