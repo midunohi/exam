@@ -237,6 +237,36 @@
       font-size: 13px;
       text-align: center;
     }
+    .result-history {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      justify-content: flex-start;
+      min-height: 52px;
+      max-height: 52px;
+      overflow: hidden;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .result-history div {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(10,19,34,.5);
+      border: 1px solid rgba(148,163,184,.2);
+    }
+    .result-history .ok {
+      color: #7cff9b;
+      text-shadow: 0 0 12px #24ff6a, 0 2px 5px rgba(0,0,0,.9);
+      border-color: rgba(124,255,155,.38);
+      box-shadow: 0 0 18px rgba(36,255,106,.18);
+    }
+    .result-history .ng {
+      color: #ff7c7c;
+      text-shadow: 0 0 12px #ff3030, 0 2px 5px rgba(0,0,0,.9);
+      border-color: rgba(255,124,124,.38);
+      box-shadow: 0 0 18px rgba(255,48,48,.16);
+    }
     @media (max-width: 640px) {
       .page { padding: 72px 12px 18px; }
       .top-bar { padding: 8px 12px; }
@@ -300,6 +330,7 @@
         <div id="feedback" class="feedback"></div>
       </div>
 
+      <div id="resultHistory" class="result-history" aria-live="polite"></div>
       <div class="exp">EXP: <span id="expLabel">0</span></div>
       <div id="startGuide" class="start-guide">枠をクリックして開始</div>
       </section>
@@ -500,6 +531,7 @@ const passages = [
     const quizArea = document.getElementById('quizArea');
     const choicesEl = document.getElementById('choices');
     const feedbackEl = document.getElementById('feedback');
+    const resultHistoryEl = document.getElementById('resultHistory');
 
     const EXP_KEY = "midunohi.exam.exp";
     let exp = 0;
@@ -536,6 +568,17 @@ const passages = [
     function updateExpDisplay() {
       const el = document.getElementById("expLabel");
       if (el) el.textContent = String(exp);
+    }
+
+    function addResult(ok, text) {
+      if (!resultHistoryEl) return;
+      const line = document.createElement("div");
+      line.className = ok ? "ok" : "ng";
+      line.textContent = text;
+      resultHistoryEl.prepend(line);
+      while (resultHistoryEl.children.length > 6) {
+        resultHistoryEl.lastElementChild.remove();
+      }
     }
 
     function wpmToIntervalMs(wpm) {
@@ -632,15 +675,19 @@ const passages = [
 
       if (isCorrect) {
         selectedBtn.classList.add("is-correct");
+        let gain = 0;
         if (!expAwarded) {
-          exp += 5;
+          gain = 5;
+          exp += gain;
           expAwarded = true;
           saveExp();
         }
-        feedbackEl.textContent = "正解です。";
+        feedbackEl.textContent = `🎉 正解 +${gain} EXP`;
+        addResult(true, `🎉 正解 +${gain} EXP`);
       } else {
         selectedBtn.classList.add("is-wrong");
-        feedbackEl.textContent = "不正解です。緑の選択肢を確認してください。";
+        feedbackEl.textContent = "✖ 不正解 +0 EXP";
+        addResult(false, "✖ 不正解 +0 EXP");
       }
       resetTimerId = setTimeout(resetToStart, 1000);
     }
