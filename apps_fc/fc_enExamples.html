@@ -130,8 +130,6 @@
   ];
 
   const EXP_KEY = "midunohi.exam.exp";
-  const CYCLE_MAX = 3;
-
   function loadExp(){
     try{
       const raw = localStorage.getItem(EXP_KEY);
@@ -149,8 +147,9 @@
   let exp = loadExp();
   let currentCategory = '--';
   let cycleCount = 0;
-  let answeredCount = 0;
   let currentFileIndex = -1;
+  let categoryPool = [];
+  let remainingProblemIndices = [];
 
   function ensureMinPhrases(phrases, n=3){
     const out = Array.isArray(phrases) ? phrases.slice(0) : [];
@@ -274,18 +273,40 @@
   }
 
   function pickWeightedFileIndex(files, except){
-    const candidates = files
-      .map((file, index)=>({ file, index }))
-      .filter(({ index }) => files.length <= 1 || index !== except);
-    const pool = candidates.length ? candidates : files.map((file, index)=>({ file, index }));
+    if(!categoryPool.length) categoryPool = files.map((_file, index)=>index);
+    let pool = categoryPool.map(index => ({ file: files[index], index }));
+    if(pool.length > 1){
+      const withoutCurrent = pool.filter(({ index }) => index !== except);
+      if(withoutCurrent.length) pool = withoutCurrent;
+    }
     const total = pool.reduce((sum, item)=>sum + item.file.weight, 0);
-    if(total <= 0) return pickRandomIndex(files.length, except);
+    if(total <= 0){
+      const fallbackIndex = pool[Math.floor(Math.random() * pool.length)].index;
+      categoryPool = categoryPool.filter(index => index !== fallbackIndex);
+      return fallbackIndex;
+    }
     let r = Math.random() * total;
     for(const item of pool){
       r -= item.file.weight;
-      if(r < 0) return item.index;
+      if(r < 0){
+        categoryPool = categoryPool.filter(index => index !== item.index);
+        return item.index;
+      }
     }
-    return pool[pool.length - 1].index;
+    const fallbackIndex = pool[pool.length - 1].index;
+    categoryPool = categoryPool.filter(index => index !== fallbackIndex);
+    return fallbackIndex;
+  }
+
+  function resetProblemQueue(){
+    remainingProblemIndices = dataset.map((_item, index)=>index);
+  }
+
+  function takeRandomProblemIndex(){
+    if(!remainingProblemIndices.length) return -1;
+    const queueIndex = Math.floor(Math.random() * remainingProblemIndices.length);
+    const [problemIndex] = remainingProblemIndices.splice(queueIndex, 1);
+    return problemIndex;
   }
 
   function getRevealTotal(item){
@@ -321,7 +342,7 @@
     els.categoryLabel.textContent = `${currentCategory}`;
     els.expLabel.textContent = `EXP: ${exp}`;
     if(els.totalCount) els.totalCount.textContent = `全${dataset.length}問`;
-    if(els.countLabel) els.countLabel.textContent = `${cycleCount} / ${CYCLE_MAX}`;
+    if(els.countLabel) els.countLabel.textContent = `${cycleCount} / ${dataset.length}`;
   }
 
   function render(){
@@ -386,9 +407,14 @@
   }
 
   function nextCard(){
-    idx = pickRandomIndex(dataset.length, idx);
+    const nextIndex = takeRandomProblemIndex();
+    if(nextIndex < 0){
+      loadRandomCategory(currentFileIndex);
+      return;
+    }
+    idx = nextIndex;
     revealStep = 0;
-    cycleCount = Math.min(cycleCount + 1, CYCLE_MAX);
+    cycleCount += 1;
     render();
   }
 
@@ -410,8 +436,7 @@
     }
 
     gainExp(1);
-    answeredCount += 1;
-    if(answeredCount % CYCLE_MAX === 0){
+    if(!remainingProblemIndices.length){
       loadRandomCategory(currentFileIndex);
       return;
     }
@@ -447,10 +472,10 @@
       dataset = toDataset(STUB_EN_EXAMPLES);
     }
 
-    idx = pickRandomIndex(dataset.length, -1);
+    resetProblemQueue();
+    idx = takeRandomProblemIndex();
     revealStep = 0;
     cycleCount = 1;
-    answeredCount = 0;
     currentFileIndex = idxFile;
     render();
   }

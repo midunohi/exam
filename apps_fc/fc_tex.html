@@ -98,8 +98,10 @@
     .category-row{
       display:flex;
       align-items:center;
-      gap:10px;
+      gap:8px;
       margin-bottom:6px;
+      flex-wrap:nowrap;
+      min-width:0;
     }
     .category-label{
       font-size: 0.75rem;
@@ -107,6 +109,8 @@
       letter-spacing: 0.08em;
       color: var(--muted);
       text-transform: uppercase;
+      flex:0 0 auto;
+      white-space:nowrap;
     }
     .category-name{
       font-size: clamp(16px,3.2vw,20px);
@@ -114,10 +118,25 @@
       letter-spacing: 0.01em;
       color: var(--fg);
       text-align: left;
+      flex:1 1 auto;
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
-    .category-count{ font-size:0.85rem; color:var(--muted); }
-    .progress{ font-size:0.85rem; color:var(--muted); }
-    .category-spacer{ flex:1; }
+    .category-count{
+      font-size:0.85rem;
+      color:var(--muted);
+      flex:0 0 auto;
+      white-space:nowrap;
+    }
+    .progress{
+      font-size:0.85rem;
+      color:var(--muted);
+      flex:0 0 auto;
+      white-space:nowrap;
+    }
+    .category-spacer{ display:none; }
     button{
       background: rgba(10,19,34,.48);
       color: var(--fg);
@@ -127,6 +146,8 @@
       font-weight: 700;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
+      flex:0 0 auto;
+      white-space:nowrap;
     }
     button:hover{ border-color:#2b3a55; }
     button:active{ border-color:#334155; box-shadow:inset 0 0 0 1px rgba(148,163,184,.14); }
@@ -170,6 +191,23 @@
 
     @media (min-width: 768px) {
       .page { padding: 96px 16px 32px; }
+      .category-row{ gap:10px; }
+      .category-spacer{
+        display:block;
+        flex:1 1 auto;
+        min-width:16px;
+      }
+      .category-name{ flex:0 1 auto; }
+    }
+
+    @media (max-width: 420px) {
+      .flashcard{ padding: 1rem 0.9rem 1.7rem; }
+      .category-row{ gap:6px; }
+      .category-label{ font-size:0.68rem; letter-spacing:0.04em; }
+      .category-name{ font-size:15px; }
+      .category-count,
+      .progress{ font-size:0.78rem; }
+      button{ padding:7px 9px; border-radius:10px; }
     }
   </style>
 
@@ -219,7 +257,6 @@
   <script>
     // ---------- EXP ----------
     const EXP_KEY = "midunohi.exam.exp";
-    const CYCLE_MAX = 3;
     let exp = 0;
 
     const expDisplayEl = document.getElementById("expLabel");
@@ -263,6 +300,8 @@
     let problems = [];
     let currentCategory = "--";
     let currentFileIndex = -1;
+    let categoryPool = [];
+    let remainingProblemIndices = [];
 
     const problemQuestionEl = document.getElementById("problemQuestion");
     const problemAnswerEl = document.getElementById("problemAnswer");
@@ -274,7 +313,6 @@
     let showingAnswer = false;
     let cycleCount = 0;
     let busy = false;
-    let answeredCount = 0;
     let filesCache = null;
 
     function pickRandomIndex(len, except) {
@@ -299,18 +337,40 @@
     }
 
     function pickWeightedFileIndex(files, except) {
-      const candidates = files
-        .map((file, index) => ({ file, index }))
-        .filter(({ index }) => files.length <= 1 || index !== except);
-      const pool = candidates.length ? candidates : files.map((file, index) => ({ file, index }));
+      if (!categoryPool.length) categoryPool = files.map((_file, index) => index);
+      let pool = categoryPool.map(index => ({ file: files[index], index }));
+      if (pool.length > 1) {
+        const withoutCurrent = pool.filter(({ index }) => index !== except);
+        if (withoutCurrent.length) pool = withoutCurrent;
+      }
       const total = pool.reduce((sum, item) => sum + item.file.weight, 0);
-      if (total <= 0) return pickRandomIndex(files.length, except);
+      if (total <= 0) {
+        const fallbackIndex = pool[Math.floor(Math.random() * pool.length)].index;
+        categoryPool = categoryPool.filter(index => index !== fallbackIndex);
+        return fallbackIndex;
+      }
       let r = Math.random() * total;
       for (const item of pool) {
         r -= item.file.weight;
-        if (r < 0) return item.index;
+        if (r < 0) {
+          categoryPool = categoryPool.filter(index => index !== item.index);
+          return item.index;
+        }
       }
-      return pool[pool.length - 1].index;
+      const fallbackIndex = pool[pool.length - 1].index;
+      categoryPool = categoryPool.filter(index => index !== fallbackIndex);
+      return fallbackIndex;
+    }
+
+    function resetProblemQueue() {
+      remainingProblemIndices = problems.map((_problem, index) => index);
+    }
+
+    function takeRandomProblemIndex() {
+      if (!remainingProblemIndices.length) return -1;
+      const queueIndex = Math.floor(Math.random() * remainingProblemIndices.length);
+      const [problemIndex] = remainingProblemIndices.splice(queueIndex, 1);
+      return problemIndex;
     }
 
     // ---------- MathJax helpers ----------
@@ -350,7 +410,7 @@
       showingAnswer = false;
 
       if (totalCountEl) totalCountEl.textContent = `全${problems.length}問`;
-      if (countLabelEl) countLabelEl.textContent = `${cycleCount} / ${CYCLE_MAX}`;
+      if (countLabelEl) countLabelEl.textContent = `${cycleCount} / ${problems.length}`;
 
       // その後にMathJaxで整える（準備できた時点で反映）
       await typesetElements([problemQuestionEl, problemAnswerEl]);
@@ -387,8 +447,8 @@
       console.warn(reason);
       problems = fallbackProblems;
       currentCategory = "stub";
-      answeredCount = 0;
       cycleCount = 0;
+      resetProblemQueue();
       updateRandomButton();
       await showRandomProblem(-1);
     }
@@ -411,8 +471,8 @@
       if (!data.length) throw new Error(`qa_tex/${base}.js にカードがありません`);
       problems = data;
       currentCategory = base;
-      answeredCount = 0;
       cycleCount = 0;
+      resetProblemQueue();
       updateRandomButton();
       await showRandomProblem(-1);
     }
@@ -439,13 +499,18 @@
       if (categoryLabelEl) categoryLabelEl.textContent = currentCategory;
     }
 
-    async function showRandomProblem(exceptIndex = -1) {
+    async function showRandomProblem(_exceptIndex = -1) {
       if (!problems.length) {
         await useFallback("カードが読み込まれていないためスタブを表示します");
         return;
       }
-      currentIndex = pickRandomIndex(problems.length, exceptIndex);
-      cycleCount = Math.min(cycleCount + 1, CYCLE_MAX);
+      const nextIndex = takeRandomProblemIndex();
+      if (nextIndex < 0) {
+        await loadRandomCategory(currentFileIndex);
+        return;
+      }
+      currentIndex = nextIndex;
+      cycleCount += 1;
       await renderProblem();
     }
 
@@ -461,9 +526,8 @@
         } else {
           exp += 1;
           saveExp();
-          answeredCount += 1;
 
-          if (answeredCount % CYCLE_MAX === 0) {
+          if (!remainingProblemIndices.length) {
             try {
               currentFileIndex = await loadRandomCategory(currentFileIndex);
             } catch (err) {
@@ -489,12 +553,11 @@
       }
     })();
 
-    let lastFileIndex = -1;
     if (randomBtnEl) {
       randomBtnEl.addEventListener("click", async (e) => {
         e.stopPropagation();
         try {
-          lastFileIndex = await loadRandomCategory(lastFileIndex);
+          currentFileIndex = await loadRandomCategory(currentFileIndex);
         } catch (err) {
           console.error(err);
         }
