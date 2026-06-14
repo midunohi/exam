@@ -150,6 +150,7 @@
   let currentFileIndex = -1;
   let categoryPool = [];
   let remainingProblemIndices = [];
+  const QUESTIONS_PER_CATEGORY = 3;
 
   function ensureMinPhrases(phrases, n=3){
     const out = Array.isArray(phrases) ? phrases.slice(0) : [];
@@ -302,6 +303,10 @@
     remainingProblemIndices = dataset.map((_item, index)=>index);
   }
 
+  function hasReachedCategoryLimit(){
+    return cycleCount >= QUESTIONS_PER_CATEGORY || !remainingProblemIndices.length;
+  }
+
   function takeRandomProblemIndex(){
     if(!remainingProblemIndices.length) return -1;
     const queueIndex = Math.floor(Math.random() * remainingProblemIndices.length);
@@ -342,7 +347,7 @@
     els.categoryLabel.textContent = `${currentCategory}`;
     els.expLabel.textContent = `EXP: ${exp}`;
     if(els.totalCount) els.totalCount.textContent = `全${dataset.length}問`;
-    if(els.countLabel) els.countLabel.textContent = `${cycleCount} / ${dataset.length}`;
+    if(els.countLabel) els.countLabel.textContent = `${Math.min(cycleCount, QUESTIONS_PER_CATEGORY)} / ${QUESTIONS_PER_CATEGORY}`;
   }
 
   function render(){
@@ -425,6 +430,10 @@
 
     if(total === 0){
       gainExp(1);
+      if(hasReachedCategoryLimit()){
+        loadRandomCategory(currentFileIndex);
+        return;
+      }
       nextCard();
       return;
     }
@@ -436,7 +445,7 @@
     }
 
     gainExp(1);
-    if(!remainingProblemIndices.length){
+    if(hasReachedCategoryLimit()){
       loadRandomCategory(currentFileIndex);
       return;
     }

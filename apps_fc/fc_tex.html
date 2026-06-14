@@ -302,6 +302,7 @@
     let currentFileIndex = -1;
     let categoryPool = [];
     let remainingProblemIndices = [];
+    const QUESTIONS_PER_CATEGORY = 3;
 
     const problemQuestionEl = document.getElementById("problemQuestion");
     const problemAnswerEl = document.getElementById("problemAnswer");
@@ -366,6 +367,10 @@
       remainingProblemIndices = problems.map((_problem, index) => index);
     }
 
+    function hasReachedCategoryLimit() {
+      return cycleCount >= QUESTIONS_PER_CATEGORY || !remainingProblemIndices.length;
+    }
+
     function takeRandomProblemIndex() {
       if (!remainingProblemIndices.length) return -1;
       const queueIndex = Math.floor(Math.random() * remainingProblemIndices.length);
@@ -410,7 +415,7 @@
       showingAnswer = false;
 
       if (totalCountEl) totalCountEl.textContent = `全${problems.length}問`;
-      if (countLabelEl) countLabelEl.textContent = `${cycleCount} / ${problems.length}`;
+      if (countLabelEl) countLabelEl.textContent = `${Math.min(cycleCount, QUESTIONS_PER_CATEGORY)} / ${QUESTIONS_PER_CATEGORY}`;
 
       // その後にMathJaxで整える（準備できた時点で反映）
       await typesetElements([problemQuestionEl, problemAnswerEl]);
@@ -527,7 +532,7 @@
           exp += 1;
           saveExp();
 
-          if (!remainingProblemIndices.length) {
+          if (hasReachedCategoryLimit()) {
             try {
               currentFileIndex = await loadRandomCategory(currentFileIndex);
             } catch (err) {
