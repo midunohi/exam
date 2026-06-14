@@ -52,6 +52,7 @@
   .hp>span{background:linear-gradient(90deg,#ef4444,#b91c1c)}
   .exp>span{background:linear-gradient(90deg,#38bdf8,#0ea5e9)}
   .val{min-width:90px;text-align:right;opacity:.9;font-size:12px}
+  .lvExp{min-width:auto;text-align:left;margin-left:6px}
 
   /* QA: 隙間を埋める */
   #qaBox{display:flex;flex-direction:column;min-height:34vh}
@@ -140,8 +141,7 @@
 
   <div id="topGrid">
     <section id="heroBox" class="panel compact">
-      <div class="row"><span class="label">Lv</span><span id="lv">1</span></div>
-      <div class="row"><span class="label">EXP</span><div class="bar exp"><span id="expBar"></span></div><span class="val" id="expText">0 / 20</span></div>
+      <div class="row"><span class="label">Lv</span><span id="lv">1</span><span class="val lvExp" id="expText">0 / 20</span></div>
       <div class="row"><span class="label">HP</span><div class="bar hp"><span id="hpBar"></span></div><span class="val" id="hpText">30 / 30</span></div>
       <div class="row"><span class="label">ATK</span><span id="atk">5</span></div>
     </section>
@@ -255,7 +255,6 @@ function render(){
   $('hpText').textContent=`${state.hp} / ${state.maxHP}`;
   $('expText').textContent=`${state.exp} / ${state.nextExp}`;
   bar('hpBar', state.hp/state.maxHP);
-  bar('expBar', state.exp/state.nextExp);
 }
 
 function gainExp(x){
