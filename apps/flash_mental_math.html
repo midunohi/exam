@@ -4,20 +4,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>フラッシュ暗算</title>
 <style>
-  body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:url("../img/ダンジョン_洞窟_祭壇.png");background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;color:#eef2ff}
+  body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:url("../img/ダンジョン_洞窟_祭壇.png");background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;color:#eef2ff;text-shadow:0 2px 5px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.65)}
   .page{position:relative;width:100%;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;padding-top:4px}
   .topbar{width:min(500px,90vw);display:flex;align-items:center;justify-content:space-between}
   .center{flex:1;width:100%;display:flex;align-items:center;justify-content:center}
   .frame{width:min(500px,90vw)}
-  #backBtn{padding:6px 12px;border-radius:999px;border:1px solid #ffffff22;background:#0c1226;color:#eef2ff;cursor:pointer}
-  .box{box-sizing:border-box;position:relative;width:100%;padding:18px 18px 28px;border:1px solid #ffffff22;border-radius:16px;background:#121a33cc;-webkit-tap-highlight-color:transparent}
+  #backBtn{padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.34);background:rgba(12,18,38,.42);color:#eef2ff;cursor:pointer}
+  .box{box-sizing:border-box;position:relative;width:100%;padding:18px 18px 28px;border:1px solid rgba(255,255,255,.28);border-radius:16px;background:rgba(18,26,51,.38);box-shadow:0 12px 30px rgba(0,0,0,.28);-webkit-tap-highlight-color:transparent}
   .box.is-startable{cursor:pointer}
   .box.is-startable:hover{border-color:#ffffff33}
   .box.is-startable:active{box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  input,button{font:inherit;border-radius:12px;border:1px solid #ffffff22;background:#0c1226;color:#eef2ff;padding:10px 12px}
+  input,button{font:inherit;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(12,18,38,.48);color:#eef2ff;padding:10px 12px}
   input{width:110px}
-  button{cursor:pointer;background:#2a3a66;-webkit-tap-highlight-color:transparent}
+  button{cursor:pointer;background:rgba(42,58,102,.58);-webkit-tap-highlight-color:transparent}
   button:active{border-color:#ffffff33;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
   button:focus{outline:none}
   button:focus-visible{outline:2px solid rgba(148,163,184,.45);outline-offset:2px}
@@ -25,16 +25,16 @@
   #n{font-size:72px;font-weight:900;letter-spacing:.02em;text-align:center;height:190px;display:flex;align-items:center;justify-content:center}
   #title{font-size:32px;font-weight:900;letter-spacing:.08em}
   #hint{display:flex;gap:6px;flex-wrap:wrap;align-content:flex-start;justify-content:flex-start;font-size:13px;font-weight:900;height:52px;overflow:hidden}
-  #hint div{padding:3px 8px;border-radius:999px;background:#0c1226}
+  #hint div{padding:3px 8px;border-radius:999px;background:rgba(12,18,38,.5)}
   #hint .ok{color:#7cff9b;text-shadow:0 0 12px #24ff6a}
   #hint .ng{color:#ff7c7c;text-shadow:0 0 12px #ff3030}
   #msg{margin-top:10px;font-weight:700;text-align:center;min-height:22px}
   .actionArea{position:relative;margin-top:10px;min-height:98px}
   #choices{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:center}
   .is-hidden,#choices.is-hidden{display:none}
-  .choice{background:#1a2446}
-  .choice.correct{background:#1f7a3a;border-color:#2aa84f}
-  .choice.wrong{background:#7a1f1f;border-color:#a82a2a}
+  .choice{background:rgba(26,36,70,.52)}
+  .choice.correct{background:rgba(31,122,58,.68);border-color:#2aa84f}
+  .choice.wrong{background:rgba(122,31,31,.68);border-color:#a82a2a}
   .exp{position:absolute;right:14px;bottom:8px;font-size:12px;color:#b8c3ea;text-align:right}
   .start-guide{position:absolute;left:18px;right:18px;bottom:30px;text-align:center;font-size:13px;font-weight:700;color:#b8c3ea;opacity:.52;pointer-events:none}
   .start-guide.is-hidden{display:none}

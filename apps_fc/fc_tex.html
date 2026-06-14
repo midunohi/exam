@@ -23,6 +23,7 @@
       background-repeat:no-repeat;
       background-attachment:fixed;
       color:var(--fg);
+      text-shadow:0 2px 5px rgba(0,0,0,.9), 0 0 12px rgba(0,0,0,.65);
     }
     .page{
       min-height:100vh;
@@ -41,7 +42,7 @@
       padding:8px 16px;
       display:flex;
       justify-content:center;
-      background: linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,.4) 60%, transparent);
+      background: linear-gradient(180deg, rgba(15,23,42,.58), rgba(15,23,42,.2) 60%, transparent);
       backdrop-filter: blur(6px);
     }
     .topbar-inner{
@@ -63,22 +64,22 @@
       gap:6px;
       text-decoration:none;
       color: var(--fg);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(148,163,184,.28);
       border-radius: 999px;
       padding: 6px 12px;
       font-size: 0.85rem;
       font-weight: 700;
-      background: #0a1322;
+      background: rgba(10,19,34,.48);
     }
     .back-link:hover{ border-color:#2b3a55; }
 
     .flashcard{
       width: min(960px, 96vw);
-      background: linear-gradient(180deg,#0a1322,#0a0f1a);
+      background: rgba(10,19,34,.38);
       border-radius: 0.9rem;
       padding: 1.2rem 1.4rem 1.8rem;
-      border: 1px solid var(--border);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(148,163,184,.28);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -118,9 +119,9 @@
     .progress{ font-size:0.85rem; color:var(--muted); }
     .category-spacer{ flex:1; }
     button{
-      background: #0a1322;
+      background: rgba(10,19,34,.48);
       color: var(--fg);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(148,163,184,.28);
       border-radius: 12px;
       padding: 8px 12px;
       font-weight: 700;

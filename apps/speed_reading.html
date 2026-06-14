@@ -26,6 +26,7 @@
       background-repeat: no-repeat;
       background-attachment: fixed;
       color: var(--fg);
+      text-shadow: 0 2px 5px rgba(0,0,0,.9), 0 0 12px rgba(0,0,0,.65);
     }
     body {
       min-height: 100vh;
@@ -38,7 +39,7 @@
       right: 0;
       z-index: 10;
       padding: 8px 16px;
-      background: linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,.4) 60%, transparent);
+      background: linear-gradient(180deg, rgba(15,23,42,.58), rgba(15,23,42,.2) 60%, transparent);
       backdrop-filter: blur(6px);
       display: flex;
       justify-content: center;
@@ -63,10 +64,10 @@
       padding: 6px 14px;
       font-size: 14px;
       border-radius: 999px;
-      background: #0a1322;
+      background: rgba(10,19,34,.48);
       color: var(--fg);
       text-decoration: none;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(148,163,184,.28);
       display: inline-block;
       line-height: 1.2;
       white-space: nowrap;
@@ -90,14 +91,14 @@
       width: 100%;
       min-height: clamp(360px, 66dvh, 560px);
       border-radius: 20px;
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg,#0a1322,#0a0f1a);
+      border: 1px solid rgba(148,163,184,.28);
+      background: rgba(10,19,34,.38);
       position: relative;
       display: flex;
       flex-direction: column;
       padding: 24px 24px 48px;
       gap: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      box-shadow: 0 12px 30px rgba(0,0,0,.28);
       -webkit-tap-highlight-color: transparent;
     }
     .word-box.is-startable { cursor: pointer; }
@@ -149,12 +150,12 @@
     .start-guide.is-hidden { display: none; }
     input[type="range"] { font-size: 12px; }
     button {
-      border: 1px solid var(--border);
+      border: 1px solid rgba(148,163,184,.28);
       border-radius: 12px;
       padding: 10px 14px;
       font-size: 13px;
       cursor: pointer;
-      background: #0a1322;
+      background: rgba(10,19,34,.48);
       color: var(--fg);
       font-weight: 800;
       user-select: none;
@@ -210,8 +211,8 @@
       min-height: clamp(64px, 12dvh, 104px);
       border-radius: 12px;
       padding: 14px 12px;
-      background: #0f172a;
-      border: 1px solid #334155;
+      background: rgba(15,23,42,.48);
+      border: 1px solid rgba(148,163,184,.36);
       color: #e5e7eb;
       text-align: center;
       line-height: 1.35;
