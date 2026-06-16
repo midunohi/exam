@@ -6,7 +6,7 @@ const qa_数学C_ベクトル = [
   ["零ベクトルでない \\(\\vec a,\\vec b\\) のなす角 \\(\\theta\\) の余弦は？", "\\(\\displaystyle \\cos\\theta=\\frac{\\vec a\\cdot\\vec b}{|\\vec a||\\vec b|}\\)"],
   ["\\(\\vec a\\) の \\(\\vec b\\) 方向への正射影ベクトルは？ \\(\\vec b\\ne\\vec0\\)", "\\(\\displaystyle \\frac{\\vec a\\cdot\\vec b}{|\\vec b|^2}\\vec b\\)"],
   ["点 \\(P\\) が線分 \\(AB\\) を \\(m:n\\) に内分するとき、位置ベクトル \\(\\vec p\\) は？", "\\(\\displaystyle \\vec p=\\frac{n\\vec a+m\\vec b}{m+n}\\)"],
-  ["点 \\(P\\) が線分 \\(AB\\) を \\(m:n\\) に外分するとき、位置ベクトル \\(\\vec p\\) は？ \\(m\\ne n\\)", "\\(\\displaystyle \\vec p=\\frac{-n\\vec a+m\\vec b}{m-n}\\)"],
+  ["点 \\(P\\) が線分 \\(AB\\) を \\(m:n\\) に外分するとき、位置ベクトル \\(\\vec p\\) は？\n\\(m\\ne n\\)", "\\(\\displaystyle \\vec p=\\frac{-n\\vec a+m\\vec b}{m-n}\\)"],
   ["点 \\(A\\) を通り、方向ベクトル \\(\\vec d\\) に平行な直線上の点 \\(P\\) の位置ベクトルは？", "\\(\\vec p=\\vec a+t\\vec d\\quad(t\\in\\mathbb R)\\)"],
   ["平面 \\(ax+by+cz+d=0\\) の法線ベクトルは？", "\\((a,b,c)\\)"],
   ["点 \\(P(x_0,y_0,z_0)\\) と平面 \\(ax+by+cz+d=0\\) の距離は？", "\\(\\displaystyle \\frac{|ax_0+by_0+cz_0+d|}{\\sqrt{a^2+b^2+c^2}}\\)"]
