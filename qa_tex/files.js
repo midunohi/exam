@@ -1,5 +1,10 @@
 const files_qaMathTree = [
-  ["galois", 1],
+  {
+    folder: "大学数学",
+    files: [
+      ["大学数学_ガロア理論", 1],
+    ],
+  },
   {
     folder: "数学",
     files: [
@@ -31,6 +36,7 @@ const files_qaMathTree = [
       ["化学_物質の変化と平衡_熱と電気", 3],
       ["化学_物質の変化と平衡_化学平衡と電離平衡", 3],
       ["化学_有機化合物の性質_燃焼分析", 3],
+      ["化学_有機化合物の性質_構造決定", 3],
       ["化学_無機物質", 3],
     ],
   },
@@ -42,13 +48,39 @@ const files_qaMathTree = [
       ["物理_熱力学", 3],
       ["物理_波動", 3],
       ["物理_電磁気", 3],
+      ["物理_電磁誘導と交流", 3],
       ["物理_原子物理", 3],
     ],
   },
-  ["古文単語", 10],
-  ["情報", 1],
-  ["英文法", 1],
-  ["英語例文", 1],
+  {
+    folder: "英語",
+    files: [
+      ["英語_英文法", 1],
+      ["英語_重要例文和訳", 1],
+      ["英語_英文解釈_構文判定", 3],
+      ["英語_整序英作文", 3],
+    ],
+  },
+  {
+    folder: "国語",
+    files: [
+      ["国語_古文単語", 10],
+      ["国語_現代文_評論語彙", 3],
+      ["国語_古文文法_助動詞", 3],
+      ["国語_漢文句法", 3],
+    ],
+  },
+  {
+    folder: "情報",
+    files: [
+      ["情報I_コンピュータの仕組み", 1],
+      ["情報I_プログラムの基礎", 1],
+      ["情報I_情報通信ネットワークとセキュリティ", 1],
+      ["情報I_情報デザインとメディア", 3],
+      ["情報I_アルゴリズムとプログラム", 3],
+      ["情報I_データ活用", 3],
+    ],
+  },
 ];
 
 function flattenQaFiles(entries, prefix = "") { const files = []; entries.forEach((entry) => { if (Array.isArray(entry)) { const name = prefix ? `${prefix}/${entry[0]}` : entry[0]; files.push([name, entry[1]]); return; } const folder = entry && entry.folder; const children = entry && entry.files; if (!folder || !Array.isArray(children)) return; const nextPrefix = prefix ? `${prefix}/${folder}` : folder; files.push(...flattenQaFiles(children, nextPrefix)); }); return files; }

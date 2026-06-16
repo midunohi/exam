@@ -1,4 +1,4 @@
-const qa_英語例文 = [
+const qa_英語_重要例文和訳 = [
   ["It is essential that we take action immediately. 日本語訳は?", "私たちが直ちに行動を起こすことが不可欠だ。"],
   ["There is no doubt that she is qualified for the job. 日本語訳は?", "彼女がその仕事に適任であることは疑いない。"],
   ["The plan was abandoned due to a lack of funds. 日本語訳は?", "その計画は資金不足のため断念された。"],
