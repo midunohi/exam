@@ -467,10 +467,11 @@
 
     async function loadCategory(name) {
       const base = String(name || "").replace(/\.js$/i, "");
+      const variableBase = base.split(/[\\/]/).pop();
       const jsSrc = encodeURI(`../qa_tex/${base}.js`);
 
       await injectScript(jsSrc);
-      const raw = safeGlobalEval(`qa_${base}`);
+      const raw = safeGlobalEval(`qa_${variableBase}`);
       const data = Array.isArray(raw) ? raw : [];
 
       if (!data.length) throw new Error(`qa_tex/${base}.js にカードがありません`);
