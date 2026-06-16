@@ -1,8 +1,8 @@
 // 数学Ⅲ: 極限
 const qa_数学Ⅲ_極限 = [
-  ["\\(\\lim_{x\\to0}\\frac{\\sin x}{x} \\) =", "\\(1\\)"],
-  ["\\(\\lim_{n\\to\\infty}(1+\\frac{1}{n})^n\\) =", "\\(e\\)"],
-  ["\\(\\lim_{x\\to0}\\frac{e^x-1}{x}\\) =", "\\(1\\)"],
-  ["\\(\\lim_{x\\to0}\\frac{\\ln(1+x)}{x}\\) =", "\\(1\\)"],
-  ["\\(\\lim_{x\\to0}\\frac{1-\\cos x}{x^2}\\) =", "\\(\\frac{1}{2}\\)"]
+  ["\\(\\displaystyle \\lim_{x\\to0}\\frac{\\sin x}{x}\\) =", "\\(1\\)"],
+  ["\\(\\displaystyle \\lim_{n\\to\\infty}(1+\\frac{1}{n})^n\\) =", "\\(e\\)"],
+  ["\\(\\displaystyle \\lim_{x\\to0}\\frac{e^x-1}{x}\\) =", "\\(1\\)"],
+  ["\\(\\displaystyle \\lim_{x\\to0}\\frac{\\ln(1+x)}{x}\\) =", "\\(1\\)"],
+  ["\\(\\displaystyle \\lim_{x\\to0}\\frac{1-\\cos x}{x^2}\\) =", "\\(\\frac{1}{2}\\)"]
 ];

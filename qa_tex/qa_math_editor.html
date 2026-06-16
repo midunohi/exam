@@ -64,9 +64,9 @@
 
     <section class="editor">
       <div id="empty" class="empty">
-        QA MathのJSファイルを開いてください。<br />
-        対応形式は <code>const qa_名前 = [["問題","解答"], ...];</code> のみです。<br />
-        編集後は「保存」でダウンロードします。
+        QA MathのJSファイルを開いてください<br />
+        対応形式は <code>const qa_名前 = [["問題","解答"], ...];</code> のみです<br />
+        編集後は「保存」でダウンロードします
       </div>
       <div id="editArea" hidden>
         <div class="row">
@@ -89,7 +89,7 @@
           <div class="previewBox" id="answerPreview"></div>
         </div>
         <div class="small">
-          保存形式は現行JSと同じ、2要素配列 <code>["問題", "解答"]</code> の一覧です。
+          保存形式は現行JSと同じ、2要素配列 <code>["問題", "解答"]</code> の一覧です
         </div>
       </div>
     </section>
@@ -131,19 +131,19 @@
     const source = normalizeNewlines(text);
     const match = source.match(/^\s*((?:(?:\/\/[^\n]*|\/\*[\s\S]*?\*\/)\s*)*)const\s+([^\s=]+)\s*=\s*/);
     if (!match) {
-      throw new Error("対応形式ではありません: const qa_名前 = [[\"問題\", \"解答\"], ...]; のJSファイルを開いてください。");
+      throw new Error("対応形式ではありません: const qa_名前 = [[\"問題\", \"解答\"], ...]; のJSファイルを開いてください");
     }
 
     const arrayStart = match[0].length;
     const arrayEnd = findMatchingBracket(source, arrayStart);
     if (arrayEnd < 0) {
-      throw new Error("QA配列の終端が見つかりません。");
+      throw new Error("QA配列の終端が見つかりません");
     }
 
     const arrayLiteral = source.slice(arrayStart, arrayEnd + 1);
     const value = Function(`"use strict"; return (${arrayLiteral});`)();
     if (!Array.isArray(value)) {
-      throw new Error("const の右辺が配列ではありません。");
+      throw new Error("const の右辺が配列ではありません");
     }
 
     return {
@@ -151,7 +151,7 @@
       leadingComment: match[1] || "",
       items: value.map((row, index) => {
         if (!Array.isArray(row) || row.length < 2) {
-          throw new Error(`${index + 1}件目が ["問題", "解答"] 形式ではありません。`);
+          throw new Error(`${index + 1}件目が ["問題", "解答"] 形式ではありません`);
         }
         return { q: String(row[0] ?? ""), a: String(row[1] ?? "") };
       })
