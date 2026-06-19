@@ -12,5 +12,9 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\tan\\frac{\\pi}{4}\\) =", "\\(1\\)"],
   ["\\(\\sin\\frac{\\pi}{3}\\) =", "\\(\\frac{\\sqrt3}{2}\\)"],
   ["\\(\\cos\\frac{\\pi}{6}\\) =", "\\(\\frac{\\sqrt3}{2}\\)"],
-  ["\\(\\tan\\frac{\\pi}{6}\\) =", "\\(\\frac{1}{\\sqrt3}\\)"]
+  ["\\(\\tan\\frac{\\pi}{6}\\) =", "\\(\\frac{1}{\\sqrt3}\\)"],
+  ["\\(\\tan(\\alpha+\\beta)\\) =", "\\(\\displaystyle \\frac{\\tan\\alpha+\\tan\\beta}{1-\\tan\\alpha\\tan\\beta}\\)"],
+  ["\\(\\sin 3\\theta\\) =", "\\(3\\sin\\theta-4\\sin^3\\theta\\)"],
+  ["\\(a\\sin x+b\\cos x\\) の最大値は？", "\\(\\sqrt{a^2+b^2}\\)"],
+  ["\\(\\displaystyle \\sin^2x+\\sin^2\\left(x+\\frac{\\pi}{3}\\right)+\\sin^2\\left(x+\\frac{2\\pi}{3}\\right)\\) を簡単にすると？", "\\(\\displaystyle \\frac32\\)\n\\(\\because \\sin^2t=\\frac{1-\\cos2t}{2}\\)"],
 ];

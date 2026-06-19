@@ -6,5 +6,6 @@ const qa_数学Ⅲ_積分法 = [
   ["\\(\\displaystyle \\int \\sin x\\,dx\\) =", "\\(-\\cos x+C\\)"],
   ["\\(\\displaystyle \\int \\cos x\\,dx\\) =", "\\(\\sin x+C\\)"],
   ["\\(\\displaystyle \\int \\frac{1}{\\cos^2 x}\\,dx\\) =", "\\(\\tan x+C\\)"],
-  ["\\(\\displaystyle \\int \\frac{1}{1+x^2}\\,dx\\) =", "\\(\\arctan x+C\\)"]
+  ["\\(\\displaystyle \\int \\frac{1}{1+x^2}\\,dx\\) =", "\\(\\arctan x+C\\)"],
+  ["\\(\\displaystyle \\int_0^1 xe^{x^2}\\,dx\\) =", "\\(\\displaystyle \\frac12\\int_0^1e^u\\,du=\\frac{e-1}{2}\\)"],
 ];
