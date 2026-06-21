@@ -11,5 +11,11 @@ const qa_数学C_ベクトル = [
   ["平面 \\(ax+by+cz+d=0\\) の法線ベクトルは？", "\\((a,b,c)\\)"],
   ["点 \\(P(x_0,y_0,z_0)\\) と平面 \\(ax+by+cz+d=0\\) の距離は？", "\\(\\displaystyle \\frac{|ax_0+by_0+cz_0+d|}{\\sqrt{a^2+b^2+c^2}}\\)"],
   ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、位置ベクトル \\(\\overrightarrow{OG}\\) は？", "\\(\\displaystyle \\overrightarrow{OG}=\\frac{\\overrightarrow{OA}+\\overrightarrow{OB}+\\overrightarrow{OC}+\\overrightarrow{OD}}{4}\\)"],
-  ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、底面 \\(BCD\\) からの \\(A,G\\) の高さの比は？", "\\(4:1\\)"]
+  ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、底面 \\(BCD\\) からの \\(A,G\\) の高さの比は？", "\\(4:1\\)"],
+  ["\\(|\\vec a-\\vec b|^2\\text{ を展開}\\)","\\(|\\vec a-\\vec b|^2=|\\vec a|^2-2\\vec a\\cdot\\vec b+|\\vec b|^2\\)"],
+  ["\\(\\vec a\\cdot\\vec b\\text{ の定義}\\)","\\(\\vec a\\cdot\\vec b=|\\vec a||\\vec b|\\cos\\theta\\)"],
+  ["\\(\\vec a\\perp\\vec b\\text{ の条件}\\)","\\(\\vec a\\cdot\\vec b=0\\)"],
+  ["\\(\\vec a\\parallel\\vec b\\text{ のとき }\\vec b\\text{ は}\\)","\\(\\vec b=t\\vec a\\quad(t\\in\\mathbb R)\\)"],
+  ["\\(\\text{コーシー・シュワルツの不等式}\\)","\\(\\displaystyle (\\vec a\\cdot\\vec b)^2\\le |\\vec a|^2|\\vec b|^2\\)"],
+  ["\\(\\left(\\sum a_ib_i\\right)^2\\le ? \\)","\\(\\displaystyle \\left(\\sum a_ib_i\\right)^2\\le\\left(\\sum a_i^2\\right)\\left(\\sum b_i^2\\right)\\)"],
 ];
