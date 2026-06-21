@@ -9,5 +9,7 @@ const qa_数学C_ベクトル = [
   ["点 \\(P\\) が線分 \\(AB\\) を \\(m:n\\) に外分するとき、位置ベクトル \\(\\vec p\\) は？\n\\(m\\ne n\\)", "\\(\\displaystyle \\vec p=\\frac{-n\\vec a+m\\vec b}{m-n}\\)"],
   ["点 \\(A\\) を通り、方向ベクトル \\(\\vec d\\) に平行な直線上の点 \\(P\\) の位置ベクトルは？", "\\(\\vec p=\\vec a+t\\vec d\\quad(t\\in\\mathbb R)\\)"],
   ["平面 \\(ax+by+cz+d=0\\) の法線ベクトルは？", "\\((a,b,c)\\)"],
-  ["点 \\(P(x_0,y_0,z_0)\\) と平面 \\(ax+by+cz+d=0\\) の距離は？", "\\(\\displaystyle \\frac{|ax_0+by_0+cz_0+d|}{\\sqrt{a^2+b^2+c^2}}\\)"]
+  ["点 \\(P(x_0,y_0,z_0)\\) と平面 \\(ax+by+cz+d=0\\) の距離は？", "\\(\\displaystyle \\frac{|ax_0+by_0+cz_0+d|}{\\sqrt{a^2+b^2+c^2}}\\)"],
+  ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、位置ベクトル \\(\\overrightarrow{OG}\\) は？", "\\(\\displaystyle \\overrightarrow{OG}=\\frac{\\overrightarrow{OA}+\\overrightarrow{OB}+\\overrightarrow{OC}+\\overrightarrow{OD}}{4}\\)"],
+  ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、底面 \\(BCD\\) からの \\(A,G\\) の高さの比は？", "\\(4:1\\)"]
 ];

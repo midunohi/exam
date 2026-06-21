@@ -9,5 +9,7 @@ const qa_数学A_場合の数と確率 = [
   ["事象 \\(A\\) が起こらない確率は?", "\\(1-P(A)\\)"],
   ["事象 \\(A\\) または \\(B\\) が起こる確率は?", "\\(P(A\\cup B)=P(A)+P(B)-P(A\\cap B)\\)"],
   ["1回の試行で成功する確率が \\(p\\) の独立な試行を \\(n\\) 回行う\nちょうど \\(r\\) 回成功する確率は?", "\\({}_nC_r p^r(1-p)^{n-r}\\)"],
-  ["\\(P(B)>0\\) のとき、条件付き確率 \\(P(A\\mid B)\\) は?", "\\(P(A\\mid B)=\\dfrac{P(A\\cap B)}{P(B)}\\)"]
+  ["\\(P(B)>0\\) のとき、条件付き確率 \\(P(A\\mid B)\\) は?", "\\(P(A\\mid B)=\\dfrac{P(A\\cap B)}{P(B)}\\)"],
+  ["\\(n\\ge1,\\ 0\\le r\\le n\\) とする。コインを \\(n\\) 回投げるとき、表がちょうど \\(r\\) 回、連続せずに出る確率は？", "\\(\\displaystyle \\begin{cases}\\dfrac{\\binom{n-r+1}{r}}{2^n} & (n\\ge2r-1)\\\\0 & (n<2r-1)\\end{cases}\\)"],
+  ["\\(n\\ge2,\\ 0\\le r\\le n\\) とする。円形に並んだ \\(n\\) 個のボールから、隣り合わない \\(r\\) 個を選ぶ方法は何通り？", "\\(\\displaystyle \\begin{cases}\\dfrac{n}{n-r}\\binom{n-r}{r} & \\left(0\\le r\\le\\left\\lfloor\\dfrac n2\\right\\rfloor\\right)\\\\0 & \\left(r>\\left\\lfloor\\dfrac n2\\right\\rfloor\\right)\\end{cases}\\)"]
 ];
