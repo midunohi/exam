@@ -1,12 +1,8 @@
 const qa_英語_英文解釈_構文判定 = [
-  ["It is no use Ving の意味は？", "Vしても無駄だ"],
-  ["not so much A as B の意味は？", "AというよりむしろB"],
-  ["no sooner had S p.p. than ... の意味は？", "Sが〜するやいなや..."],
-  ["The last person to V の意味は？", "最もVしそうにない人"],
-  ["have difficulty (in) Ving の意味は？", "Vするのに苦労する"],
-  ["find it C to V の it は何？", "形式目的語（真の目的語は to V）"],
-  ["It is not until A that B の意味は？", "Aして初めてBする"],
-  ["so ... as to V の意味は？", "Vするほど...だ"],
-  ["関係代名詞 what の基本的な訳は？", "〜すること・もの"],
-  ["be to V 構文が表せる主な意味は？", "予定\n義務\n可能\n運命\n意図"]
+  ["not so much A as B\nの意味は？", "A というよりむしろ B"],
+  ["no sooner had S p.p. than ... \nの意味は？", "S が〜するやいなや..."],
+  ["The last person to V\nの意味は？", "最も V しそうにない人"],
+  ["have difficulty (in) Ving の意味は？", "V するのに苦労する"],
+  ["It is not until A that B\nの意味は？", "Aして初めてBする"],
+  ["so ... as to V\nの意味は？", "V するほど ... だ"]
 ];
