@@ -3,6 +3,7 @@ const files_enExamples = [
   ["geography", 10],
   ["science", 10],
   ["electromagnetism", 10],
+  ["物理", 1],
   ["color", 1],
   ["emotion", 1],
   ["existence", 1],
@@ -13,3 +14,4 @@ const files_enExamples = [
   ["psych", 1],
   ["quantity_degrees", 1],
 ];
+
