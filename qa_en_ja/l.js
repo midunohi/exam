@@ -228,5 +228,3 @@ const enJa_l = [
 ["lynch","私刑にする"],
 ["lyrical","叙情的な"]
 ]
-
-

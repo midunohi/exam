@@ -20,5 +20,3 @@ const enJa_q = [
 ["quotation","引用文"],
 ["quote","引用する"]
 ]
-
-

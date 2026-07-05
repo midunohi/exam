@@ -475,7 +475,12 @@ const enJa_c = [
 ["cutback","削減"],
 ["cyber","サイバーの"],
 ["cynical","冷笑的な"],
-["cynicism","冷笑主義"]
+["cynicism","冷笑主義"],
+["cholesterol","コレステロール"],
+["commodity","商品"],
+["concise","簡潔"],
+["consolidate","統合"],
+["conspicuous","顕著"],
+["conversely","逆に"],
+["convict","有罪判決"]
 ]
-
-

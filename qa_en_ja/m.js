@@ -336,7 +336,6 @@ const enJa_m = [
 ["myth","神話/作り話"],
 ["mythic","神話の"],
 ["mythical","神話上の"],
-["mythology","神話学"]
+["mythology","神話学"],
+["membrane","膜"]
 ]
-
-

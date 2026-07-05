@@ -201,5 +201,3 @@ const enJa_h = [
 ["hypothetical","仮定の"],
 ["hysterical","ヒステリーの/大笑いの"]
 ]
-
-

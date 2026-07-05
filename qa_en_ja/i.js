@@ -168,7 +168,9 @@ const enJa_i = [
 ["irreversible","元に戻せない"],
 ["isolate","孤立させる"],
 ["isolation","孤立"],
-["issue","問題"]
+["issue","問題"],
+["ingredient","材料"],
+["interior","内部"],
+["interval","間隔"],
+["intimidate","威嚇"]
 ]
-
-

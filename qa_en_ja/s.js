@@ -134,7 +134,13 @@ const enJa_s = [
 ["symbolic","象徴的な"],
 ["synthesis","統合"],
 ["system","体系"],
-["systematic","体系的な"]
+["systematic","体系的な"],
+["sacrifice","犠牲"],
+["secondary","二次的"],
+["sensible","賢明"],
+["sponsor","後援"],
+["statistic","統計値"],
+["submit","提出"],
+["substantial","相当"],
+["successive","連続"]
 ]
-
-

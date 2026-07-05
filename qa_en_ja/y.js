@@ -26,5 +26,3 @@ const enJa_y = [
 ["youthful","若々しい"],
 ["youthfulness","若々しさ"]
 ]
-
-

@@ -174,7 +174,6 @@ const enJa_o = [
 ["owing","〜のために"],
 ["owner","所有者"],
 ["ownership","所有権"],
-["oxymoron","矛盾語法"]
+["oxymoron","矛盾語法"],
+["optical","光学"]
 ]
-
-

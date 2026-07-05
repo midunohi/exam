@@ -227,7 +227,8 @@ const enJa_r = [
 ["roundabout","遠回しの"],
 ["rudimentary","初歩的な"],
 ["ruin","破滅/台無しにする"],
-["ruthless","冷酷な"]
+["ruthless","冷酷な"],
+["restrain","抑制"],
+["retail","小売"],
+["rural","田舎"]
 ]
-
-

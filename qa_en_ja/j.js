@@ -41,5 +41,3 @@ const enJa_j = [
 ["juxtapose","並置する"],
 ["juxtaposition","並置/対比"]
 ]
-
-

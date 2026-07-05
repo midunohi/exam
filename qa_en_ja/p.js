@@ -254,7 +254,6 @@ const enJa_p = [
 ["publish","出版する/公表する"],
 ["pursue","追求する"],
 ["pursuit","追求/仕事"],
-["putative","推定上の/いわゆる"]
+["putative","推定上の/いわゆる"],
+["poverty","貧困"]
 ]
-
-

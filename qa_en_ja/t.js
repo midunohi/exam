@@ -218,5 +218,3 @@ const enJa_t = [
 ["utility","有用性／公共事業"],
 ["utilize","利用する"]
 ]
-
-

@@ -170,5 +170,3 @@ const enJa_n = [
 ["nutritional","栄養の"],
 ["nutritious","栄養のある"]
 ]
-
-

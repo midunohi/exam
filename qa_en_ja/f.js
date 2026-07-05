@@ -269,5 +269,3 @@ const enJa_f = [
 ["futurist","未来派の人"],
 ["futuristic","未来的な"]
 ]
-
-

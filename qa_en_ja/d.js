@@ -317,7 +317,7 @@ const enJa_d = [
 ["dynamics","力学 / 変動"],
 ["dysfunction","機能不全"],
 ["disseminate","広める / 伝える"],
-["dissemination","普及 / 伝達"]
+["dissemination","普及 / 伝達"],
+["deadline","締切"],
+["diploma","卒業証書"]
 ]
-
-

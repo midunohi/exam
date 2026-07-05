@@ -47,5 +47,3 @@ const enJa_k = [
 ["kurt","無愛想な"],
 ["kowtow","へつらう"]
 ]
-
-

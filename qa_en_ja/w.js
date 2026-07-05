@@ -149,5 +149,3 @@ const enJa_w = [
 ["wrongful dismissal","不当解雇"],
 ["wrongly","誤って"]
 ]
-
-

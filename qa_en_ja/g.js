@@ -207,5 +207,3 @@ const enJa_g = [
 ["gun control","銃規制"],
 ["gut feeling","直感"]
 ]
-
-

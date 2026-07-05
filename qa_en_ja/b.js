@@ -303,7 +303,6 @@ const enJa_b = [
 ["blight","病害／荒廃"],
 ["blunder","失策"],
 ["blueprint","青写真／設計図"],
-["build","構築する"]
+["build","構築する"],
+["boost","増強"]
 ]
-
-

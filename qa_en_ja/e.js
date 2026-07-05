@@ -226,7 +226,9 @@ const enJa_e = [
 ["extinction","絶滅"],
 ["extravagant","浪費的な"],
 ["extremism","過激主義"],
-["extremist","過激派"]
+["extremist","過激派"],
+["embrace","受容"],
+["enthusiastic","熱心"],
+["exile","亡命"],
+["expire","失効"]
 ]
-
-

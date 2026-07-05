@@ -102,7 +102,6 @@ const enJa_v = [
 ["vulgar","下品な"],
 ["vulnerability","脆弱性"],
 ["vulnerable","弱い／脆弱な"],
-["vulture","ハゲタカ／強欲な人"]
+["vulture","ハゲタカ／強欲な人"],
+["via","経由"]
 ]
-
-
