@@ -411,9 +411,9 @@
       const question = row[0] ?? "";
       const answer = row[1] ?? "";
 
-      // まず普通に表示（MathJax待ちの間も文字が出る）
-      problemQuestionEl.innerHTML = String(question);
-      problemAnswerEl.innerHTML = String(answer);
+      // TeXの < や > をHTMLタグとして解釈させず、MathJaxにはテキストとして渡す。
+      problemQuestionEl.textContent = String(question);
+      problemAnswerEl.textContent = String(answer);
 
       problemAnswerEl.classList.add("is-hidden");
       showingAnswer = false;
