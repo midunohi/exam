@@ -1,21 +1,18 @@
 // 数学C: ベクトル
 const qa_数学C_ベクトル = [
-  ["零ベクトルでない \\(\\vec a,\\vec b\\) が平行である条件は？", "ある実数 \\(k\\) が存在して\n\\(\\vec b=k\\vec a\\)"],
   ["\\(\\vec a,\\vec b\\) のなす角を \\(\\theta\\) とするとき、内積は？", "\\(\\vec a\\cdot\\vec b=|\\vec a||\\vec b|\\cos\\theta\\)"],
   ["零ベクトルでない \\(\\vec a,\\vec b\\) が垂直である条件は？", "\\(\\vec a\\cdot\\vec b=0\\)"],
   ["零ベクトルでない \\(\\vec a,\\vec b\\) のなす角 \\(\\theta\\) の余弦は？", "\\(\\displaystyle \\cos\\theta=\\frac{\\vec a\\cdot\\vec b}{|\\vec a||\\vec b|}\\)"],
   ["\\(\\vec a\\) の \\(\\vec b\\) 方向への正射影ベクトルは？ \\(\\vec b\\ne\\vec0\\)", "\\(\\displaystyle \\frac{\\vec a\\cdot\\vec b}{|\\vec b|^2}\\vec b\\)"],
   ["点 \\(P\\) が線分 \\(AB\\) を \\(m:n\\) に内分するとき、位置ベクトル \\(\\vec p\\) は？", "\\(\\displaystyle \\vec p=\\frac{n\\vec a+m\\vec b}{m+n}\\)"],
   ["点 \\(P\\) が線分 \\(AB\\) を \\(m:n\\) に外分するとき、位置ベクトル \\(\\vec p\\) は？\n\\(m\\ne n\\)", "\\(\\displaystyle \\vec p=\\frac{-n\\vec a+m\\vec b}{m-n}\\)"],
-  ["点 \\(A\\) を通り、方向ベクトル \\(\\vec d\\) に平行な直線上の点 \\(P\\) の位置ベクトルは？", "\\(\\vec p=\\vec a+t\\vec d\\quad(t\\in\\mathbb R)\\)"],
   ["平面 \\(ax+by+cz+d=0\\) の法線ベクトルは？", "\\((a,b,c)\\)"],
   ["点 \\(P(x_0,y_0,z_0)\\) と平面 \\(ax+by+cz+d=0\\) の距離は？", "\\(\\displaystyle \\frac{|ax_0+by_0+cz_0+d|}{\\sqrt{a^2+b^2+c^2}}\\)"],
   ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、位置ベクトル \\(\\overrightarrow{OG}\\) は？", "\\(\\displaystyle \\overrightarrow{OG}=\\frac{\\overrightarrow{OA}+\\overrightarrow{OB}+\\overrightarrow{OC}+\\overrightarrow{OD}}{4}\\)"],
   ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、底面 \\(BCD\\) からの \\(A,G\\) の高さの比は？", "\\(4:1\\)"],
-  ["\\(|\\vec a-\\vec b|^2\\text{ を展開}\\)","\\(|\\vec a-\\vec b|^2=|\\vec a|^2-2\\vec a\\cdot\\vec b+|\\vec b|^2\\)"],
-  ["\\(\\vec a\\cdot\\vec b\\text{ の定義}\\)","\\(\\vec a\\cdot\\vec b=|\\vec a||\\vec b|\\cos\\theta\\)"],
-  ["\\(\\vec a\\perp\\vec b\\text{ の条件}\\)","\\(\\vec a\\cdot\\vec b=0\\)"],
-  ["\\(\\vec a\\parallel\\vec b\\text{ のとき }\\vec b\\text{ は}\\)","\\(\\vec b=t\\vec a\\quad(t\\in\\mathbb R)\\)"],
-  ["\\(\\text{コーシー・シュワルツの不等式}\\)","\\(\\displaystyle (\\vec a\\cdot\\vec b)^2\\le |\\vec a|^2|\\vec b|^2\\)"],
-  ["\\(\\left(\\sum a_ib_i\\right)^2\\le ? \\)","\\(\\displaystyle \\left(\\sum a_ib_i\\right)^2\\le\\left(\\sum a_i^2\\right)\\left(\\sum b_i^2\\right)\\)"],
+  ["\\(|\\vec a-\\vec b|^2\\text{ を展開}\\)", "\\(|\\vec a-\\vec b|^2=|\\vec a|^2-2\\vec a\\cdot\\vec b+|\\vec b|^2\\)"],
+  ["\\(\\vec a\\cdot\\vec b\\text{ の定義}\\)", "\\(\\vec a\\cdot\\vec b=|\\vec a||\\vec b|\\cos\\theta\\)"],
+  ["\\(\\vec a\\perp\\vec b\\text{ の条件}\\)", "\\(\\vec a\\cdot\\vec b=0\\)"],
+  ["\\(\\text{コーシー・シュワルツの不等式}\\)", "\\(\\displaystyle (\\vec a\\cdot\\vec b)^2\\le |\\vec a|^2|\\vec b|^2\\)"],
+  ["\\(\\left(\\sum a_ib_i\\right)^2\\le ? \\)", "\\(\\displaystyle \\left(\\sum a_ib_i\\right)^2\\le\\left(\\sum a_i^2\\right)\\left(\\sum b_i^2\\right)\\)"]
 ];
