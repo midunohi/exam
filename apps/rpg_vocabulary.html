@@ -53,6 +53,7 @@
   .exp>span{background:linear-gradient(90deg,#38bdf8,#0ea5e9)}
   .val{min-width:90px;text-align:right;opacity:.9;font-size:12px}
   .lvExp{min-width:auto;text-align:left;margin-left:6px}
+  #weaponAtk{margin-left:5px;color:#fde68a;font-size:12px;white-space:nowrap}
 
   /* QA: 隙間を埋める */
   #qaBox{display:flex;flex-direction:column;min-height:34vh}
@@ -159,7 +160,7 @@
     <section id="heroBox" class="panel compact">
       <div class="row"><span class="label">Lv</span><span id="lv">1</span><span class="val lvExp" id="expText">0 / 20</span></div>
       <div class="row"><span class="label">HP</span><div class="bar hp"><span id="hpBar"></span></div><span class="val" id="hpText">30 / 30</span></div>
-      <div class="row"><span class="label">ATK</span><span id="atk">5</span></div>
+      <div class="row"><span class="label">ATK</span><strong id="atk">5</strong><span id="weaponAtk">装備なし</span></div>
     </section>
 
     <section id="enemyBox" class="panel compact">
@@ -182,6 +183,7 @@
   </section>
 </div>
 
+<script src="./rpg_equipment.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const KEY='midunohi.exam.exp'; // 累計EXP
@@ -209,7 +211,7 @@ let words=[], MONSTERS=[], enemy=null, Q=null;
 const state={
   total:0,   // 累計EXP（保存）
   lv:1, exp:0, nextExp:EXP0,
-  maxHP:30, hp:30, atk:5,
+  maxHP:30, hp:30, baseAtk:5, atk:5, weapon:null,
 
   // モンスター順
   mi:0,
@@ -258,9 +260,14 @@ function recalcFromTotal(){
   }
   state.lv=lv; state.exp=t; state.nextExp=next;
 
-  // ステータス（ここも好みで調整）
+  // キャラステータスと同じ基礎値に、共有装備モジュールの倍率を適用する。
   state.maxHP = 26 + state.lv*8;
-  state.atk   = 5  + Math.floor(state.lv*1.2);
+  state.baseAtk = 5 + (state.lv - 1) * 2;
+  const attack = window.RPGEquipment
+    ? window.RPGEquipment.getAttackStats(state.baseAtk)
+    : { total:state.baseAtk, equipped:null };
+  state.atk = attack.total;
+  state.weapon = attack.equipped;
   state.hp = clamp(state.hp,0,state.maxHP);
 
 }
@@ -268,6 +275,9 @@ function recalcFromTotal(){
 function render(){
   $('lv').textContent=state.lv;
   $('atk').textContent=state.atk;
+  $('weaponAtk').textContent=state.weapon
+    ? `${state.weapon.icon} +${state.weapon.atkBonusPct}%`
+    : '装備なし';
   $('hpText').textContent=`${state.hp} / ${state.maxHP}`;
   $('expText').textContent=`${state.exp} / ${state.nextExp}`;
   bar('hpBar', state.hp/state.maxHP);
@@ -536,6 +546,8 @@ if(backBtn){
   });
 }
 window.addEventListener('resize', syncChoiceColumns);
+window.addEventListener('storage', ()=>{ recalcFromTotal(); render(); });
+window.addEventListener('rpg-equipment-change', ()=>{ recalcFromTotal(); render(); });
 
 init();
 </script>

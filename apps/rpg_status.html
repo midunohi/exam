@@ -123,9 +123,10 @@
   }
 
   .avatarRow{
-    display:flex;
-    align-items:flex-start;
-    gap:12px;
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) minmax(240px, 280px);
+    align-items:start;
+    gap:14px;
     margin-top:10px;
   }
   /* キャラ画像：中央・大きめ（正方形想定） */
@@ -135,7 +136,7 @@
     flex:1;
   }
   .avatar{
-    width:clamp(220px, min(520px, 82vw, calc(100dvh - 214px)), 520px);
+    width:min(100%, 420px);
     aspect-ratio:1/1;
     border-radius:16px;
     overflow:hidden;
@@ -149,23 +150,69 @@
     object-fit:cover;
     display:block;
   }
+  .buildPanel{display:grid;gap:10px}
   .atkBox{
-    min-width:96px;
-    height:fit-content;
-    align-self:flex-start;
+    border:1px solid rgba(103,232,249,.42);
+    border-radius:14px;
+    padding:10px 12px;
+    background:linear-gradient(135deg,rgba(8,47,73,.62),rgba(15,23,42,.34));
+  }
+  .atkMain{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .atkMain span{font-size:12px;letter-spacing:.14em;color:#a5f3fc}
+  .atkMain strong{font-size:30px;line-height:1;color:#fef3c7}
+  #atkDetail{display:block;margin-top:5px;font-size:11px;color:#cbd5e1;text-align:right}
+  .itemBag{
+    border:1px solid rgba(148,163,184,.32);
+    border-radius:14px;
+    padding:10px;
+    background:rgba(2,6,23,.34);
+  }
+  .bagHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .bagHead h2{font-size:14px;letter-spacing:.06em;margin:0}
+  #bagCount{font-size:11px;color:#94a3b8;font-variant-numeric:tabular-nums}
+  .equipped{
+    display:grid;
+    grid-template-columns:36px minmax(0,1fr) auto;
+    align-items:center;
+    gap:8px;
+    min-height:54px;
+    margin-bottom:8px;
+    padding:7px 8px;
+    border-radius:10px;
+    border:1px solid rgba(250,204,21,.32);
+    background:linear-gradient(100deg,rgba(120,53,15,.3),rgba(15,23,42,.28));
+  }
+  .equippedIcon{font-size:26px;text-align:center;filter:drop-shadow(0 0 8px rgba(250,204,21,.35))}
+  .equippedName{display:block;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .equippedRank{display:block;margin-top:2px;font-size:10px;color:#fde68a;letter-spacing:.08em}
+  .equippedBonus{font-size:12px;font-weight:800;color:#86efac;white-space:nowrap}
+  .emptyEquipment .equippedBonus{color:#94a3b8}
+  .weaponGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+  .weaponSlot{
+    position:relative;
+    min-width:0;
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:9px;
+    border:1px solid rgba(148,163,184,.2);
+    background:rgba(15,23,42,.42);
+    color:#64748b;
+  }
+  .weaponSlot.owned{border-color:rgba(103,232,249,.44);background:rgba(8,47,73,.38);color:#fff}
+  .slotIcon{font-size:23px;filter:grayscale(1);opacity:.34}
+  .owned .slotIcon{filter:none;opacity:1}
+  .slotRank{position:absolute;top:3px;left:5px;font-size:9px;letter-spacing:.06em;color:#94a3b8}
+  .slotCount{position:absolute;right:4px;bottom:3px;min-width:17px;padding:1px 4px;border-radius:999px;background:rgba(2,6,23,.82);font-size:10px;text-align:center;font-variant-numeric:tabular-nums}
+  .bagNote{margin:7px 0 0;font-size:10px;color:#94a3b8;text-align:center}
+  @media (max-width: 640px){
+    .avatarRow{grid-template-columns:1fr}
+    .buildPanel{grid-template-columns:minmax(0,1fr) minmax(220px,1.25fr)}
   }
   @media (max-width: 520px){
-    .avatarRow{
-      flex-direction:column;
-      align-items:center;
-    }
-    .avatarWrap{
-      width:100%;
-    }
-    .atkBox{
-      min-width:120px;
-      align-self:center;
-    }
+    .buildPanel{grid-template-columns:1fr}
+    .avatar{width:min(100%, 360px)}
   }
 </style>
 </head>
@@ -205,12 +252,32 @@
           <img src="../img/rpg_player_character.png" alt="player character">
         </div>
       </div>
-      <div class="pill atkBox"><span>ATK</span><span id="atk">5</span></div>
+      <aside class="buildPanel" aria-label="装備とアイテムバッグ">
+        <div class="atkBox">
+          <div class="atkMain"><span>ATK</span><strong id="atk">5</strong></div>
+          <small id="atkDetail">基礎 5</small>
+        </div>
+
+        <section class="itemBag">
+          <div class="bagHead">
+            <h2>🎒 アイテムバッグ</h2>
+            <span id="bagCount">所持 0</span>
+          </div>
+          <div id="equippedWeapon" class="equipped emptyEquipment">
+            <span class="equippedIcon">◌</span>
+            <span><strong class="equippedName">装備なし</strong><small class="equippedRank">AUTO EQUIP</small></span>
+            <strong class="equippedBonus">ATK +0%</strong>
+          </div>
+          <div id="weaponGrid" class="weaponGrid" aria-label="武器一覧"></div>
+          <p class="bagNote">同じランクが3個そろうと自動強化</p>
+        </section>
+      </aside>
     </div>
 
   </section>
 </div>
 
+<script src="./rpg_equipment.js"></script>
 <script>
   const KEY = 'midunohi.exam.exp';
   const $ = (id)=>document.getElementById(id);
@@ -238,8 +305,16 @@
   };
 
   const render = ()=>{
+    const equipment = window.RPGEquipment;
+    const attack = equipment
+      ? equipment.getAttackStats(atk)
+      : { base:atk, bonus:0, total:atk, equipped:null };
+
     $('lv').textContent = lv;
-    $('atk').textContent = atk;
+    $('atk').textContent = attack.total;
+    $('atkDetail').textContent = attack.bonus > 0
+      ? `基礎 ${attack.base} + 装備 ${attack.bonus}`
+      : `基礎 ${attack.base}`;
     $('totalExp').textContent = totalExp;
 
     $('expText').textContent = `${exp} / ${nextExp}`;
@@ -248,6 +323,31 @@
 
     setBar($('expBar'), exp / nextExp);
     setBar($('hpBar'), 1);
+
+    renderEquipment(equipment, attack.equipped);
+  };
+
+  const renderEquipment = (equipment, equipped)=>{
+    const inventory = equipment ? equipment.getInventory() : [];
+    const total = inventory.reduce((sum, weapon)=>sum + weapon.count, 0);
+    $('bagCount').textContent = `所持 ${total}`;
+
+    const equippedEl = $('equippedWeapon');
+    equippedEl.classList.toggle('emptyEquipment', !equipped);
+    equippedEl.querySelector('.equippedIcon').textContent = equipped ? equipped.icon : '◌';
+    equippedEl.querySelector('.equippedName').textContent = equipped ? equipped.name : '装備なし';
+    equippedEl.querySelector('.equippedRank').textContent = equipped ? `RANK ${equipped.rank}・AUTO EQUIP` : 'AUTO EQUIP';
+    equippedEl.querySelector('.equippedBonus').textContent = equipped ? `ATK +${equipped.atkBonusPct}%` : 'ATK +0%';
+
+    const grid = $('weaponGrid');
+    grid.replaceChildren();
+    inventory.forEach((weapon)=>{
+      const slot = document.createElement('div');
+      slot.className = `weaponSlot${weapon.count ? ' owned' : ''}`;
+      slot.title = `${weapon.name} / ATK +${weapon.atkBonusPct}%`;
+      slot.innerHTML = `<span class="slotRank">R${weapon.rank}</span><span class="slotIcon">${weapon.icon}</span><span class="slotCount">${weapon.count}</span>`;
+      grid.appendChild(slot);
+    });
   };
 
   const init = ()=>{
@@ -256,6 +356,8 @@
       location.href = '../index.html';
     });
   };
+  window.addEventListener('storage', ()=>{ load(); render(); });
+  window.addEventListener('rpg-equipment-change', render);
   init();
 </script>
 </body>

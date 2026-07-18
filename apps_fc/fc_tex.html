@@ -95,7 +95,7 @@
     .exp-message.is-visible{animation:expMessageIn .55s cubic-bezier(.2,.8,.2,1) both}.exp-message.is-visible::before{animation:expMessageShine 1.1s .12s ease-out both}
     .exp-message-icon{position:relative;z-index:1;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;font-size:27px;background:radial-gradient(circle at 35% 30%,#fff6a8 0 8%,#fbbf24 34%,#f97316 75%);box-shadow:0 0 18px rgba(251,191,36,.55),inset 0 0 0 2px rgba(255,255,255,.4)}
     .is-visible .exp-message-icon{animation:expIconBounce .72s .08s cubic-bezier(.2,.9,.3,1.25) both}.exp-message-copy{position:relative;z-index:1;min-width:0}
-    .exp-message-title{overflow:hidden;color:#d1fae5;font-size:clamp(.82rem,2.8vw,.95rem);font-weight:850;letter-spacing:.04em;white-space:nowrap;text-overflow:ellipsis}.exp-message-total{margin-top:1px;color:#a5b4c7;font-size:.76rem;font-weight:750}
+    .exp-message-title{overflow:hidden;color:#d1fae5;font-size:clamp(.82rem,2.8vw,.95rem);font-weight:850;letter-spacing:.04em;white-space:nowrap;text-overflow:ellipsis}.exp-message-total{margin-top:1px;overflow:hidden;color:#a5b4c7;font-size:.76rem;font-weight:750;white-space:nowrap;text-overflow:ellipsis}
     .exp-message-gain{position:relative;z-index:1;color:#fff3a3;font-size:clamp(1.1rem,4vw,1.35rem);font-weight:900;letter-spacing:.02em;white-space:nowrap;text-shadow:0 0 12px rgba(251,191,36,.72),0 2px 4px rgba(0,0,0,.9)}.is-visible .exp-message-gain{animation:expGainPop .6s .18s cubic-bezier(.2,.9,.3,1.35) both}
     .exp-particle{position:absolute;z-index:2;color:#fef08a;font-size:14px;opacity:0;filter:drop-shadow(0 0 5px #fbbf24)}.exp-particle.p1{left:14%;top:5px}.exp-particle.p2{left:48%;bottom:3px;font-size:10px}.exp-particle.p3{right:19%;top:4px;font-size:11px}.is-visible .exp-particle{animation:expParticle 1.15s .22s ease-out both}.is-visible .exp-particle.p2{animation-delay:.34s}.is-visible .exp-particle.p3{animation-delay:.46s}
     @keyframes expMessageIn{0%{opacity:0;transform:translate(-50%,18px) scale(.96)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
@@ -119,6 +119,7 @@
   <script id="MathJax-script" async
     src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
   <script src="../qa_tex/files.js"></script>
+  <script src="../apps/rpg_equipment.js"></script>
 </head>
 
 <body>
@@ -170,12 +171,12 @@
         <span class="exp-particle p1" aria-hidden="true">✦</span>
         <span class="exp-particle p2" aria-hidden="true">◆</span>
         <span class="exp-particle p3" aria-hidden="true">✧</span>
-        <div class="exp-message-icon" aria-hidden="true">📖</div>
+        <div id="expMessageIcon" class="exp-message-icon" aria-hidden="true">📖</div>
         <div class="exp-message-copy">
           <div id="expMessageTitle" class="exp-message-title">知識がひとつ身についた！</div>
-          <div class="exp-message-total">累計 EXP <span id="expMessageTotal">0</span></div>
+          <div id="expMessageDetail" class="exp-message-total">累計 EXP 0</div>
         </div>
-        <div class="exp-message-gain">+1 EXP</div>
+        <div id="expMessageGain" class="exp-message-gain">+1 EXP</div>
       </div>
     </div>
   </div>
@@ -186,8 +187,10 @@
     let exp = 0;
 
     const expMessageEl = document.getElementById("expMessage");
+    const expMessageIconEl = document.getElementById("expMessageIcon");
     const expMessageTitleEl = document.getElementById("expMessageTitle");
-    const expMessageTotalEl = document.getElementById("expMessageTotal");
+    const expMessageDetailEl = document.getElementById("expMessageDetail");
+    const expMessageGainEl = document.getElementById("expMessageGain");
     const countLabelEl = document.getElementById("countLabel");
     const totalCountEl = document.getElementById("totalCount");
     const progressTrackEl = document.getElementById("progressTrack");
@@ -215,7 +218,7 @@
       }
     }
 
-    function showExpMessage() {
+    function showExpMessage(weaponDrop = null) {
       if (!expMessageEl) return;
       const messages = [
         "知識がひとつ身についた！",
@@ -223,13 +226,39 @@
         "理解のかけらを手に入れた！",
         "冒険の知恵が深まった！"
       ];
-      if (expMessageTitleEl) expMessageTitleEl.textContent = messages[(exp - 1) % messages.length];
-      if (expMessageTotalEl) expMessageTotalEl.textContent = String(exp);
+      let icon = "📖";
+      let title = messages[(exp - 1) % messages.length];
+      let detail = "累計 EXP " + exp;
+
+      if (weaponDrop) {
+        const lastMerge = weaponDrop.merges[weaponDrop.merges.length - 1];
+        const weapon = lastMerge ? lastMerge.to : weaponDrop.dropped;
+        icon = weapon.icon;
+        title = lastMerge ? "装備強化！ " + weapon.name : "武器ドロップ！ " + weapon.name;
+        detail = lastMerge
+          ? "RANK " + lastMerge.from.rank + " × 3 → RANK " + weapon.rank + "・ATK +" + weapon.atkBonusPct + "%"
+          : "RANK " + weapon.rank + "・アイテムバッグへ収納・ATK +" + weapon.atkBonusPct + "%";
+      }
+
+      if (expMessageIconEl) expMessageIconEl.textContent = icon;
+      if (expMessageTitleEl) expMessageTitleEl.textContent = title;
+      if (expMessageDetailEl) expMessageDetailEl.textContent = detail;
+      if (expMessageGainEl) expMessageGainEl.textContent = "+1 EXP";
 
       expMessageEl.hidden = false;
       expMessageEl.classList.remove("is-visible");
       void expMessageEl.offsetWidth; // 連続獲得時もアニメーションを先頭から再生
       expMessageEl.classList.add("is-visible");
+    }
+
+    function grantWeaponDrop() {
+      if (cycleCount !== QUESTIONS_PER_CATEGORY || !window.RPGEquipment) return null;
+      try {
+        return window.RPGEquipment.dropRankOne();
+      } catch (error) {
+        console.warn("武器を保存できませんでした", error);
+        return null;
+      }
     }
 
     function hideExpMessage() {
@@ -501,7 +530,7 @@
           updateProgressDisplay(true);
           exp += 1;
           saveExp();
-          showExpMessage();
+          showExpMessage(grantWeaponDrop());
         } else {
           hideExpMessage();
 
