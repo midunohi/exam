@@ -6,7 +6,7 @@
     storageKey: "midunohi.exam.equipment.v1",
     mergeCount: 3,
     ranks: Object.freeze([
-      { rank: 1, name: "かけだしの剣", icon: "🗡️", atkBonusPct: 10 },
+      { rank: 1, name: "木の剣",       icon: "🗡️", atkBonusPct: 10 },
       { rank: 2, name: "青銅の剣",     icon: "⚔️", atkBonusPct: 30 },
       { rank: 3, name: "鉄の剣",       icon: "⚔️", atkBonusPct: 50 },
       { rank: 4, name: "騎士の剣",     icon: "⚔️", atkBonusPct: 75 },
