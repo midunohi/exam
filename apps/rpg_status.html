@@ -161,6 +161,13 @@
   .atkMain span{font-size:12px;letter-spacing:.14em;color:#a5f3fc}
   .atkMain strong{font-size:30px;line-height:1;color:#fef3c7}
   #atkDetail{display:block;margin-top:5px;font-size:11px;color:#cbd5e1;text-align:right}
+  .equipmentPanel{
+    border:1px solid rgba(250,204,21,.3);
+    border-radius:14px;
+    padding:10px;
+    background:rgba(69,26,3,.22);
+  }
+  .sectionLabel{margin:0 0 7px;font-size:12px;font-weight:800;letter-spacing:.1em;color:#fde68a}
   .itemBag{
     border:1px solid rgba(148,163,184,.32);
     border-radius:14px;
@@ -176,7 +183,6 @@
     align-items:center;
     gap:8px;
     min-height:54px;
-    margin-bottom:8px;
     padding:7px 8px;
     border-radius:10px;
     border:1px solid rgba(250,204,21,.32);
@@ -196,28 +202,30 @@
     align-items:center;
     justify-content:center;
     border-radius:9px;
-    border:1px solid rgba(148,163,184,.2);
-    background:rgba(15,23,42,.42);
-    color:#64748b;
+    border:1px solid rgba(103,232,249,.44);
+    background:rgba(8,47,73,.38);
+    color:#fff;
   }
-  .weaponSlot.owned{border-color:rgba(103,232,249,.44);background:rgba(8,47,73,.38);color:#fff}
-  .slotIcon{font-size:23px;filter:grayscale(1);opacity:.34}
-  .owned .slotIcon{filter:none;opacity:1}
+  .slotIcon{font-size:23px}
   .slotRank{position:absolute;top:3px;left:5px;font-size:9px;letter-spacing:.06em;color:#94a3b8}
   .slotCount{position:absolute;right:4px;bottom:3px;min-width:17px;padding:1px 4px;border-radius:999px;background:rgba(2,6,23,.82);font-size:10px;text-align:center;font-variant-numeric:tabular-nums}
+  .bagEmpty{grid-column:1/-1;margin:8px 0;padding:8px 0;color:#94a3b8;font-size:11px;text-align:center}
   .bagNote{margin:7px 0 0;font-size:10px;color:#94a3b8;text-align:center}
   @media (max-width: 640px){
     .avatarRow{grid-template-columns:1fr}
     .buildPanel{grid-template-columns:minmax(0,1fr) minmax(220px,1.25fr)}
+    .itemBag{grid-column:1/-1}
   }
   @media (max-width: 520px){
     .buildPanel{grid-template-columns:1fr}
+    .itemBag{grid-column:auto}
     .avatar{width:min(100%, 360px)}
   }
 </style>
+<link rel="stylesheet" href="./app_world_ui.css" />
 </head>
 
-<body>
+<body class="world-app" data-app="status">
 <div class="page">
   <header>
     <h1>キャラステータス</h1>
@@ -258,15 +266,19 @@
           <small id="atkDetail">基礎 5</small>
         </div>
 
-        <section class="itemBag">
-          <div class="bagHead">
-            <h2>🎒 アイテムバッグ</h2>
-            <span id="bagCount">所持 0</span>
-          </div>
+        <section class="equipmentPanel" aria-label="現在の装備">
+          <h2 class="sectionLabel">⚔️ 装備</h2>
           <div id="equippedWeapon" class="equipped emptyEquipment">
             <span class="equippedIcon">◌</span>
             <span><strong class="equippedName">装備なし</strong><small class="equippedRank">AUTO EQUIP</small></span>
             <strong class="equippedBonus">ATK +0%</strong>
+          </div>
+        </section>
+
+        <section class="itemBag">
+          <div class="bagHead">
+            <h2>🎒 アイテムバッグ</h2>
+            <span id="bagCount">所持 0</span>
           </div>
           <div id="weaponGrid" class="weaponGrid" aria-label="武器一覧"></div>
           <p class="bagNote">同じランクが3個そろうと自動強化</p>
@@ -329,7 +341,8 @@
 
   const renderEquipment = (equipment, equipped)=>{
     const inventory = equipment ? equipment.getInventory() : [];
-    const total = inventory.reduce((sum, weapon)=>sum + weapon.count, 0);
+    const ownedWeapons = inventory.filter((weapon)=>weapon.count > 0);
+    const total = ownedWeapons.reduce((sum, weapon)=>sum + weapon.count, 0);
     $('bagCount').textContent = `所持 ${total}`;
 
     const equippedEl = $('equippedWeapon');
@@ -341,9 +354,16 @@
 
     const grid = $('weaponGrid');
     grid.replaceChildren();
-    inventory.forEach((weapon)=>{
+    if(!ownedWeapons.length){
+      const empty = document.createElement('p');
+      empty.className = 'bagEmpty';
+      empty.textContent = 'まだ武器を持っていません';
+      grid.appendChild(empty);
+      return;
+    }
+    ownedWeapons.forEach((weapon)=>{
       const slot = document.createElement('div');
-      slot.className = `weaponSlot${weapon.count ? ' owned' : ''}`;
+      slot.className = 'weaponSlot';
       slot.title = `${weapon.name} / ATK +${weapon.atkBonusPct}%`;
       slot.innerHTML = `<span class="slotRank">R${weapon.rank}</span><span class="slotIcon">${weapon.icon}</span><span class="slotCount">${weapon.count}</span>`;
       grid.appendChild(slot);

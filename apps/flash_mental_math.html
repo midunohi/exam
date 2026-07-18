@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ja">
+<head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>フラッシュ暗算</title>
@@ -35,12 +36,16 @@
   .choice{background:rgba(26,36,70,.52)}
   .choice.correct{background:rgba(31,122,58,.68);border-color:#2aa84f}
   .choice.wrong{background:rgba(122,31,31,.68);border-color:#a82a2a}
-  .exp{position:absolute;right:14px;bottom:8px;font-size:12px;color:#b8c3ea;text-align:right}
   .start-guide{position:absolute;left:18px;right:18px;bottom:30px;text-align:center;font-size:13px;font-weight:700;color:#b8c3ea;opacity:.52;pointer-events:none}
   .start-guide.is-hidden{display:none}
   .startRow{min-height:44px}
 </style>
+<link rel="stylesheet" href="./app_world_ui.css" />
+<script src="./rpg_equipment.js"></script>
+<script src="./rpg_study_rewards.js"></script>
+</head>
 
+<body class="world-app" data-app="mental">
 <div class="page">
   <div class="topbar">
     <div id="title">フラッシュ暗算</div>
@@ -49,7 +54,6 @@
   <div class="center">
     <div class="frame">
       <div class="box" id="box">
-        <div class="exp">EXP: <span id="expLabel">0</span></div>
         <div class="row" style="flex-wrap:nowrap;overflow:auto">
           <label>個数 <input id="k" type="number" min="2" max="200" value="5"></label>
           <label>桁 <input id="d" type="number" min="1" max="6" value="1"></label>
@@ -70,6 +74,7 @@
         <div id="hint"></div>
         <div id="startGuide" class="start-guide">枠をクリックして開始</div>
       </div>
+      <div id="rewardSlot"></div>
     </div>
   </div>
 </div>
@@ -79,12 +84,14 @@
   const $ = (id) => document.getElementById(id);
   const kEl=$('k'), dEl=$('d'), msEl=$('ms');
   const boxEl=$('box');
-  const nEl=$('n'), msgEl=$('msg'), expLabelEl=$('expLabel'), startGuideEl=$('startGuide');
+  const nEl=$('n'), msgEl=$('msg'), startGuideEl=$('startGuide');
   const choicesEl=$('choices');
   const choiceBtns=Array.from(choicesEl.querySelectorAll('.choice'));
-
-  const EXP_KEY = "midunohi.exam.exp";
-  let exp = 0;
+  const rewards = window.RPGStudyRewards.create({
+    slot:'#rewardSlot',
+    icon:'🧮',
+    dropEvery:3
+  });
   let seq=[], sum=0, i=0, t=null, running=false, readyForChoice=false;
 
   const randInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
@@ -108,6 +115,7 @@
 
   function reset(){
     clearTimer();
+    rewards.hide();
     seq=[]; sum=0; i=0;
     nEl.textContent='';
     msgEl.textContent='';
@@ -171,12 +179,6 @@
     updateStartable();
   }
 
-  function addExp(n){
-    exp += Math.max(0, Math.floor(n));
-    try{ localStorage.setItem(EXP_KEY, String(exp)); }catch(_){ /* noop */ }
-    if(expLabelEl) expLabelEl.textContent = String(exp);
-  }
-
   function addResult(ok, text){
     const line=document.createElement('div');
     line.className=ok ? 'ok' : 'ng';
@@ -193,7 +195,7 @@
     });
     if(chosen && chosen.dataset.value===correctVal){
       gain = Math.max(1, Math.floor(Number(kEl.value)||0)) * Math.max(1, Math.floor(Number(dEl.value)||0));
-      addExp(gain);
+      rewards.award({ exp:gain });
     }
     if(chosen && chosen.dataset.value!==correctVal){
       chosen.classList.add('wrong');
@@ -201,7 +203,7 @@
     const ok = chosen && chosen.dataset.value===correctVal;
     addResult(ok, ok ? `🎉 正解 +${gain} EXP` : `✖ 不正解 +0 EXP`);
     choiceBtns.forEach(b=>b.disabled=true);
-    setTimeout(reset, 1000);
+    setTimeout(reset, 1400);
   }
 
   function start(){
@@ -246,18 +248,8 @@
     });
   }
 
-  (function initExp(){
-    try{
-      const raw = localStorage.getItem(EXP_KEY);
-      const n = Number(raw || 0);
-      exp = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
-    }catch(_){
-      exp = 0;
-    }
-    if(expLabelEl) expLabelEl.textContent = String(exp);
-  })();
-
   reset();
 })();
 </script>
+</body>
 </html>

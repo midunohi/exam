@@ -128,13 +128,6 @@
       flex-wrap: wrap;
       justify-content: flex-end;
     }
-    .exp {
-      position: absolute;
-      right: 18px;
-      bottom: 16px;
-      color: var(--muted);
-      font-size: 12px;
-    }
     .start-guide {
       position: absolute;
       left: 24px;
@@ -297,8 +290,11 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="./app_world_ui.css" />
+  <script src="./rpg_equipment.js"></script>
+  <script src="./rpg_study_rewards.js"></script>
 </head>
-<body>
+<body class="world-app" data-app="speed">
   <div class="top-bar">
     <div class="top-bar-inner">
       <h1 class="title">英語速読4択</h1>
@@ -331,9 +327,9 @@
       </div>
 
       <div id="resultHistory" class="result-history" aria-live="polite"></div>
-      <div class="exp">EXP: <span id="expLabel">0</span></div>
       <div id="startGuide" class="start-guide">枠をクリックして開始</div>
       </section>
+      <div id="rewardSlot"></div>
     </div>
   </main>
 
@@ -532,9 +528,11 @@ const passages = [
     const choicesEl = document.getElementById('choices');
     const feedbackEl = document.getElementById('feedback');
     const resultHistoryEl = document.getElementById('resultHistory');
-
-    const EXP_KEY = "midunohi.exam.exp";
-    let exp = 0;
+    const rewards = window.RPGStudyRewards.create({
+      slot: '#rewardSlot',
+      icon: '📜',
+      dropEvery: 3
+    });
     let expAwarded = false;
     let words = [];
     let index = 0;
@@ -544,31 +542,6 @@ const passages = [
     let currentPassage = null;
     let answered = false;
     let resetTimerId = null;
-
-    function loadExp() {
-      try {
-        const stored = localStorage.getItem(EXP_KEY);
-        const n = Number(stored || 0);
-        exp = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
-      } catch (e) {
-        exp = 0;
-      }
-      updateExpDisplay();
-    }
-
-    function saveExp() {
-      try {
-        localStorage.setItem(EXP_KEY, String(exp));
-      } catch (e) {
-        /* noop */
-      }
-      updateExpDisplay();
-    }
-
-    function updateExpDisplay() {
-      const el = document.getElementById("expLabel");
-      if (el) el.textContent = String(exp);
-    }
 
     function addResult(ok, text) {
       if (!resultHistoryEl) return;
@@ -678,9 +651,8 @@ const passages = [
         let gain = 0;
         if (!expAwarded) {
           gain = 5;
-          exp += gain;
           expAwarded = true;
-          saveExp();
+          rewards.award({ exp:gain });
         }
         feedbackEl.textContent = `🎉 正解 +${gain} EXP`;
         addResult(true, `🎉 正解 +${gain} EXP`);
@@ -689,7 +661,7 @@ const passages = [
         feedbackEl.textContent = "✖ 不正解 +0 EXP";
         addResult(false, "✖ 不正解 +0 EXP");
       }
-      resetTimerId = setTimeout(resetToStart, 1000);
+      resetTimerId = setTimeout(resetToStart, 1400);
     }
 
     function resetToStart() {
@@ -698,6 +670,7 @@ const passages = [
         resetTimerId = null;
       }
       running = false;
+      rewards.hide();
       answered = false;
       words = [];
       index = 0;
@@ -756,6 +729,7 @@ const passages = [
 
     function play() {
       if (running || answered || isQuizVisible()) return;
+      rewards.hide();
       if (resetTimerId) {
         clearTimeout(resetTimerId);
         resetTimerId = null;
@@ -811,7 +785,6 @@ const passages = [
     });
 
     // 初期化
-    loadExp();
     updateSpeedLabel();
     updateDisplay();
     updateStartable();

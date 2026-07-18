@@ -1,0 +1,324 @@
+:root{
+  --world-fg:#e8f2fb;
+  --world-muted:#a8bdcf;
+  --world-line:rgba(148,197,221,.24);
+  --world-line-soft:rgba(148,197,221,.14);
+  --world-mint:#7cffb2;
+  --world-cyan:#71eaff;
+  --world-gold:#ffe98a;
+  --world-learning:rgba(3,14,30,.82);
+  --world-learning-alt:rgba(5,19,38,.76);
+  --world-game:rgba(3,14,30,.18);
+  --world-game-strong:rgba(3,14,30,.3);
+  --world-radius:18px;
+  --world-shadow:0 16px 38px rgba(0,0,0,.26);
+}
+
+.world-app,.world-app *{box-sizing:border-box}
+.world-app{color:var(--world-fg)}
+.world-app :is(.topbar,.top-bar,#appTop){
+  border:0;
+  box-shadow:none;
+  background:linear-gradient(180deg,rgba(3,12,28,.42),rgba(3,12,28,.12) 68%,transparent);
+  backdrop-filter:blur(7px) saturate(110%);
+}
+.world-app :is(.back-link,.back,.back-btn,#backBtn){
+  border:0!important;
+  border-radius:0!important;
+  padding:7px 2px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:var(--world-fg)!important;
+  text-decoration:none;
+  font-weight:800;
+}
+.world-app :is(.back-link,.back,.back-btn,#backBtn):hover{color:var(--world-cyan)!important}
+.world-app :is(.back-link,.back,.back-btn,#backBtn):focus-visible{
+  outline:2px solid rgba(113,234,255,.52);
+  outline-offset:4px;
+}
+
+/* 各科目フラッシュカード：基準デザイン */
+body[data-app="fc-tex"] .topbar{background:linear-gradient(180deg,rgba(3,12,28,.44),rgba(5,17,36,.18))}
+body[data-app="fc-tex"] .flashcard{
+  overflow:hidden;
+  background:linear-gradient(145deg,rgba(13,31,54,.78),rgba(3,13,28,.84));
+  border-color:var(--world-line);
+  box-shadow:var(--world-shadow),inset 0 1px 0 rgba(255,255,255,.05);
+}
+body[data-app="fc-tex"] .category-row{
+  background:rgba(7,20,39,.14);
+  border-bottom-color:var(--world-line);
+}
+body[data-app="fc-tex"] .qa{
+  background:linear-gradient(180deg,var(--world-learning-alt),var(--world-learning));
+}
+body[data-app="fc-tex"] .card-section + .card-section{border-top-color:rgba(124,255,178,.22)}
+
+/* 英単語・例文：一枚の学習面を区切り線で分割 */
+body[data-app="fc-en"] .page{width:100%;padding-inline:16px}
+body[data-app="fc-en"] .card{
+  width:min(960px,calc(100vw - 32px));
+  display:block;
+  overflow:hidden;
+  padding:0;
+  border:1px solid var(--world-line);
+  border-radius:var(--world-radius);
+  background:linear-gradient(180deg,var(--world-learning-alt),var(--world-learning));
+  box-shadow:var(--world-shadow);
+}
+body[data-app="fc-en"] .card:active{box-shadow:var(--world-shadow)}
+body[data-app="fc-en"] .category-row{
+  min-height:52px;
+  padding:10px 16px;
+  border-bottom:1px solid var(--world-line);
+  background:rgba(7,20,39,.16);
+}
+body[data-app="fc-en"] #countLabel{
+  flex:0 0 auto;
+  margin:0;
+  padding:4px 8px;
+  color:var(--world-muted);
+  font-size:.78rem;
+}
+body[data-app="fc-en"] .term-mean{
+  min-height:128px;
+  align-items:center;
+  justify-content:center;
+  padding:22px clamp(18px,4vw,42px);
+  border-bottom:1px solid var(--world-line);
+  text-align:center;
+}
+body[data-app="fc-en"] .phrases{gap:0}
+body[data-app="fc-en"] .phrase-line{
+  min-height:72px;
+  justify-content:center;
+  padding:12px clamp(18px,4vw,42px);
+  border-bottom:1px solid var(--world-line-soft);
+}
+body[data-app="fc-en"] .phrase-line:last-child{border-bottom:0}
+body[data-app="fc-en"] button{
+  min-height:32px;
+  padding:5px 10px;
+  border-color:rgba(91,219,215,.3);
+  border-radius:10px;
+  background:rgba(9,31,47,.42);
+}
+@media(max-width:640px){
+  body[data-app="fc-en"] .page{padding-inline:8px}
+  body[data-app="fc-en"] .card{width:100%;border-radius:16px}
+  body[data-app="fc-en"] .category-row{padding:9px 11px;gap:6px;flex-wrap:wrap}
+  body[data-app="fc-en"] .category-spacer{display:none}
+  body[data-app="fc-en"] .term-mean{min-height:112px;padding:18px 14px}
+  body[data-app="fc-en"] .phrase-line{min-height:64px;padding:10px 14px}
+}
+
+/* フラッシュ暗算：操作・問題・選択肢を一枚の面で分割 */
+body[data-app="mental"] .frame{width:min(620px,calc(100vw - 20px))}
+body[data-app="mental"] .box{
+  overflow:hidden;
+  padding:0;
+  border:1px solid var(--world-line);
+  border-radius:var(--world-radius);
+  background:linear-gradient(180deg,var(--world-learning-alt),var(--world-learning));
+  box-shadow:var(--world-shadow);
+}
+body[data-app="mental"] .box>.row{
+  min-height:58px;
+  padding:9px 14px;
+  border-bottom:1px solid var(--world-line);
+  background:rgba(7,20,39,.14);
+}
+body[data-app="mental"] #n{
+  height:clamp(150px,28vh,230px);
+  border-bottom:1px solid var(--world-line);
+}
+body[data-app="mental"] .actionArea{
+  min-height:108px;
+  margin:0;
+  padding:10px 14px;
+  border-bottom:1px solid var(--world-line-soft);
+}
+body[data-app="mental"] #choices{inset:10px 14px;gap:0}
+body[data-app="mental"] .choice{
+  border:0;
+  border-top:1px solid var(--world-line-soft);
+  border-radius:0;
+  background:rgba(7,20,39,.24);
+}
+body[data-app="mental"] .choice:nth-child(even){border-left:1px solid var(--world-line-soft)}
+body[data-app="mental"] #msg{margin:0;padding:8px 14px;min-height:38px}
+body[data-app="mental"] #hint{
+  height:58px;
+  padding:6px 14px 10px;
+  border-top:1px solid var(--world-line-soft);
+}
+body[data-app="mental"] #hint div{border:0;background:transparent;padding:2px 5px}
+body[data-app="mental"] .start-guide{bottom:20px}
+body[data-app="mental"] input{
+  border-color:rgba(148,197,221,.22);
+  background:rgba(3,14,30,.44);
+}
+
+/* 英語速読：設定・本文・選択肢・履歴を一枚の学習面で分割 */
+body[data-app="speed"] .word-box{
+  overflow:hidden;
+  padding:0 0 42px;
+  gap:0;
+  border:1px solid var(--world-line);
+  border-radius:var(--world-radius);
+  background:linear-gradient(180deg,var(--world-learning-alt),var(--world-learning));
+  box-shadow:var(--world-shadow);
+}
+body[data-app="speed"] .word-box.is-startable:active{box-shadow:var(--world-shadow)}
+body[data-app="speed"] .top-controls{
+  min-height:56px;
+  padding:10px 18px;
+  border-bottom:1px solid var(--world-line);
+  background:rgba(7,20,39,.14);
+}
+body[data-app="speed"] .word-area{padding:22px clamp(18px,4vw,42px)}
+body[data-app="speed"] .quiz-area{
+  padding:18px clamp(16px,3vw,32px) 12px;
+  gap:12px;
+}
+body[data-app="speed"] .quiz-title{text-align:center}
+body[data-app="speed"] .choices{gap:0}
+body[data-app="speed"] .choice-btn{
+  min-height:clamp(64px,11dvh,96px);
+  border:0;
+  border-top:1px solid var(--world-line);
+  border-radius:0;
+  background:rgba(7,20,39,.22);
+}
+body[data-app="speed"] .choice-btn:nth-child(even){border-left:1px solid var(--world-line)}
+body[data-app="speed"] .result-history{
+  min-height:54px;
+  max-height:54px;
+  padding:7px 18px;
+  border-top:1px solid var(--world-line-soft);
+}
+body[data-app="speed"] .result-history div{
+  border:0;
+  border-radius:0;
+  padding:3px 5px;
+  background:transparent;
+  box-shadow:none;
+}
+body[data-app="speed"] .start-guide{bottom:15px}
+@media(max-width:640px){
+  body[data-app="mental"] .frame{width:min(calc(100% - 12px),620px)}
+  body[data-app="mental"] .box{border-radius:16px}
+  body[data-app="mental"] .box>.row{overflow-x:auto}
+  body[data-app="speed"] .word-box{padding:0 0 40px;border-radius:16px}
+  body[data-app="speed"] .top-controls{padding:9px 12px}
+  body[data-app="speed"] .word-area{padding:18px 12px}
+  body[data-app="speed"] .quiz-area{padding:14px 10px 8px}
+}
+
+/* モンスター狩り：学習面だけ濃く、ゲーム情報は背景を透かす */
+body[data-app="hunt"] #wrap{gap:10px;padding:8px clamp(8px,2vw,20px)}
+body[data-app="hunt"] #appTop{padding:3px 2px 8px}
+body[data-app="hunt"] #topGrid{gap:10px}
+body[data-app="hunt"] .panel{border:0;border-radius:0;background:transparent;box-shadow:none}
+body[data-app="hunt"] :is(#heroBox,#enemyBox){
+  padding:8px 10px;
+  border-bottom:1px solid var(--world-line-soft);
+  background:var(--world-game);
+  backdrop-filter:blur(3px);
+}
+body[data-app="hunt"] :is(#heroBox,#enemyBox) .row:last-child{margin-bottom:0}
+body[data-app="hunt"] #qaBox{
+  overflow:hidden;
+  min-height:34vh;
+  padding:0;
+  border:1px solid var(--world-line);
+  border-radius:var(--world-radius);
+  background:linear-gradient(180deg,var(--world-learning-alt),var(--world-learning));
+  box-shadow:var(--world-shadow);
+}
+body[data-app="hunt"] #question{
+  min-height:74px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0;
+  padding:14px clamp(14px,3vw,28px);
+  border-bottom:1px solid var(--world-line);
+  text-align:center;
+}
+body[data-app="hunt"] #choices{gap:0}
+body[data-app="hunt"] button.choice{
+  border:0;
+  border-radius:0;
+  background:rgba(7,20,39,.2);
+}
+body[data-app="hunt"] button.choice+button.choice{border-top:1px solid var(--world-line-soft)}
+body[data-app="hunt"] button.choice.correct{border:0;background:rgba(34,197,94,.26)}
+body[data-app="hunt"] button.choice.wrong{border:0;background:rgba(239,68,68,.24)}
+body[data-app="hunt"] #enemyView{padding:0;background:transparent}
+body[data-app="hunt"] #enemyView img{filter:drop-shadow(0 16px 24px rgba(0,0,0,.38))}
+body[data-app="hunt"] #logWrap{
+  padding:5px 8px;
+  border:0;
+  border-top:1px solid var(--world-line-soft);
+  border-radius:0;
+  background:var(--world-game);
+  backdrop-filter:blur(3px);
+}
+
+/* キャラステータス：外側は透明、右欄だけを一枚にまとめる */
+body[data-app="status"] #panel{
+  width:min(820px,calc(100vw - 16px));
+  padding:clamp(10px,2vw,16px);
+  border:0;
+  background:var(--world-game);
+  box-shadow:0 14px 34px rgba(0,0,0,.2);
+  backdrop-filter:blur(4px);
+}
+body[data-app="status"] header{max-width:min(820px,calc(100vw - 16px))}
+body[data-app="status"] .meta{
+  gap:0;
+  margin-bottom:10px;
+  border-bottom:1px solid var(--world-line-soft);
+  background:rgba(3,14,30,.1);
+}
+body[data-app="status"] .meta .pill{
+  border:0;
+  border-right:1px solid var(--world-line-soft);
+  border-radius:0;
+  background:transparent;
+}
+body[data-app="status"] .meta .pill:last-child{border-right:0}
+body[data-app="status"] .avatar{border:0;background:transparent;box-shadow:0 12px 26px rgba(0,0,0,.24)}
+body[data-app="status"] .buildPanel{
+  display:block;
+  overflow:hidden;
+  border:1px solid var(--world-line-soft);
+  border-radius:16px;
+  background:var(--world-game);
+  backdrop-filter:blur(4px);
+}
+body[data-app="status"] :is(.atkBox,.equipmentPanel,.itemBag){
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+body[data-app="status"] :is(.equipmentPanel,.itemBag){border-top:1px solid var(--world-line-soft)}
+body[data-app="status"] .equipped{
+  min-height:48px;
+  padding:4px 0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+body[data-app="status"] .weaponSlot{background:rgba(8,47,73,.3)}
+@media(max-width:720px){
+  body[data-app="hunt"] #topGrid{grid-template-columns:1fr}
+  body[data-app="hunt"] #heroBox{grid-row:auto}
+  body[data-app="hunt"] #enemyBox{grid-row:auto}
+  body[data-app="hunt"] #qaBox{grid-row:auto}
+  body[data-app="hunt"] #enemyView{grid-row:auto}
+  body[data-app="hunt"] #enemyView img{max-height:24vh}
+  body[data-app="status"] #panel{background:rgba(3,14,30,.18)}
+}
