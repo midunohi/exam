@@ -19,43 +19,109 @@
       --button-bg-hover:rgba(15,23,42,.58);
       --shadow:rgba(0,0,0,.32);
       --text-shadow:0 2px 5px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.65);
+      --heading-bg:rgba(4,12,24,.3);
+      --heading-line:rgba(255,255,255,.2);
     }
     *{ box-sizing:border-box }
     html,body{ margin:0; height:100%; color:var(--fg); font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif; text-shadow:var(--text-shadow); }
 
-    .wrap{ max-width:960px; margin:0 auto; padding:20px }
-    header{ padding:8px 0 16px; border-bottom:1px solid rgba(255,255,255,.2) }
-    header h1{ font-size:22px; margin:0 }
-    header a{ color:var(--fg); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.45); }
-    header a:hover{ border-color:var(--accent); }
+    .wrap{ max-width:960px; margin:0 auto; padding:76px 20px 20px }
+    header{
+      position:fixed;
+      inset:0 0 auto;
+      z-index:100;
+      display:flex;
+      flex-wrap:nowrap;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      width:100%;
+      height:58px;
+      padding:0 max(12px,calc((100vw - 960px)/2 + 20px));
+      border:0;
+      border-bottom:1px solid var(--heading-line);
+      border-radius:0;
+      background:rgba(4,12,24,.76);
+      box-shadow:0 5px 18px rgba(0,0,0,.2);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+    }
 
-    .sitemap{ margin:18px 0 }
-    .sitemap h2{ font-size:20px; margin:18px 0 10px; color:var(--fg); font-weight:800; letter-spacing:.08em; text-shadow:var(--text-shadow),0 0 12px color-mix(in srgb, var(--accent) 45%, transparent); }
-    .sitemap ul{ list-style:none; padding:0; margin:12px 0; display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:4px 8px; }
+    .sitemap{ margin:18px 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); align-items:start; gap:14px }
+    header h1{
+      min-width:0;
+      max-width:100%;
+      margin:0;
+      overflow:hidden;
+      color:var(--fg);
+      font-size:clamp(17px,3vw,22px);
+      white-space:nowrap;
+      text-overflow:ellipsis;
+      -webkit-text-stroke:.2px rgba(2,6,23,.72);
+    }
+    .github-button{
+      display:inline-flex;
+      flex:0 0 auto;
+      align-items:center;
+      min-height:36px;
+      padding:7px 11px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      color:var(--fg);
+      background:var(--button-bg);
+      box-shadow:0 5px 14px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.12);
+      text-decoration:none;
+      font-size:14px;
+      font-weight:800;
+      text-shadow:var(--text-shadow);
+      transition:transform .08s ease,background-color .15s ease,border-color .15s ease,box-shadow .15s ease;
+    }
+    .github-button::after{ content:"↗"; margin-left:6px; color:var(--accent); font-size:.85em; }
+    .github-button:hover{ transform:translateY(-1px); background:var(--button-bg-hover); border-color:var(--accent); box-shadow:0 8px 18px rgba(0,0,0,.3),0 0 12px color-mix(in srgb,var(--accent) 28%,transparent); }
+    .github-button:active{ transform:translateY(0) scale(.98); }
+    .github-button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+    .sitemap-group{
+      overflow:hidden;
+      border:1px solid var(--heading-line);
+      border-radius:12px;
+      background:var(--heading-bg);
+      box-shadow:0 8px 22px var(--shadow),inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter:blur(5px);
+      -webkit-backdrop-filter:blur(5px);
+    }
+    .sitemap h2{
+      margin:0;
+      padding:10px 12px;
+      border-bottom:1px solid var(--heading-line);
+      background:rgba(4,12,24,.16);
+      color:var(--fg);
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-shadow:var(--text-shadow),0 0 12px color-mix(in srgb, var(--accent) 45%, transparent);
+      -webkit-text-stroke:.2px rgba(2,6,23,.72);
+    }
+    .sitemap ul{ list-style:none; padding:0; margin:0; }
     .sitemap li{ margin:0 }
+    .sitemap li + li{ border-top:1px solid var(--heading-line) }
 
     /* --- link base --- */
     .sitemap a{
       display:block;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:7px 11px;
+      padding:10px 12px;
       text-decoration:none;
       color:inherit;
-      background:var(--button-bg);
-      box-shadow:0 8px 22px var(--shadow), inset 0 1px 0 rgba(255,255,255,.12);
-      backdrop-filter:blur(5px);
-      -webkit-backdrop-filter:blur(5px);
-      transition:transform .06s ease, box-shadow .15s ease, border-color .15s ease, opacity .15s ease, filter .15s ease, background-color .15s ease;
+      background:transparent;
+      transition:opacity .15s ease, filter .15s ease, background-color .15s ease;
       font-size:14px;
       font-weight:700;
       line-height:1.4;
       position:relative; /* for status mark */
       text-shadow:var(--text-shadow);
     }
-    .sitemap a:hover{ transform:translateY(-1px); background:var(--button-bg-hover); box-shadow:0 12px 28px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.16); border-color:rgba(255,255,255,.5); }
-    .sitemap a:active{ transform:translateY(0); box-shadow:0 6px 16px rgba(0,0,0,.34), inset 0 0 0 1px rgba(255,255,255,.16); }
-    .sitemap a:focus{ outline:2px solid var(--accent); outline-offset:2px; }
+    .sitemap a:hover{ background:var(--button-bg-hover); }
+    .sitemap a:active{ background:rgba(15,23,42,.68); }
+    .sitemap a:focus-visible{ outline:2px solid var(--accent); outline-offset:-3px; }
 
     /* --- status mark: single mark (no duplicate dot) --- */
     .sitemap a::before{ content:""; display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--accent); margin-right:8px; vertical-align:-1px; box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); }
@@ -69,36 +135,43 @@
 
     @media (prefers-color-scheme: dark){
       :root{ --fg:#e5e7eb; --muted:#9ca3af; --line:rgba(255,255,255,.26); --accent:#60a5fa; --shadow:rgba(0,0,0,.35); }
-      header{ border-color:var(--line) }
-      .sitemap a:hover{ border-color:color-mix(in srgb, var(--line) 70%, #fff 24%); }
+      .sitemap-group{ border-color:var(--line) }
     }
   </style>
+  <link rel="stylesheet" href="apps/app_world_ui.css" />
 </head>
 
-<body>
+<body class="world-app" data-app="index">
   <main class="wrap" role="main">
     <header>
-      <h1>みづの 大学受験 問題集 <a href="https://github.com/midunohi/exam" target="_blank" rel="noopener">（GitHub）</a></h1>
+      <h1>みづの 大学受験 問題集</h1>
+      <a class="github-button" href="https://github.com/midunohi/exam" target="_blank" rel="noopener">GitHub</a>
     </header>
 
     <nav class="sitemap" aria-label="サイトマップ">
-      <h2>フラッシュカード</h2>
-      <ul>
-        <li><a href="apps/fc_tex.html" class="recommended">各科目 フラッシュカード</a></li>
-        <li><a href="apps/fc_enExamples.html" class="recommended">英単語·例文</a></li>
-      </ul>
+      <section class="sitemap-group" aria-labelledby="group-flashcards">
+        <h2 id="group-flashcards">フラッシュカード</h2>
+        <ul>
+          <li><a href="apps/fc_tex.html" class="recommended">各科目 フラッシュカード</a></li>
+          <li><a href="apps/fc_enExamples.html" class="recommended">英単語·例文</a></li>
+        </ul>
+      </section>
 
-      <h2>速読・暗算</h2>
-      <ul>
-        <li><a href="apps/flash_mental_math.html" class="recommended">フラッシュ暗算</a></li>
-        <li><a href="apps/speed_reading.html" class="recommended">英語速読4択</a></li>
-      </ul>
+      <section class="sitemap-group" aria-labelledby="group-speed">
+        <h2 id="group-speed">速読・暗算</h2>
+        <ul>
+          <li><a href="apps/flash_mental_math.html" class="recommended">フラッシュ暗算</a></li>
+          <li><a href="apps/speed_reading.html" class="recommended">英語速読4択</a></li>
+        </ul>
+      </section>
 
-      <h2>モンスター狩り</h2>
-      <ul>
-        <li><a href="apps/rpg_vocabulary.html" class="recommended">英単語 4択</a></li>
-        <li><a href="apps/rpg_status.html" class="recommended">キャラ ステータス</a></li>
-      </ul>
+      <section class="sitemap-group" aria-labelledby="group-monsters">
+        <h2 id="group-monsters">モンスター狩り</h2>
+        <ul>
+          <li><a href="apps/rpg_vocabulary.html" class="recommended">英単語 4択</a></li>
+          <li><a href="apps/rpg_status.html" class="recommended">キャラ ステータス</a></li>
+        </ul>
+      </section>
     </nav>
   </main>
 </body>

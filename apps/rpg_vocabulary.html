@@ -154,7 +154,7 @@
 <div id="wrap">
   <header id="appTop">
     <div id="pageTitle">モンスター狩り 英単語</div>
-    <button id="backBtn" type="button">戻る</button>
+    <button id="backBtn" type="button" aria-label="トップへ戻る">← 戻る</button>
   </header>
 
   <div id="topGrid">
@@ -184,19 +184,17 @@
   </section>
 </div>
 
+<script src="./rpg_progression.js"></script>
 <script src="./rpg_equipment.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const KEY='midunohi.exam.exp'; // 累計EXP
+const progression=window.RPGProgression;
 const R=n=>(Math.random()*n)|0;
 const clamp=(x,a,b)=>x<a?a:x>b?b:x;
 const bar=(id,r)=>{const e=$(id); if(e) e.style.width=(100*clamp(r,0,1)).toFixed(1)+'%';};
 const log=s=>{const e=$('log'); if(!e) return; e.insertAdjacentHTML('beforeend',`<p>${s}</p>`); e.scrollTop=e.scrollHeight;};
 const clearLog=()=>{const e=$('log'); if(e) e.innerHTML='';};
 
-// ---- EXP曲線（ここだけ好みで調整） ----
-const EXP0 = 20;         // Lv1->2 必要EXP
-const EXP_GROW = 1.35;   // 必要EXP成長率
 
 // fallback
 const FALLBACK_WORDS=[
@@ -211,7 +209,7 @@ let words=[], MONSTERS=[], enemy=null, Q=null;
 
 const state={
   total:0,   // 累計EXP（保存）
-  lv:1, exp:0, nextExp:EXP0,
+  lv:1, exp:0, nextExp:progression.config.initialLevelExp,
   maxHP:30, hp:30, baseAtk:5, atk:5, weapon:null,
 
   // モンスター順
@@ -222,7 +220,7 @@ const state={
   used:new Set()
 };
 
-function save(){ try{ localStorage.setItem(KEY, String(state.total)); }catch(e){} }
+function save(){ progression.writeTotalExp(state.total); }
 
 function safeGlobalEval(name){
   try{
@@ -251,26 +249,21 @@ function injectScript(src){
   });
 }
 
-// 累計EXPから (lv, exp, nextExp) を復元（必要EXPが増える方式）
+// 累計EXPからレベルと基礎能力値を共通仕様で復元する。
 function recalcFromTotal(){
-  let lv=1, next=EXP0, t=state.total;
-  while(t >= next){
-    t -= next;
-    lv++;
-    next = Math.round(next * EXP_GROW);
-  }
-  state.lv=lv; state.exp=t; state.nextExp=next;
+  const snapshot = progression.calculate(state.total);
+  state.lv = snapshot.level;
+  state.exp = snapshot.exp;
+  state.nextExp = snapshot.nextExp;
+  state.maxHP = snapshot.maxHP;
+  state.baseAtk = snapshot.baseAttack;
 
-  // キャラステータスと同じ基礎値に、共有装備モジュールの倍率を適用する。
-  state.maxHP = 26 + state.lv*8;
-  state.baseAtk = 5 + (state.lv - 1) * 2;
   const attack = window.RPGEquipment
     ? window.RPGEquipment.getAttackStats(state.baseAtk)
     : { total:state.baseAtk, equipped:null };
   state.atk = attack.total;
   state.weapon = attack.equipped;
   state.hp = clamp(state.hp,0,state.maxHP);
-
 }
 
 function render(){
@@ -521,7 +514,7 @@ function answer(choice){
 }
 
 function init(){
-  state.total = Number(localStorage.getItem(KEY) || '0');
+  state.total = progression.readTotalExp();
   if(!Number.isFinite(state.total) || state.total<0) state.total=0;
 
   recalcFromTotal();

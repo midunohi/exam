@@ -16,6 +16,11 @@
 
 .world-app,.world-app *{box-sizing:border-box}
 .world-app{color:var(--world-fg)}
+.world-app:is([data-app="fc-en"],[data-app="mental"],[data-app="speed"],[data-app="hunt"])
+  :is(.card,.box,.word-box,#qaBox){
+  backdrop-filter:blur(6px) saturate(108%);
+  -webkit-backdrop-filter:blur(6px) saturate(108%);
+}
 .world-app :is(.topbar,.top-bar,#appTop){
   border:0;
   box-shadow:none;
@@ -147,6 +152,16 @@ body[data-app="mental"] .choice{
   background:rgba(7,20,39,.24);
 }
 body[data-app="mental"] .choice:nth-child(even){border-left:1px solid var(--world-line-soft)}
+body[data-app="mental"] .choice.correct{
+  opacity:1;
+  border:1px solid rgba(34,197,94,.9);
+  background:rgba(34,197,94,.28);
+}
+body[data-app="mental"] .choice.wrong{
+  opacity:1;
+  border:1px solid rgba(239,68,68,.9);
+  background:rgba(239,68,68,.28);
+}
 body[data-app="mental"] #msg{margin:0;padding:8px 14px;min-height:38px}
 body[data-app="mental"] #hint{
   height:58px;
@@ -154,7 +169,6 @@ body[data-app="mental"] #hint{
   border-top:1px solid var(--world-line-soft);
 }
 body[data-app="mental"] #hint div{border:0;background:transparent;padding:2px 5px}
-body[data-app="mental"] .start-guide{bottom:20px}
 body[data-app="mental"] input{
   border-color:rgba(148,197,221,.22);
   background:rgba(3,14,30,.44);
@@ -192,6 +206,16 @@ body[data-app="speed"] .choice-btn{
   background:rgba(7,20,39,.22);
 }
 body[data-app="speed"] .choice-btn:nth-child(even){border-left:1px solid var(--world-line)}
+body[data-app="speed"] .choice-btn.is-correct{
+  opacity:1;
+  border:1px solid rgba(34,197,94,.9);
+  background:rgba(34,197,94,.28);
+}
+body[data-app="speed"] .choice-btn.is-wrong{
+  opacity:1;
+  border:1px solid rgba(239,68,68,.9);
+  background:rgba(239,68,68,.28);
+}
 body[data-app="speed"] .result-history{
   min-height:54px;
   max-height:54px;
@@ -205,7 +229,6 @@ body[data-app="speed"] .result-history div{
   background:transparent;
   box-shadow:none;
 }
-body[data-app="speed"] .start-guide{bottom:15px}
 @media(max-width:640px){
   body[data-app="mental"] .frame{width:min(calc(100% - 12px),620px)}
   body[data-app="mental"] .box{border-radius:16px}
@@ -267,52 +290,13 @@ body[data-app="hunt"] #logWrap{
   backdrop-filter:blur(3px);
 }
 
-/* キャラステータス：外側は透明、右欄だけを一枚にまとめる */
+/* キャラステータス：一枚のグラス面を区切り線で分類 */
 body[data-app="status"] #panel{
-  width:min(820px,calc(100vw - 16px));
-  padding:clamp(10px,2vw,16px);
-  border:0;
-  background:var(--world-game);
-  box-shadow:0 14px 34px rgba(0,0,0,.2);
-  backdrop-filter:blur(4px);
-}
-body[data-app="status"] header{max-width:min(820px,calc(100vw - 16px))}
-body[data-app="status"] .meta{
-  gap:0;
-  margin-bottom:10px;
-  border-bottom:1px solid var(--world-line-soft);
-  background:rgba(3,14,30,.1);
-}
-body[data-app="status"] .meta .pill{
-  border:0;
-  border-right:1px solid var(--world-line-soft);
-  border-radius:0;
-  background:transparent;
-}
-body[data-app="status"] .meta .pill:last-child{border-right:0}
-body[data-app="status"] .avatar{border:0;background:transparent;box-shadow:0 12px 26px rgba(0,0,0,.24)}
-body[data-app="status"] .buildPanel{
-  display:block;
+  width:min(960px,calc(100vw - 16px));
+  padding:0;
   overflow:hidden;
-  border:1px solid var(--world-line-soft);
-  border-radius:16px;
-  background:var(--world-game);
-  backdrop-filter:blur(4px);
 }
-body[data-app="status"] :is(.atkBox,.equipmentPanel,.itemBag){
-  border:0;
-  border-radius:0;
-  background:transparent;
-}
-body[data-app="status"] :is(.equipmentPanel,.itemBag){border-top:1px solid var(--world-line-soft)}
-body[data-app="status"] .equipped{
-  min-height:48px;
-  padding:4px 0;
-  border:0;
-  border-radius:0;
-  background:transparent;
-}
-body[data-app="status"] .weaponSlot{background:rgba(8,47,73,.3)}
+body[data-app="status"] header{max-width:min(960px,calc(100vw - 16px))}
 @media(max-width:720px){
   body[data-app="hunt"] #topGrid{grid-template-columns:1fr}
   body[data-app="hunt"] #heroBox{grid-row:auto}
@@ -320,5 +304,359 @@ body[data-app="status"] .weaponSlot{background:rgba(8,47,73,.3)}
   body[data-app="hunt"] #qaBox{grid-row:auto}
   body[data-app="hunt"] #enemyView{grid-row:auto}
   body[data-app="hunt"] #enemyView img{max-height:24vh}
-  body[data-app="status"] #panel{background:rgba(3,14,30,.18)}
+}
+
+/* 全アプリ共通：画面上端に固定したタイトルバー */
+:root{--world-topbar-height:58px}
+body.world-app :is(.topbar,.top-bar,#appTop),
+body.world-app[data-app="status"] header{
+  position:fixed;
+  inset:0 0 auto;
+  z-index:100;
+  width:100%!important;
+  max-width:none!important;
+  height:var(--world-topbar-height);
+  min-height:var(--world-topbar-height);
+  margin:0;
+  padding-block:0!important;
+  border:0;
+  border-bottom:1px solid var(--world-line);
+  border-radius:0!important;
+  background:rgba(3,12,28,.76);
+  box-shadow:0 5px 18px rgba(0,0,0,.2);
+  backdrop-filter:blur(8px) saturate(110%);
+  -webkit-backdrop-filter:blur(8px) saturate(110%);
+}
+body.world-app :is(.topbar-inner,.top-bar-inner){
+  width:min(1100px,100%);
+  height:100%;
+  flex-wrap:nowrap;
+}
+body.world-app[data-app="mental"] .topbar,
+body.world-app[data-app="hunt"] #appTop,
+body.world-app[data-app="status"] header{
+  justify-content:space-between;
+  padding-inline:clamp(12px,3vw,24px)!important;
+}
+body.world-app :is(.app-title,.title,#title,#pageTitle),
+body.world-app[data-app="status"] h1{
+  min-width:0;
+  margin:0;
+  overflow:hidden;
+  font-size:clamp(17px,3vw,22px)!important;
+  line-height:1.2;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+body.world-app :is(.back-link,.back,.back-btn,#backBtn){
+  flex:0 0 auto;
+  min-height:34px;
+  padding:6px 10px!important;
+  border:1px solid var(--world-line)!important;
+  border-radius:8px!important;
+  background:rgba(7,24,43,.58)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+  transition:background-color .15s ease,border-color .15s ease,transform .08s ease;
+}
+body.world-app :is(.back-link,.back,.back-btn,#backBtn):hover{
+  color:var(--world-cyan)!important;
+  border-color:rgba(113,234,255,.62)!important;
+  background:rgba(9,38,58,.72)!important;
+}
+body.world-app :is(.back-link,.back,.back-btn,#backBtn):active{transform:scale(.98)}
+body[data-app="fc-tex"] .page,
+body[data-app="fc-en"] .page,
+body[data-app="mental"] .page,
+body[data-app="speed"] .page,
+body[data-app="status"] .page{
+  padding-top:calc(var(--world-topbar-height) + 12px);
+}
+body[data-app="hunt"] #wrap{
+  grid-template-rows:minmax(0,1fr) auto;
+  padding-top:calc(var(--world-topbar-height) + 8px);
+}
+/* 共通グラス仕様：補助UIは薄く、学習面は濃く */
+:root{
+  --world-glass-thin-bg:linear-gradient(180deg,rgba(12,31,51,.24),rgba(3,14,30,.14));
+  --world-glass-thin-line:rgba(181,224,241,.18);
+  --world-glass-thin-shadow:0 7px 20px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.06);
+  --world-glass-deep-bg:linear-gradient(160deg,rgba(5,20,39,.82),rgba(2,10,24,.88));
+  --world-glass-deep-line:rgba(181,224,241,.34);
+  --world-glass-deep-shadow:0 18px 44px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.08),inset 0 0 0 1px rgba(27,107,137,.08);
+}
+.world-glass-thin{
+  border:1px solid var(--world-glass-thin-line);
+  background:var(--world-glass-thin-bg);
+  box-shadow:var(--world-glass-thin-shadow);
+  backdrop-filter:blur(6px) saturate(106%);
+  -webkit-backdrop-filter:blur(6px) saturate(106%);
+}
+.world-glass-deep{
+  border:1px solid var(--world-glass-deep-line);
+  background:var(--world-glass-deep-bg);
+  box-shadow:var(--world-glass-deep-shadow);
+  backdrop-filter:blur(12px) saturate(112%);
+  -webkit-backdrop-filter:blur(12px) saturate(112%);
+}
+body.world-app :is(.topbar,.top-bar,#appTop),
+body.world-app[data-app="status"] header,
+body.world-app[data-app="index"] header{
+  border-bottom-color:var(--world-glass-thin-line);
+  background:rgba(5,18,34,.24);
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  backdrop-filter:blur(7px) saturate(106%);
+  -webkit-backdrop-filter:blur(7px) saturate(106%);
+}
+body.world-app :is(.back-link,.back,.back-btn,#backBtn,.github-button){
+  border-color:var(--world-glass-thin-line)!important;
+  background:rgba(8,27,45,.32)!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+body.world-app :is(.back-link,.back,.back-btn,#backBtn,.github-button):hover{
+  border-color:rgba(113,234,255,.52)!important;
+  background:rgba(10,43,63,.5)!important;
+  box-shadow:0 5px 14px rgba(0,0,0,.16),0 0 12px rgba(113,234,255,.1)!important;
+}
+
+/* 各科目フラッシュカード */
+body[data-app="fc-tex"] .flashcard{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  overflow:visible;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body[data-app="fc-tex"] .category-row{
+  border:1px solid var(--world-glass-thin-line);
+  border-radius:14px;
+  background:var(--world-glass-thin-bg);
+  box-shadow:var(--world-glass-thin-shadow);
+  backdrop-filter:blur(6px) saturate(106%);
+  -webkit-backdrop-filter:blur(6px) saturate(106%);
+}
+body[data-app="fc-tex"] .qa{
+  overflow:hidden;
+  border:1px solid var(--world-glass-deep-line);
+  border-radius:var(--world-radius);
+  background:var(--world-glass-deep-bg);
+  box-shadow:var(--world-glass-deep-shadow);
+  backdrop-filter:blur(12px) saturate(112%);
+  -webkit-backdrop-filter:blur(12px) saturate(112%);
+}
+
+/* 英単語・例文 */
+body[data-app="fc-en"] .card{
+  overflow:visible;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body[data-app="fc-en"] .category-row{
+  margin-bottom:10px;
+  border:1px solid var(--world-glass-thin-line);
+  border-radius:14px;
+  background:var(--world-glass-thin-bg);
+  box-shadow:var(--world-glass-thin-shadow);
+  backdrop-filter:blur(6px) saturate(106%);
+  -webkit-backdrop-filter:blur(6px) saturate(106%);
+}
+body[data-app="fc-en"] .term-mean,
+body[data-app="fc-en"] .phrases{
+  border-color:var(--world-glass-deep-line);
+  background:var(--world-glass-deep-bg);
+  backdrop-filter:blur(12px) saturate(112%);
+  -webkit-backdrop-filter:blur(12px) saturate(112%);
+}
+body[data-app="fc-en"] .term-mean{
+  border:1px solid var(--world-glass-deep-line);
+  border-bottom-color:var(--world-line-soft);
+  border-radius:var(--world-radius) var(--world-radius) 0 0;
+  box-shadow:var(--world-glass-deep-shadow);
+}
+body[data-app="fc-en"] .phrases{
+  overflow:hidden;
+  border:1px solid var(--world-glass-deep-line);
+  border-top:0;
+  border-radius:0 0 var(--world-radius) var(--world-radius);
+  box-shadow:0 18px 44px rgba(0,0,0,.28);
+}
+
+/* フラッシュ暗算 */
+body[data-app="mental"] .box{
+  overflow:visible;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body[data-app="mental"] .box>.row,
+body[data-app="mental"] :is(#msg,#hint){
+  border:1px solid var(--world-glass-thin-line);
+  background:var(--world-glass-thin-bg);
+  box-shadow:var(--world-glass-thin-shadow);
+  backdrop-filter:blur(6px) saturate(106%);
+  -webkit-backdrop-filter:blur(6px) saturate(106%);
+}
+body[data-app="mental"] .box>.row{margin-bottom:10px;border-radius:14px}
+body[data-app="mental"] #n,
+body[data-app="mental"] .actionArea{
+  border-color:var(--world-glass-deep-line);
+  background:var(--world-glass-deep-bg);
+  backdrop-filter:blur(12px) saturate(112%);
+  -webkit-backdrop-filter:blur(12px) saturate(112%);
+}
+body[data-app="mental"] #n{
+  border:1px solid var(--world-glass-deep-line);
+  border-bottom-color:var(--world-line-soft);
+  border-radius:var(--world-radius) var(--world-radius) 0 0;
+  box-shadow:var(--world-glass-deep-shadow);
+}
+body[data-app="mental"] .actionArea{
+  border:1px solid var(--world-glass-deep-line);
+  border-top:0;
+  border-radius:0 0 var(--world-radius) var(--world-radius);
+}
+body[data-app="mental"] #msg{margin-top:10px;border-bottom:0;border-radius:14px 14px 0 0}
+body[data-app="mental"] #hint{border-top-color:var(--world-line-soft);border-radius:0 0 14px 14px}
+
+/* 英語速読 */
+body[data-app="speed"] .word-box{
+  overflow:visible;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body[data-app="speed"] .top-controls,
+body[data-app="speed"] .result-history{
+  border:1px solid var(--world-glass-thin-line);
+  border-radius:14px;
+  background:var(--world-glass-thin-bg);
+  box-shadow:var(--world-glass-thin-shadow);
+  backdrop-filter:blur(6px) saturate(106%);
+  -webkit-backdrop-filter:blur(6px) saturate(106%);
+}
+body[data-app="speed"] .top-controls{margin-bottom:10px}
+body[data-app="speed"] :is(.word-area,.quiz-area){
+  overflow:hidden;
+  border:1px solid var(--world-glass-deep-line);
+  border-radius:var(--world-radius);
+  background:var(--world-glass-deep-bg);
+  box-shadow:var(--world-glass-deep-shadow);
+  backdrop-filter:blur(12px) saturate(112%);
+  -webkit-backdrop-filter:blur(12px) saturate(112%);
+}
+body[data-app="speed"] .result-history{margin-top:10px}
+
+/* モンスター狩りとステータス */
+body[data-app="hunt"] :is(#heroBox,#enemyBox,#logWrap),
+body[data-app="status"] #panel{
+  border:1px solid var(--world-glass-thin-line);
+  background:var(--world-glass-thin-bg);
+  box-shadow:var(--world-glass-thin-shadow);
+  backdrop-filter:blur(6px) saturate(106%);
+  -webkit-backdrop-filter:blur(6px) saturate(106%);
+}
+body[data-app="hunt"] :is(#heroBox,#enemyBox){border-radius:12px}
+body[data-app="hunt"] #logWrap{border-radius:12px}
+body[data-app="hunt"] #qaBox{
+  border:1px solid var(--world-glass-deep-line);
+  background:var(--world-glass-deep-bg);
+  box-shadow:var(--world-glass-deep-shadow);
+  backdrop-filter:blur(12px) saturate(112%);
+  -webkit-backdrop-filter:blur(12px) saturate(112%);
+}
+body[data-app="status"] #panel{border-radius:16px}
+
+/* トップページは補助情報のみなので薄いグラスへ統一 */
+body[data-app="index"] .wrap{padding-top:76px}
+body[data-app="index"] .sitemap-group{
+  border-color:var(--world-glass-thin-line);
+  background:var(--world-glass-thin-bg);
+  box-shadow:var(--world-glass-thin-shadow);
+  backdrop-filter:blur(6px) saturate(106%);
+  -webkit-backdrop-filter:blur(6px) saturate(106%);
+}
+body[data-app="index"] .sitemap h2{border-bottom-color:var(--world-glass-thin-line);background:rgba(5,18,34,.14)}
+/* 学習面の単一枠化：内部は区切り線のみ */
+body[data-app="fc-tex"] .flashcard,
+body[data-app="fc-en"] .card,
+body[data-app="mental"] .box,
+body[data-app="speed"] .word-box{
+  overflow:hidden;
+  border:1px solid var(--world-glass-deep-line);
+  border-radius:var(--world-radius);
+  background:var(--world-glass-deep-bg);
+  box-shadow:var(--world-glass-deep-shadow);
+  backdrop-filter:blur(12px) saturate(112%);
+  -webkit-backdrop-filter:blur(12px) saturate(112%);
+}
+body[data-app="fc-tex"] .flashcard{display:block}
+body[data-app="fc-tex"] .category-row,
+body[data-app="fc-en"] .category-row{
+  margin:0;
+  border:0;
+  border-bottom:1px solid var(--world-line);
+  border-radius:0;
+  background:rgba(12,31,51,.16);
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body[data-app="fc-tex"] .qa,
+body[data-app="fc-en"] .term-mean,
+body[data-app="fc-en"] .phrases{
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body[data-app="fc-en"] .term-mean{border-bottom:1px solid var(--world-line-soft)}
+
+body[data-app="mental"] .box>.row,
+body[data-app="mental"] :is(#n,.actionArea,#msg,#hint){
+  margin:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body[data-app="mental"] .box>.row{border-bottom:1px solid var(--world-line)}
+body[data-app="mental"] #n{border-bottom:1px solid var(--world-line-soft)}
+body[data-app="mental"] .actionArea{border-bottom:1px solid var(--world-line-soft)}
+body[data-app="mental"] #msg{border-bottom:1px solid var(--world-line-soft)}
+
+body[data-app="speed"] :is(.top-controls,.word-area,.quiz-area,.result-history){
+  margin:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body[data-app="speed"] .top-controls{border-bottom:1px solid var(--world-line)}
+body[data-app="speed"] .result-history{border-top:1px solid var(--world-line-soft)}
+/* 単一枠化の互換補正 */
+body[data-app="fc-tex"] .qa,
+body[data-app="fc-en"] :is(.category-row,.term-mean,.phrases),
+body[data-app="mental"] :is(.box>.row,#n,.actionArea,#msg,#hint),
+body[data-app="speed"] :is(.top-controls,.word-area,.quiz-area,.result-history){
+  -webkit-backdrop-filter:none;
+}
+body[data-app="speed"] .word-box{padding:0}
+/* 戻る操作は全ページで同じ外観に統一 */
+body.world-app :is(.back-link,.back,.back-btn,#backBtn){
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:34px;
+  font-size:14px;
+  line-height:1.2;
+  white-space:nowrap;
 }

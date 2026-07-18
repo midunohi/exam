@@ -7,12 +7,17 @@
 <style>
   :root{
     --fg:#e5e7eb;
-    --hp:#ef4444; --hp2:#b91c1c;
-    --exp:#38bdf8; --exp2:#0ea5e9;
+    --muted:#a9b7ca;
+    --hp:#ef4444;
+    --hp2:#b91c1c;
+    --exp:#38bdf8;
+    --exp2:#0ea5e9;
+    --status-line:rgba(148,163,184,.24);
   }
   *{box-sizing:border-box}
   html,body{
     margin:0;
+    min-height:100%;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
     background:#020617;
     color:var(--fg);
@@ -20,206 +25,187 @@
   body{
     min-height:100vh;
     min-height:100dvh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
     padding:8px;
     background-image:url('../img/街_農場_夜.png');
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
-    text-shadow:0 2px 5px rgba(0,0,0,.9), 0 0 12px rgba(0,0,0,.65);
+    text-shadow:0 2px 5px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.65);
   }
+  button{font:inherit}
   .page{
     width:100%;
     min-height:calc(100dvh - 16px);
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:8px;
-  }
-  #panel{
-    width:min(720px, calc(100vw - 16px));
-    background:rgba(15,23,42,.36);
-    border-radius:16px;
-    border:1px solid rgba(148,163,184,.35);
-    box-shadow:0 14px 34px rgba(0,0,0,.34);
-    padding:clamp(12px, 2.4vw, 18px);
   }
   header{
     width:100%;
-    max-width:min(720px, calc(100vw - 16px));
     display:flex;
-    flex-direction:row;
     align-items:center;
     justify-content:space-between;
     gap:8px;
   }
-  h1{
-    font-size:clamp(22px, 6vw, 32px);
-    letter-spacing:.06em;
-    margin:0;
+  h1{margin:0;letter-spacing:.06em}
+  #backBtn{color:var(--fg);cursor:pointer}
+  #panel{
+    width:min(960px,calc(100vw - 16px));
+    overflow:hidden;
   }
-  #backBtn{
-    padding:4px 10px;
-    border-radius:999px;
-    border:0;
-    background:rgba(15,23,42,.46);
-    color:var(--fg);
-    font-size:12px;
-    cursor:pointer;
+  .statusLayout{
+    display:grid;
+    grid-template-columns:minmax(260px,.86fr) minmax(420px,1.14fr);
+  }
+  .categorySection{
+    position:relative;
+    min-width:0;
+    padding:clamp(30px,3.4vw,34px) clamp(14px,2.5vw,22px) clamp(14px,2.5vw,22px);
+  }
+  .sectionHeading{
+    position:absolute;
+    top:9px;
+    left:clamp(14px,2.5vw,22px);
+    margin:0;
+    color:rgba(203,213,225,.52);
+    font-size:9px;
+    font-weight:800;
+    line-height:1;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+  }
+  .characterSection{
+    display:flex;
+    min-height:100%;
+    flex-direction:column;
+    border-right:1px solid var(--status-line);
+  }
+  .avatarWrap{
+    flex:1;
     display:flex;
     align-items:center;
-    gap:4px;
+    justify-content:center;
   }
-  #backBtn span{font-size:14px}
-
-  /* 上部ステータス */
+  .avatar{
+    width:min(100%,390px);
+    aspect-ratio:1;
+    overflow:hidden;
+    border-radius:12px;
+    background:rgba(2,6,23,.14);
+    box-shadow:0 14px 34px rgba(0,0,0,.24);
+  }
+  .avatar img{display:block;width:100%;height:100%;object-fit:cover}
+  .detailsColumn{min-width:0}
+  .statsSection{border-bottom:1px solid var(--status-line)}
   .meta{
     display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:8px;
-    margin-bottom:10px;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    margin:0 0 14px;
+    border-block:1px solid var(--status-line);
   }
   .pill{
-    padding:6px 10px;
-    border-radius:999px;
-    background:rgba(15,23,42,.42);
-    border:1px solid rgba(148,163,184,.5);
-    font-size:12px;
+    min-width:0;
+    padding:8px 10px;
     display:flex;
     justify-content:space-between;
     gap:8px;
+    border-right:1px solid var(--status-line);
+    font-size:12px;
     font-variant-numeric:tabular-nums;
   }
-  .pill span:first-child{opacity:.8}
-
+  .pill:last-child{border-right:0}
+  .pill span:first-child{color:var(--muted)}
+  .vitals{display:grid;gap:9px}
   .row{
-    display:flex;
+    display:grid;
+    grid-template-columns:48px minmax(0,1fr) 94px;
     align-items:center;
-    gap:8px;
-    margin-bottom:8px;
+    gap:9px;
     font-size:13px;
   }
-  .label{width:64px;opacity:.8}
+  .label{color:var(--muted);font-weight:700;letter-spacing:.06em}
   .barWrap{
-    flex:1;
-    height:12px;
-    border-radius:999px;
+    height:10px;
     overflow:hidden;
-    background:#020617;
-    border:1px solid #020617;
+    border-radius:999px;
+    background:rgba(2,6,23,.65);
+    box-shadow:inset 0 0 0 1px rgba(148,163,184,.12);
   }
   .barInner{height:100%;width:0;transition:width .25s}
   .barHp{background:linear-gradient(90deg,var(--hp),var(--hp2))}
   .barExp{background:linear-gradient(90deg,var(--exp),var(--exp2))}
-  .barText{
-    min-width:110px;
-    text-align:right;
-    font-size:11px;
-    opacity:.9;
-    font-variant-numeric:tabular-nums
-  }
-
-  .avatarRow{
-    display:grid;
-    grid-template-columns:minmax(0, 1fr) minmax(240px, 280px);
-    align-items:start;
-    gap:14px;
-    margin-top:10px;
-  }
-  /* キャラ画像：中央・大きめ（正方形想定） */
-  .avatarWrap{
-    display:flex;
-    justify-content:center;
-    flex:1;
-  }
-  .avatar{
-    width:min(100%, 420px);
-    aspect-ratio:1/1;
-    border-radius:16px;
-    overflow:hidden;
-    border:1px solid rgba(148,163,184,.55);
-    background:rgba(2,6,23,.28);
-    box-shadow:0 10px 30px rgba(0,0,0,.35);
-  }
-  .avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
-  .buildPanel{display:grid;gap:10px}
+  .barText{text-align:right;color:#dbeafe;font-size:11px;font-variant-numeric:tabular-nums}
   .atkBox{
-    border:1px solid rgba(103,232,249,.42);
-    border-radius:14px;
-    padding:10px 12px;
-    background:linear-gradient(135deg,rgba(8,47,73,.62),rgba(15,23,42,.34));
+    display:flex;
+    align-items:end;
+    justify-content:space-between;
+    gap:14px;
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid var(--status-line);
   }
-  .atkMain{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-  .atkMain span{font-size:12px;letter-spacing:.14em;color:#a5f3fc}
-  .atkMain strong{font-size:30px;line-height:1;color:#fef3c7}
-  #atkDetail{display:block;margin-top:5px;font-size:11px;color:#cbd5e1;text-align:right}
-  .equipmentPanel{
-    border:1px solid rgba(250,204,21,.3);
-    border-radius:14px;
-    padding:10px;
-    background:rgba(69,26,3,.22);
+  .atkMain{display:flex;align-items:baseline;gap:10px}
+  .atkMain span{color:#a5f3fc;font-size:11px;font-weight:800;letter-spacing:.16em}
+  .atkMain strong{color:#fef3c7;font-size:30px;line-height:1}
+  #atkDetail{color:#cbd5e1;font-size:11px;text-align:right}
+  .equipmentLayout{
+    display:grid;
+    grid-template-columns:minmax(160px,.82fr) minmax(190px,1.18fr);
+    align-items:stretch;
   }
-  .sectionLabel{margin:0 0 7px;font-size:12px;font-weight:800;letter-spacing:.1em;color:#fde68a}
-  .itemBag{
-    border:1px solid rgba(148,163,184,.32);
-    border-radius:14px;
-    padding:10px;
-    background:rgba(2,6,23,.34);
+  .equipmentPanel{min-width:0;padding-right:16px}
+  .itemBag{min-width:0;padding-left:16px;border-left:1px solid var(--status-line)}
+  .subsectionHeading{
+    margin:0 0 10px;
+    color:#fde68a;
+    font-size:12px;
+    letter-spacing:.08em;
   }
-  .bagHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-  .bagHead h2{font-size:14px;letter-spacing:.06em;margin:0}
-  #bagCount{font-size:11px;color:#94a3b8;font-variant-numeric:tabular-nums}
+  .bagHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .bagHead .subsectionHeading{margin:0}
+  #bagCount{color:#94a3b8;font-size:11px;font-variant-numeric:tabular-nums}
   .equipped{
     display:grid;
     grid-template-columns:36px minmax(0,1fr) auto;
     align-items:center;
     gap:8px;
     min-height:54px;
-    padding:7px 8px;
-    border-radius:10px;
-    border:1px solid rgba(250,204,21,.32);
-    background:linear-gradient(100deg,rgba(120,53,15,.3),rgba(15,23,42,.28));
   }
   .equippedIcon{font-size:26px;text-align:center;filter:drop-shadow(0 0 8px rgba(250,204,21,.35))}
-  .equippedName{display:block;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .equippedRank{display:block;margin-top:2px;font-size:10px;color:#fde68a;letter-spacing:.08em}
-  .equippedBonus{font-size:12px;font-weight:800;color:#86efac;white-space:nowrap}
+  .equippedName{display:block;overflow:hidden;color:#f8fafc;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+  .equippedRank{display:block;margin-top:2px;color:#fde68a;font-size:9px;letter-spacing:.08em}
+  .equippedBonus{color:#86efac;font-size:12px;white-space:nowrap}
   .emptyEquipment .equippedBonus{color:#94a3b8}
-  .weaponGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+  .weaponGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
   .weaponSlot{
     position:relative;
     min-width:0;
-    aspect-ratio:1/1;
+    aspect-ratio:1;
     display:flex;
     align-items:center;
     justify-content:center;
-    border-radius:9px;
-    border:1px solid rgba(103,232,249,.44);
-    background:rgba(8,47,73,.38);
+    border:1px solid rgba(103,232,249,.34);
+    border-radius:8px;
+    background:rgba(8,47,73,.28);
     color:#fff;
   }
   .slotIcon{font-size:23px}
-  .slotRank{position:absolute;top:3px;left:5px;font-size:9px;letter-spacing:.06em;color:#94a3b8}
+  .slotRank{position:absolute;top:3px;left:5px;color:#94a3b8;font-size:9px;letter-spacing:.06em}
   .slotCount{position:absolute;right:4px;bottom:3px;min-width:17px;padding:1px 4px;border-radius:999px;background:rgba(2,6,23,.82);font-size:10px;text-align:center;font-variant-numeric:tabular-nums}
   .bagEmpty{grid-column:1/-1;margin:8px 0;padding:8px 0;color:#94a3b8;font-size:11px;text-align:center}
-  .bagNote{margin:7px 0 0;font-size:10px;color:#94a3b8;text-align:center}
-  @media (max-width: 640px){
-    .avatarRow{grid-template-columns:1fr}
-    .buildPanel{grid-template-columns:minmax(0,1fr) minmax(220px,1.25fr)}
-    .itemBag{grid-column:1/-1}
+  .bagNote{margin:9px 0 0;color:#94a3b8;font-size:10px;line-height:1.5;text-align:center}
+  @media(max-width:760px){
+    .statusLayout{grid-template-columns:1fr}
+    .characterSection{border-right:0;border-bottom:1px solid var(--status-line)}
+    .avatar{width:min(100%,360px)}
   }
-  @media (max-width: 520px){
-    .buildPanel{grid-template-columns:1fr}
-    .itemBag{grid-column:auto}
-    .avatar{width:min(100%, 360px)}
+  @media(max-width:520px){
+    .categorySection{padding:28px 12px 14px}
+    .sectionHeading{top:9px;left:12px}
+    .row{grid-template-columns:38px minmax(0,1fr) 78px;gap:7px}
+    .equipmentLayout{grid-template-columns:1fr}
+    .equipmentPanel{padding:0 0 13px}
+    .itemBag{padding:13px 0 0;border-top:1px solid var(--status-line);border-left:0}
   }
 </style>
 <link rel="stylesheet" href="./app_world_ui.css" />
@@ -229,91 +215,90 @@
 <div class="page">
   <header>
     <h1>キャラステータス</h1>
-    <button id="backBtn" type="button"><span>◀</span> ゲームにもどる</button>
+    <button id="backBtn" type="button" aria-label="トップへ戻る">← 戻る</button>
   </header>
 
-  <section id="panel">
-
-    <!-- ステータス（キャラの上部） -->
-    <div class="meta">
-      <div class="pill"><span>Lv</span><span id="lv">1</span></div>
-      <div class="pill"><span>総EXP</span><span id="totalExp">0</span></div>
-      <div class="pill"><span>次Lvまで</span><span id="toNext">20</span></div>
-    </div>
-
-    <div class="row">
-      <span class="label">EXP</span>
-      <div class="barWrap"><div id="expBar" class="barInner barExp"></div></div>
-      <span id="expText" class="barText">0 / 20</span>
-    </div>
-
-    <div class="row">
-      <span class="label">HP</span>
-      <div class="barWrap"><div id="hpBar" class="barInner barHp"></div></div>
-      <span id="hpText" class="barText">30 / 30</span>
-    </div>
-
-    <!-- キャラ（中央） -->
-    <div class="avatarRow">
-      <div class="avatarWrap">
-        <div class="avatar">
-          <img src="../img/rpg_player_character.png" alt="player character">
+  <section id="panel" aria-label="キャラクター情報">
+    <div class="statusLayout">
+      <section class="categorySection characterSection" aria-labelledby="characterTitle">
+        <h2 id="characterTitle" class="sectionHeading">CHARACTER</h2>
+        <div class="avatarWrap">
+          <div class="avatar">
+            <img src="../img/rpg_player_character.png" alt="プレイヤーキャラクター">
+          </div>
         </div>
+      </section>
+
+      <div class="detailsColumn">
+        <section class="categorySection statsSection" aria-labelledby="statsTitle">
+          <h2 id="statsTitle" class="sectionHeading">STATUS</h2>
+          <div class="meta">
+            <div class="pill"><span>Lv</span><span id="lv">1</span></div>
+            <div class="pill"><span>総EXP</span><span id="totalExp">0</span></div>
+            <div class="pill"><span>次Lvまで</span><span id="toNext">20</span></div>
+          </div>
+          <div class="vitals">
+            <div class="row">
+              <span class="label">EXP</span>
+              <div class="barWrap"><div id="expBar" class="barInner barExp"></div></div>
+              <span id="expText" class="barText">0 / 20</span>
+            </div>
+            <div class="row">
+              <span class="label">HP</span>
+              <div class="barWrap"><div id="hpBar" class="barInner barHp"></div></div>
+              <span id="hpText" class="barText">30 / 30</span>
+            </div>
+          </div>
+          <div class="atkBox">
+            <div class="atkMain"><span>ATK</span><strong id="atk">5</strong></div>
+            <small id="atkDetail">基礎 5</small>
+          </div>
+        </section>
+
+        <section class="categorySection gearSection" aria-labelledby="gearTitle">
+          <h2 id="gearTitle" class="sectionHeading">EQUIPMENT</h2>
+          <div class="equipmentLayout">
+            <div class="equipmentPanel" role="group" aria-labelledby="currentEquipmentTitle">
+              <h3 id="currentEquipmentTitle" class="subsectionHeading">EQUIPPED</h3>
+              <div id="equippedWeapon" class="equipped emptyEquipment">
+                <span class="equippedIcon">◌</span>
+                <span><strong class="equippedName">装備なし</strong><small class="equippedRank">AUTO EQUIP</small></span>
+                <strong class="equippedBonus">ATK +0%</strong>
+              </div>
+            </div>
+            <div class="itemBag" role="group" aria-labelledby="itemBagTitle">
+              <div class="bagHead">
+                <h3 id="itemBagTitle" class="subsectionHeading">INVENTORY</h3>
+                <span id="bagCount">所持 0</span>
+              </div>
+              <div id="weaponGrid" class="weaponGrid" aria-label="武器一覧"></div>
+              <p class="bagNote">同じランクが3個そろうと自動強化</p>
+            </div>
+          </div>
+        </section>
       </div>
-      <aside class="buildPanel" aria-label="装備とアイテムバッグ">
-        <div class="atkBox">
-          <div class="atkMain"><span>ATK</span><strong id="atk">5</strong></div>
-          <small id="atkDetail">基礎 5</small>
-        </div>
-
-        <section class="equipmentPanel" aria-label="現在の装備">
-          <h2 class="sectionLabel">⚔️ 装備</h2>
-          <div id="equippedWeapon" class="equipped emptyEquipment">
-            <span class="equippedIcon">◌</span>
-            <span><strong class="equippedName">装備なし</strong><small class="equippedRank">AUTO EQUIP</small></span>
-            <strong class="equippedBonus">ATK +0%</strong>
-          </div>
-        </section>
-
-        <section class="itemBag">
-          <div class="bagHead">
-            <h2>🎒 アイテムバッグ</h2>
-            <span id="bagCount">所持 0</span>
-          </div>
-          <div id="weaponGrid" class="weaponGrid" aria-label="武器一覧"></div>
-          <p class="bagNote">同じランクが3個そろうと自動強化</p>
-        </section>
-      </aside>
     </div>
-
   </section>
 </div>
 
+<script src="./rpg_progression.js"></script>
 <script src="./rpg_equipment.js"></script>
 <script>
-  const KEY = 'midunohi.exam.exp';
   const $ = (id)=>document.getElementById(id);
   const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
   const setBar = (el,r)=>el && (el.style.width=(100*clamp(r,0,1)).toFixed(1)+'%');
+  const progression = window.RPGProgression;
 
   let lv, exp, nextExp, maxHP, atk, totalExp;
 
-  const reset = ()=>{ lv=1; exp=0; nextExp=20; atk=5; maxHP=30; };
-  const levelUp = ()=>{
-    lv++;
-    maxHP += 8 + Math.floor(lv*1.5);
-    atk += 2;
-    nextExp = Math.round(nextExp*1.35);
-  };
-
   const load = ()=>{
-    totalExp = Number(localStorage.getItem(KEY) || '0');
-    if(!Number.isFinite(totalExp) || totalExp < 0) totalExp = 0;
-
-    reset();
-    let rest = totalExp;
-    while(rest >= nextExp){ rest -= nextExp; levelUp(); }
-    exp = rest;
+    const snapshot = progression.getSnapshot();
+    lv = snapshot.level;
+    exp = snapshot.exp;
+    nextExp = snapshot.nextExp;
+    maxHP = snapshot.maxHP;
+    atk = snapshot.baseAttack;
+    totalExp = snapshot.totalExp;
   };
 
   const render = ()=>{
@@ -377,6 +362,7 @@
     });
   };
   window.addEventListener('storage', ()=>{ load(); render(); });
+  window.addEventListener('rpg-exp-change', ()=>{ load(); render(); });
   window.addEventListener('rpg-equipment-change', render);
   init();
 </script>

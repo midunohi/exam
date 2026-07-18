@@ -3,7 +3,7 @@
 
   // 学習報酬の保存先・武器周期・文言はここだけを編集する。
   const CONFIG = Object.freeze({
-    expKey: "midunohi.exam.exp",
+    expKey: global.RPGProgression?.config?.storageKey || "midunohi.exam.exp",
     weaponDropEvery: 3,
     messages: Object.freeze([
       "知識がひとつ身についた！",
@@ -19,6 +19,9 @@
     return Number.isFinite(number) && number > 0 ? Math.floor(number) : 0;
   }
   function readExp() {
+    if (global.RPGProgression && typeof global.RPGProgression.readTotalExp === "function") {
+      return global.RPGProgression.readTotalExp();
+    }
     try {
       const value = Number(global.localStorage && global.localStorage.getItem(CONFIG.expKey));
       return Number.isFinite(value) && value >= 0 ? Math.floor(value) : 0;
@@ -27,6 +30,10 @@
     }
   }
   function writeExp(value) {
+    if (global.RPGProgression && typeof global.RPGProgression.writeTotalExp === "function") {
+      global.RPGProgression.writeTotalExp(value, { notify: false });
+      return;
+    }
     try {
       if (global.localStorage) global.localStorage.setItem(CONFIG.expKey, String(value));
     } catch (_error) {
@@ -110,8 +117,13 @@
       const options = typeof input === "number" ? { exp: input } : (input || {});
       const amount = toAmount(options.exp ?? 1);
       if (!amount) return null;
-      const totalExp = readExp() + amount;
-      writeExp(totalExp);
+      let totalExp;
+      if (global.RPGProgression && typeof global.RPGProgression.addExp === "function") {
+        totalExp = global.RPGProgression.addExp(amount, { notify: false }).totalExp;
+      } else {
+        totalExp = readExp() + amount;
+        writeExp(totalExp);
+      }
 
       if (options.countForDrop !== false) this.rewardCount += 1;
       const periodicDrop = this.dropEvery > 0 && this.rewardCount > 0

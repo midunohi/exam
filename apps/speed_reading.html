@@ -128,19 +128,6 @@
       flex-wrap: wrap;
       justify-content: flex-end;
     }
-    .start-guide {
-      position: absolute;
-      left: 24px;
-      right: 24px;
-      bottom: 18px;
-      color: var(--muted);
-      opacity: .52;
-      font-size: 13px;
-      font-weight: 700;
-      text-align: center;
-      pointer-events: none;
-    }
-    .start-guide.is-hidden { display: none; }
     input[type="range"] { font-size: 12px; }
     button {
       border: 1px solid rgba(148,163,184,.28);
@@ -270,11 +257,6 @@
         border-radius: 16px;
         gap: 14px;
       }
-      .start-guide {
-        left: 16px;
-        right: 16px;
-        bottom: 16px;
-      }
       .speed {
         width: 100%;
         justify-content: space-between;
@@ -291,14 +273,15 @@
     }
   </style>
   <link rel="stylesheet" href="./app_world_ui.css" />
-  <script src="./rpg_equipment.js"></script>
+  <script src="./rpg_progression.js"></script>
+<script src="./rpg_equipment.js"></script>
   <script src="./rpg_study_rewards.js"></script>
 </head>
 <body class="world-app" data-app="speed">
   <div class="top-bar">
     <div class="top-bar-inner">
       <h1 class="title">英語速読4択</h1>
-      <a class="back-btn" href="../index.html">← 戻る</a>
+      <a class="back-btn" href="../index.html" aria-label="トップへ戻る">← 戻る</a>
     </div>
   </div>
 
@@ -327,7 +310,7 @@
       </div>
 
       <div id="resultHistory" class="result-history" aria-live="polite"></div>
-      <div id="startGuide" class="start-guide">枠をクリックして開始</div>
+      
       </section>
       <div id="rewardSlot"></div>
     </div>
@@ -522,7 +505,6 @@ const passages = [
     const wordDisplay  = document.getElementById('wordDisplay');
     const progressLabel = document.getElementById('progressLabel');
     const wordBox = document.querySelector('.word-box');
-    const startGuideEl = document.getElementById('startGuide');
     const wordArea = document.querySelector('.word-area');
     const quizArea = document.getElementById('quizArea');
     const choicesEl = document.getElementById('choices');
@@ -582,7 +564,6 @@ const passages = [
     function updateStartable() {
       const canStart = !running && !answered && !isQuizVisible();
       if (wordBox) wordBox.classList.toggle("is-startable", canStart);
-      if (startGuideEl) startGuideEl.classList.toggle("is-hidden", !canStart);
     }
 
     function shuffle(list) {
