@@ -16,6 +16,10 @@
   --next-pad-y: clamp(10px, 1.2vh, 16px);
   --next-pad-x: clamp(16px, 2vw, 26px);
   --next-h: clamp(52px, 6vh, 70px);
+  --log-font-size:13px;
+  --log-line-height:1.35;
+  --log-height:80px;
+  --log-pad-y:4px;
 }
 
 @media (orientation: portrait){
@@ -67,6 +71,21 @@
     gap:4px;
     min-height:0;
   }
+  #choices.game-over{flex:0 0 auto;align-items:center}
+  #restartBtn{
+    width:auto;
+    min-height:0;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:rgba(255,255,255,.78);
+    font:inherit;
+    font-size:clamp(15px,1.2vw + 11px,20px);
+    font-weight:700;
+    cursor:pointer;
+    text-shadow:inherit;
+  }
+  #restartBtn:focus-visible{outline:2px solid rgba(255,255,255,.72);outline-offset:5px}
 
   button.choice{
     flex:1;
@@ -138,9 +157,22 @@
     }
   }
 
-  #logWrap{min-height:96px;max-height:30vh;display:flex;flex-direction:column;padding-top:2px;background:rgba(0,0,0,.24);border-radius:8px}
-  #log{flex:1;overflow:auto;font-size:13px;padding:4px 6px}
-  #log p{margin:2px 0}
+  #logWrap{display:flex;flex-direction:column;padding:0;background:rgba(0,0,0,.24);border-radius:8px}
+  #log{
+    flex:1;
+    min-height:0;
+    overflow:auto;
+    overscroll-behavior:contain;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+    font-size:var(--log-font-size);
+    line-height:var(--log-line-height);
+    padding:var(--log-pad-y) 6px;
+  }
+  #log::-webkit-scrollbar{display:none}
+  #log .log-line{display:block;min-width:0}
+  #log .log-message{display:inline;margin:0}
+  #log .log-message:not(:last-child)::after{content:"　"}
   .ok{color:var(--ok)}
   .bad{color:var(--bad)}
   .blink{animation:blink .24s 3}
@@ -158,7 +190,7 @@
     max-height:100svh;
     min-height:0;
     overflow:hidden;
-    grid-template-rows:minmax(0,89fr) minmax(44px,11fr);
+    grid-template-rows:minmax(0,1fr) auto;
   }
   #topGrid{
     min-height:0;
@@ -248,9 +280,39 @@
   }
   #question{min-height:clamp(38px,8dvh,62px)!important;padding:clamp(5px,1.5dvh,10px) 10px!important}
   #choices{overflow:hidden}
+  body[data-app="hunt"] #qaBox.game-over{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(14px,3dvh,28px);
+    padding:clamp(16px,4vmin,40px);
+    cursor:pointer;
+    transition:filter .15s,background-color .15s;
+  }
+  body[data-app="hunt"] #qaBox.game-over:hover{filter:brightness(1.08)}
+  body[data-app="hunt"] #qaBox.game-over:active{filter:brightness(1.18)}
+  body[data-app="hunt"] #qaBox.game-over #question{
+    flex:0 0 auto;
+    min-height:0!important;
+    margin:0;
+    padding:0!important;
+    border:0;
+    font-size:clamp(24px,5vmin,44px);
+    line-height:1.1;
+  }
+  body[data-app="hunt"] #qaBox.game-over #choices{
+    width:auto;
+    overflow:visible;
+  }
   button.choice{min-height:0;padding:clamp(2px,.8dvh,6px) 6px}
-  #logWrap{width:100%;height:100%;min-height:0;max-height:100%;overflow:hidden}
-  #log{min-height:0;overflow:auto}
+  #logWrap{
+    width:100%;
+    height:var(--log-height);
+    min-height:0;
+    max-height:none;
+    overflow:hidden;
+  }
 
   /* Tall portrait: player group 74%, horizontal enemy group 26%. */
   @media (max-aspect-ratio:3/4){
@@ -309,6 +371,9 @@
       --q-size:clamp(15px,4dvh,20px);
       --choice-size:clamp(14px,4.5dvh,19px);
       --choice-min-h:0px;
+      --log-font-size:11px;
+      --log-height:34px;
+      --log-pad-y:1px;
     }
     body[data-app="hunt"] #wrap{gap:6px;padding-top:calc(var(--world-topbar-height) + 5px)}
     body[data-app="hunt"] #topGrid{gap:6px}
@@ -319,8 +384,14 @@
     #playerArea{gap:6px}
     #question{min-height:34px!important;padding:3px 6px!important}
     button.choice{padding-block:1px}
-    #logWrap{padding-block:2px!important}
-    #log{font-size:11px;padding-block:1px}
+  }
+
+  @media (min-height:521px) and (max-height:700px){
+    :root{--log-height:63px}
+  }
+
+  @media (min-height:900px){
+    :root{--log-height:98px}
   }
 </style>
 </head>
@@ -371,10 +442,22 @@ const progression=window.RPGProgression;
 const R=n=>(Math.random()*n)|0;
 const clamp=(x,a,b)=>x<a?a:x>b?b:x;
 const bar=(id,r)=>{const e=$(id); if(e) e.style.width=(100*clamp(r,0,1)).toFixed(1)+'%';};
-const log=s=>{const e=$('log'); if(!e) return; e.insertAdjacentHTML('beforeend',`<p>${s}</p>`); e.scrollTop=e.scrollHeight;};
-const clearLog=()=>{const e=$('log'); if(e) e.innerHTML='';};
-
-
+const beginLogLine=()=>{
+  const e=$('log');
+  if(!e) return null;
+  e.insertAdjacentHTML('afterbegin','<div class="log-line"></div>');
+  e.scrollTo({top:0,left:0});
+  return e.firstElementChild;
+};
+const log=s=>{
+  const e=$('log');
+  if(!e) return;
+  const line=e.firstElementChild?.classList.contains('log-line')
+    ? e.firstElementChild
+    : beginLogLine();
+  line.insertAdjacentHTML('beforeend',`<span class="log-message">${s}</span>`);
+  e.scrollTo({top:0,left:0});
+};
 // fallback
 const FALLBACK_WORDS=[
   ['increase','増える、増やす'],['reduce','減らす'],['gather','集める'],['explore','探索する'],
@@ -513,6 +596,7 @@ function spawnEnemy(){
   $('enemyName').textContent=`Lv${enemy.level}`;
   setEnemyImage(mon);
   updateEnemy();
+  beginLogLine();
   log(`👾 モンスターが現れた！`);
 }
 
@@ -581,8 +665,45 @@ function syncChoiceColumns(){
   box.style.setProperty('--meaning-col', `${meaningCol}px`);
 }
 
+function showGameOver(){
+  $('question').textContent='☠️ GAME OVER';
+  const qaBox=$('qaBox');
+  qaBox.classList.add('game-over');
+  qaBox.onclick=null;
+  requestAnimationFrame(()=>{
+    if(state.hp<=0 && qaBox.classList.contains('game-over')){
+      qaBox.onclick=restartGame;
+    }
+  });
+  const box=$('choices');
+  box.innerHTML='';
+  box.classList.add('game-over');
+
+  const restart=document.createElement('button');
+  restart.id='restartBtn';
+  restart.type='button';
+  restart.textContent='タップして再開';
+  box.appendChild(restart);
+}
+
+function restartGame(){
+  if(state.hp>0) return;
+  state.hp=state.maxHP;
+  render();
+
+  if(!enemy || enemy.hp<=0) spawnEnemy();
+  beginLogLine();
+  log(`🔄 戦闘再開！ <span class="ok">HP全回復</span>`);
+  nextQuestion();
+}
+
 function nextQuestion(){
-  if(state.hp<=0){ $('question').textContent='☠️ GAME OVER'; $('choices').innerHTML=''; return; }
+  if(state.hp<=0){ showGameOver(); return; }
+  const qaBox=$('qaBox');
+  qaBox.classList.remove('game-over');
+  qaBox.onclick=null;
+  const box=$('choices');
+  box.classList.remove('game-over');
   if(!words.length){ $('question').textContent='単語データがありません'; $('choices').innerHTML=''; return; }
 
   const idxs=words.map((_,i)=>i).filter(i=>!state.used.has(i));
@@ -602,7 +723,7 @@ function nextQuestion(){
   Q={ja:q[1], ans:correct, ch:shuffle([...set]), meanings};
 
   $('question').textContent=`「${Q.ja}」の英語は？`;
-  const box=$('choices'); box.innerHTML='';
+  box.innerHTML='';
   Q.ch.forEach(w=>{
     const b=document.createElement('button');
     b.className='choice';
@@ -641,7 +762,7 @@ function disableChoices(){
 function answer(choice){
   if(!Q || !enemy || state.hp<=0) return;
   disableChoices();
-  clearLog();
+  beginLogLine();
 
   const btns = Array.from(document.querySelectorAll('button.choice'));
   btns.forEach(b=>b.classList.add('show-meaning'));

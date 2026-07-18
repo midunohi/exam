@@ -39,7 +39,8 @@
       flex-wrap:wrap;
     }
     .topbar-inner .spacer{flex:1;}
-    .title{font-weight:800; letter-spacing:.3px; white-space:normal; word-break:break-word; line-height:1.15; font-size:clamp(18px,3.6vw,22px)}
+    .title{font-weight:900; letter-spacing:.03em; white-space:normal; word-break:break-word; line-height:1.15; font-size:clamp(18px,3.6vw,22px)}
+    .title-accent{color:#dffcff}
     .meta{margin-top:8px; color:var(--muted); font-size:13px}
     .category-row{display:flex; align-items:center; gap:10px;}
     .category-label{font-size:0.75rem; font-weight:700; letter-spacing:0.08em; color:var(--muted); text-transform:uppercase;}
@@ -53,7 +54,7 @@
     button:focus{outline:none}
     button:focus-visible{outline:2px solid rgba(34,211,238,.45); outline-offset:2px}
 
-    .card{width:min(960px,96vw); background:rgba(10,19,34,.38); border:1px solid rgba(148,163,184,.28); border-radius:20px; padding:24px; display:grid; grid-template-columns:1fr; gap:16px; align-items:start; box-shadow:0 12px 30px rgba(0,0,0,.28); position:relative; -webkit-tap-highlight-color:transparent;}
+    .card{width:min(960px,96vw); background:linear-gradient(145deg,rgba(17,37,63,.5),rgba(5,15,31,.58)); border:1px solid rgba(148,197,221,.28); border-radius:20px; padding:24px; display:grid; grid-template-columns:1fr; gap:16px; align-items:start; box-shadow:0 22px 60px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.06); position:relative; -webkit-tap-highlight-color:transparent; cursor:default; caret-color:transparent; user-select:none;}
     .card:active{border-color:#334155; box-shadow:0 8px 24px rgba(0,0,0,.32), inset 0 0 0 1px rgba(148,163,184,.16)}
     .card:focus{outline:none}
     .card:focus-visible{outline:2px solid rgba(34,211,238,.45); outline-offset:3px}
@@ -66,7 +67,17 @@
     .question{color:var(--muted);}
     .question.is-active{color:var(--fg);}
     .answer{color:var(--answer);}
-    .answer.is-hidden{visibility:hidden;}
+    .answer.is-hidden{display:none;}
+
+    .category-main,.category-actions{display:flex;align-items:center;gap:7px;min-width:0}
+    .category-main{overflow:hidden;flex-wrap:nowrap;white-space:nowrap;container-type:inline-size}
+    .category-main :is(.category-label,.category-count){flex:0 0 auto}
+    .category-main .category-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .category-actions{justify-content:flex-end;flex:0 0 auto;white-space:nowrap}
+    .meta-pill{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:4px 9px;border:1px solid rgba(148,197,221,.18);border-radius:999px;background:rgba(5,15,30,.36);white-space:nowrap}
+    .meta-label{color:#6fd8df;font-size:.57rem;font-weight:800;letter-spacing:.09em}
+    .progress-track{position:relative;width:76px;height:4px;overflow:hidden;border-radius:999px;background:rgba(116,154,180,.2);box-shadow:inset 0 1px 2px rgba(0,0,0,.38)}
+    .progress-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#27c8d0,#7cffb2,#ffe47a);box-shadow:0 0 9px rgba(76,229,196,.62);transition:width .24s ease}
 
     a.back{color:var(--fg); text-decoration:none; font-size:14px; border:1px solid rgba(148,163,184,.28); border-radius:999px; padding:6px 12px; font-weight:700; background:rgba(10,19,34,.48);}
     a.back:hover{border-color:#2b3a55}
@@ -77,6 +88,47 @@
     }
   </style>
   <link rel="stylesheet" href="./app_world_ui.css" />
+  <style>
+    /* app_world_ui.css の共通値を、このカードに適した密度へ調整 */
+    body[data-app="fc-en"] .card{cursor:default;caret-color:transparent;user-select:none;background:linear-gradient(160deg,rgba(5,20,39,.94),rgba(2,10,24,.97));border-color:rgba(181,224,241,.4);box-shadow:0 22px 60px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.07);backdrop-filter:blur(14px) saturate(108%);-webkit-backdrop-filter:blur(14px) saturate(108%)}
+    body[data-app="fc-en"] .category-row{display:grid;grid-template-columns:minmax(0,1fr) auto;min-height:0;padding:10px 16px;gap:10px}
+    body[data-app="fc-en"] #countLabel{padding:0;color:#d8e8f2}
+    body[data-app="fc-en"] .term-mean{min-height:0;padding:12px clamp(16px,3vw,28px);flex-direction:column;align-items:flex-start;gap:4px;text-align:left}
+    body[data-app="fc-en"] .term-mean>.q-text,
+    body[data-app="fc-en"] .term-mean>.a-text{width:100%;min-height:1.4em;line-height:1.4}
+    body[data-app="fc-en"] .phrase-line{display:grid;grid-template-rows:minmax(1.4em,auto) minmax(1.4em,auto);min-height:0;padding:8px clamp(16px,3vw,28px);gap:2px}
+    body[data-app="fc-en"] .phrase-line>.q-text,
+    body[data-app="fc-en"] .phrase-line>.a-text{width:100%;min-height:1.4em;line-height:1.4}
+    body[data-app="fc-en"] .answer.is-hidden{display:block;visibility:hidden}
+    body[data-app="fc-en"] #rewardSlot .study-reward-window{background:linear-gradient(135deg,rgba(7,18,36,.26),rgba(20,37,61,.16));border-color:rgba(181,224,241,.24);box-shadow:0 10px 28px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(6px) saturate(106%);-webkit-backdrop-filter:blur(6px) saturate(106%);text-shadow:0 2px 4px rgba(0,0,0,.98),0 0 10px rgba(0,0,0,.9)}
+    body[data-app="fc-en"] #rewardSlot :is(.study-reward-title,.study-reward-detail,.study-reward-gain){text-shadow:0 2px 4px rgba(0,0,0,1),0 0 9px rgba(0,0,0,.95)}
+    body[data-app="fc-en"] #rewardSlot .study-reward-detail{color:#d7e3ef}
+    body[data-app="fc-en"] button{cursor:pointer}
+    @container (max-width:420px){
+      body[data-app="fc-en"] .category-label{display:none}
+    }
+    @container (max-width:310px){
+      body[data-app="fc-en"] #totalCount{display:none}
+    }
+    @media(max-width:640px){
+      body[data-app="fc-en"] .category-row{grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:9px 11px}
+      body[data-app="fc-en"] .category-actions{justify-self:end}
+      body[data-app="fc-en"] .term-mean{min-height:0;padding:10px 12px}
+      body[data-app="fc-en"] .phrase-line{min-height:0;padding:7px 12px}
+      body[data-app="fc-en"] .progress-track{width:58px}
+    }
+    @media(max-width:480px){
+      body[data-app="fc-en"] .category-row{gap:6px}
+      body[data-app="fc-en"] .category-actions{gap:5px}
+      body[data-app="fc-en"] .category-actions .meta-label,
+      body[data-app="fc-en"] #randomBtn .button-label{display:none}
+      body[data-app="fc-en"] #randomBtn{min-width:36px;padding-inline:8px}
+      body[data-app="fc-en"] .progress-track{width:44px}
+    }
+    @media(max-width:360px){
+      body[data-app="fc-en"] .progress-track{display:none}
+    }
+  </style>
 
   <!-- files.js を「普通の script」として先に読み込む（export無しでも使えるように） -->
   <script src="../qa_en_examples/files.js"></script>
@@ -87,21 +139,29 @@
 <body class="world-app" data-app="fc-en">
   <div class="topbar">
     <div class="topbar-inner">
-      <div class="title">英単語・例文 フラッシュカード</div>
+      <div class="title">英単語・例文 <span class="title-accent">フラッシュカード</span></div>
       <div class="spacer"></div>
       <a class="back" href="../index.html" aria-label="トップへ戻る">← 戻る</a>
     </div>
   </div>
 
   <div class="page">
-    <section class="card" aria-live="polite" id="card" tabindex="0">
-      <div class="category-row" aria-label="カテゴリと切り替え">
-        <div class="category-label">カテゴリ</div>
-        <div id="totalCount" class="category-count">全0問</div>
-        <div id="categoryLabel" class="category-name">--</div>
-        <div class="category-spacer"></div>
-        <div id="countLabel" class="progress">0 / 3</div>
-        <button id="randomBtn" type="button">🎲 切り替え</button>
+    <section class="card" aria-live="polite" id="card">
+      <div class="category-row" aria-label="カテゴリと進捗">
+        <div class="category-main">
+          <div class="category-label">カテゴリ</div>
+          <div id="totalCount" class="category-count">全0問</div>
+          <div id="categoryLabel" class="category-name">--</div>
+        </div>
+        <div class="category-actions">
+          <div class="progress meta-pill">
+            <span class="meta-label">QUEST</span><span id="countLabel">0 / 3</span>
+            <div id="progressTrack" class="progress-track" role="progressbar" aria-label="解答済みの進捗" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+          </div>
+          <button id="randomBtn" type="button" aria-label="別のカテゴリへランダムに切り替える">🎲 <span class="button-label">切り替え</span></button>
+        </div>
       </div>
       <div class="term-mean">
         <div class="term question q-text" id="term">...</div>
@@ -327,7 +387,9 @@
     categoryLabel: document.getElementById('categoryLabel'),
     countLabel: document.getElementById('countLabel'),
     totalCount: document.getElementById('totalCount'),
-    randomBtn: document.getElementById('randomBtn')
+    randomBtn: document.getElementById('randomBtn'),
+    progressTrack: document.getElementById('progressTrack'),
+    progressFill: document.getElementById('progressFill')
   };
   const rewards = window.RPGStudyRewards.create({
     slot: '#rewardSlot',
@@ -339,7 +401,16 @@
   function updateMeta(){
     els.categoryLabel.textContent = `${currentCategory}`;
     if(els.totalCount) els.totalCount.textContent = `全${dataset.length}問`;
-    if(els.countLabel) els.countLabel.textContent = `${Math.min(cycleCount, QUESTIONS_PER_CATEGORY)} / ${QUESTIONS_PER_CATEGORY}`;
+    const current = Math.min(cycleCount, QUESTIONS_PER_CATEGORY);
+    const item = dataset[idx];
+    const completed = item && revealStep >= getRevealTotal(item) ? current : Math.max(0, current - 1);
+    const percent = (completed / QUESTIONS_PER_CATEGORY) * 100;
+    if(els.countLabel) els.countLabel.textContent = `${current} / ${QUESTIONS_PER_CATEGORY}`;
+    if(els.progressFill) els.progressFill.style.width = `${percent}%`;
+    if(els.progressTrack){
+      els.progressTrack.setAttribute('aria-valuenow', String(completed));
+      els.progressTrack.setAttribute('aria-valuetext', `${completed}問解答済み`);
+    }
   }
 
   function render(){
@@ -365,6 +436,7 @@
     const questionEls = [];
     questionEls.push(els.term);
     (item.phrases || []).forEach((p, i) => {
+      if(!p.en && !p.ja) return;
       const line = document.createElement('div');
       line.className = 'phrase-line';
       const en = document.createElement('div');
@@ -489,7 +561,10 @@
   }
 
   function boot(){
-    els.randomBtn.addEventListener('click', ()=>loadRandomCategory(currentFileIndex));
+    els.randomBtn.addEventListener('click', (event)=>{
+      event.stopPropagation();
+      loadRandomCategory(currentFileIndex);
+    });
     loadRandomCategory(-1);
   }
 
