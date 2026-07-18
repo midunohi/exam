@@ -149,6 +149,152 @@
   #enemyView img{display:block;width:100%;height:auto;max-height:30vh;object-fit:contain;opacity:1}
 </style>
 <link rel="stylesheet" href="./app_world_ui.css" />
+<style>
+  /* Four independent areas; no item is layered over another. */
+  html,body{width:100%;height:100%;overflow:hidden}
+  #wrap{
+    height:100vh;
+    height:100svh;
+    max-height:100svh;
+    min-height:0;
+    overflow:hidden;
+    grid-template-rows:minmax(0,89fr) minmax(44px,11fr);
+  }
+  #topGrid{
+    min-height:0;
+    grid-template-areas:
+      "hero hero"
+      "qa qa"
+      "enemy enemyImage";
+    grid-template-columns:minmax(0,42fr) minmax(0,58fr);
+    grid-template-rows:auto minmax(0,70fr) minmax(78px,30fr);
+    align-items:stretch;
+    overflow:hidden;
+  }
+  #topGrid>*{min-width:0;min-height:0;max-width:100%;max-height:100%}
+  #playerArea{display:contents}
+  #heroBox{
+    grid-area:hero;
+    min-width:0;
+    min-height:0;
+  }
+  #enemyBox{
+    grid-area:enemy;
+    min-width:0;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  #qaBox{grid-area:qa;width:100%;height:100%;min-height:0!important}
+  #enemyView{
+    grid-area:enemyImage;
+    position:relative;
+    width:100%;
+    height:100%;
+    min-width:0;
+    min-height:0;
+    max-width:100%;
+    max-height:100%;
+    overflow:hidden;
+    border:1px solid var(--world-glass-thin-line);
+    border-radius:12px;
+    background:var(--world-glass-thin-bg);
+    box-shadow:var(--world-glass-thin-shadow);
+    backdrop-filter:blur(6px) saturate(106%);
+    -webkit-backdrop-filter:blur(6px) saturate(106%);
+  }
+  body[data-app="hunt"] :is(#heroBox,#enemyBox){
+    padding:clamp(4px,1.2dvh,8px) clamp(5px,1.8vw,10px);
+  }
+  .compact{font-size:clamp(11px,2.9vw,14px)}
+  .row{min-width:0;gap:clamp(3px,1vw,6px);margin-bottom:clamp(2px,.7dvh,4px)}
+  .row:last-child{margin-bottom:0}
+  .val{min-width:clamp(48px,15vw,90px);font-size:clamp(10px,2.7vw,12px)}
+  #weaponAtk{min-width:0;overflow:hidden;font-size:clamp(9px,2.6vw,12px);text-overflow:ellipsis}
+  #enemyView img{
+    position:absolute;
+    inset:0;
+    display:block;
+    width:100%;
+    height:100%;
+    max-width:100%;
+    max-height:100%!important;
+    object-fit:contain;
+  }
+  #question{min-height:clamp(38px,8dvh,62px)!important;padding:clamp(5px,1.5dvh,10px) 10px!important}
+  #choices{overflow:hidden}
+  button.choice{min-height:0;padding:clamp(2px,.8dvh,6px) 6px}
+  #logWrap{width:100%;height:100%;min-height:0;max-height:100%;overflow:hidden}
+  #log{min-height:0;overflow:auto}
+
+  /* Tall portrait: player status / quiz / enemy pair = auto / 74% / 26%. */
+  @media (max-aspect-ratio:3/4){
+    :root{
+      --q-size:clamp(17px,5.3vw,26px);
+      --choice-size:clamp(15px,4.8vw,23px);
+      --choice-min-h:0px;
+    }
+    #topGrid{
+      grid-template-columns:minmax(0,44fr) minmax(0,56fr);
+      grid-template-rows:auto minmax(0,74fr) minmax(76px,26fr);
+      gap:clamp(4px,1.4vw,8px);
+    }
+    #heroBox .bar,#enemyBox .bar{height:clamp(8px,2.5vw,12px)}
+  }
+
+  /* Square-ish: give the enemy pair a little more height. */
+  @media (min-aspect-ratio:3/4) and (max-aspect-ratio:4/3){
+    :root{
+      --q-size:clamp(17px,3.8vmin,25px);
+      --choice-size:clamp(15px,3.4vmin,23px);
+      --choice-min-h:0px;
+    }
+    #topGrid{grid-template-rows:auto minmax(0,66fr) minmax(82px,34fr)}
+  }
+
+  /*
+   * Landscape:
+   * player status | enemy status
+   * quiz          | enemy image
+   */
+  @media (min-aspect-ratio:4/3){
+    #topGrid{
+      grid-template-areas:
+        "hero enemy"
+        "qa enemyImage";
+      grid-template-columns:minmax(0,70fr) minmax(190px,30fr);
+      grid-template-rows:auto minmax(0,1fr);
+    }
+    #playerArea{display:contents}
+    #heroBox,#enemyBox{align-self:stretch}
+    .compact{font-size:14px}
+    .val{min-width:90px;font-size:12px}
+  }
+
+  @media (min-aspect-ratio:16/9){
+    #topGrid{grid-template-columns:minmax(0,72fr) minmax(210px,28fr)}
+  }
+
+  @media (max-height:520px){
+    :root{
+      --world-topbar-height:46px;
+      --q-size:clamp(15px,4dvh,20px);
+      --choice-size:clamp(14px,4.5dvh,19px);
+      --choice-min-h:0px;
+    }
+    body[data-app="hunt"] #wrap{gap:6px;padding-top:calc(var(--world-topbar-height) + 5px)}
+    body[data-app="hunt"] #topGrid{gap:6px}
+    body[data-app="hunt"] :is(#heroBox,#enemyBox){padding:3px 5px}
+    .compact{font-size:10px}
+    .row{margin-bottom:1px}
+    .val{min-width:44px;font-size:9px}
+    #question{min-height:34px!important;padding:3px 6px!important}
+    button.choice{padding-block:1px}
+    #logWrap{padding-block:2px!important}
+    #log{font-size:11px;padding-block:1px}
+  }
+</style>
 </head>
 <body class="world-app" data-app="hunt">
 <div id="wrap">
@@ -158,25 +304,28 @@
   </header>
 
   <div id="topGrid">
-    <section id="heroBox" class="panel compact">
-      <div class="row"><span class="label">Lv</span><span id="lv">1</span><span class="val lvExp" id="expText">0 / 20</span></div>
-      <div class="row"><span class="label">HP</span><div class="bar hp"><span id="hpBar"></span></div><span class="val" id="hpText">30 / 30</span></div>
-      <div class="row"><span class="label">ATK</span><strong id="atk">5</strong><span id="weaponAtk">装備なし</span></div>
-    </section>
+    <div id="playerArea" aria-label="プレイヤー情報と問題">
+      <section id="heroBox" class="panel compact">
+        <div class="row"><span class="label">Lv</span><span id="lv">1</span><span class="val lvExp" id="expText">0 / 20</span></div>
+        <div class="row"><span class="label">HP</span><div class="bar hp"><span id="hpBar"></span></div><span class="val" id="hpText">30 / 30</span></div>
+        <div class="row"><span class="label">ATK</span><strong id="atk">5</strong><span id="weaponAtk">装備なし</span></div>
+      </section>
+
+      <section id="qaBox" class="panel">
+        <p id="question">—</p>
+        <div id="choices"></div>
+      </section>
+    </div>
 
     <section id="enemyBox" class="panel compact">
       <div class="row"><span class="label">ENEMY</span><span id="enemyName">—</span></div>
       <div class="row"><span class="label">HP</span><div class="bar hp"><span id="enemyHpBar"></span></div><span class="val" id="enemyHpText">0 / 0</span></div>
     </section>
 
-    <section id="qaBox" class="panel">
-      <p id="question">—</p>
-      <div id="choices"></div>
-    </section>
-
-    <section id="enemyView" class="panel">
+    <section id="enemyView" class="panel" aria-label="敵の画像">
       <img id="enemyImg" src="" alt="" onerror="this.style.display='none'" />
     </section>
+
   </div>
 
   <section id="logWrap" class="panel">
