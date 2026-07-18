@@ -23,17 +23,17 @@
   button:focus{outline:none}
   button:focus-visible{outline:2px solid rgba(148,163,184,.45);outline-offset:2px}
   button:disabled{opacity:.5;cursor:not-allowed}
-  #n{font-size:72px;font-weight:900;letter-spacing:.02em;text-align:center;height:190px;display:flex;align-items:center;justify-content:center}
+  .displayArea{position:relative;height:clamp(220px,38vh,340px);caret-color:transparent;user-select:none;-webkit-user-select:none}
+  #n{font-size:72px;font-weight:900;letter-spacing:.02em;text-align:center;height:100%;display:flex;align-items:center;justify-content:center}
   #title{font-size:32px;font-weight:900;letter-spacing:.08em}
   #hint{display:flex;gap:6px;flex-wrap:wrap;align-content:flex-start;justify-content:flex-start;font-size:13px;font-weight:900;height:52px;overflow:hidden}
   #hint div{padding:3px 8px;border-radius:999px;background:rgba(12,18,38,.5)}
   #hint .ok{color:#7cff9b;text-shadow:0 0 12px #24ff6a}
   #hint .ng{color:#ff7c7c;text-shadow:0 0 12px #ff3030}
   #msg{margin-top:10px;font-weight:700;text-align:center;min-height:22px}
-  .actionArea{position:relative;margin-top:10px;min-height:98px}
-  #choices{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:center}
-  .is-hidden,#choices.is-hidden{display:none}
-  .choice{background:rgba(26,36,70,.52)}
+  #choices{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px}
+  .is-hidden,#n.is-hidden,#choices.is-hidden{display:none}
+  .choice{background:rgba(26,36,70,.52);font-size:clamp(28px,6vw,48px);font-weight:900;line-height:1}
   .choice.correct{background:rgba(31,122,58,.68);border-color:#2aa84f}
   .choice.wrong{background:rgba(122,31,31,.68);border-color:#a82a2a}
   .startRow{min-height:44px}
@@ -59,9 +59,8 @@
           <label>間隔ms <input id="ms" type="number" min="50" max="3000" value="1000"></label>
         </div>
 
-        <div id="n"></div>
-
-        <div class="actionArea">
+        <div class="displayArea">
+          <div id="n"></div>
           <div id="choices" class="is-hidden">
             <button class="choice" data-idx="0"></button>
             <button class="choice" data-idx="1"></button>
@@ -129,8 +128,6 @@
 
   function showNext(){
     if(i>=seq.length){
-      nEl.textContent='?';
-      setRunning(false);
       showChoices();
       return;
     }
@@ -166,12 +163,14 @@
       b.disabled=false;
       b.classList.remove('correct','wrong');
     });
+    nEl.classList.add('is-hidden');
     choicesEl.classList.remove('is-hidden');
     readyForChoice=true;
     updateStartable();
   }
   function showStart(){
     choicesEl.classList.add('is-hidden');
+    nEl.classList.remove('is-hidden');
     nEl.textContent='開始';
     msgEl.textContent='';
     updateStartable();
@@ -206,6 +205,7 @@
 
   function start(){
     reset();
+    if(document.activeElement instanceof HTMLElement) document.activeElement.blur();
     const k=Math.max(2, Math.min(200, Number(kEl.value)||10));
     const [lo,hi]=rangeForDigits(dEl.value);
     seq=[];
@@ -221,6 +221,7 @@
     msgEl.textContent='';
     choiceBtns.forEach(b=>{ b.disabled=true; b.textContent=''; b.classList.remove('correct','wrong'); });
     choicesEl.classList.add('is-hidden');
+    nEl.classList.remove('is-hidden');
     setRunning(true);
     showNext();
   }

@@ -210,52 +210,94 @@
 </style>
 <link rel="stylesheet" href="./app_world_ui.css" />
 <style>
-  /* Fit both portrait and short landscape screens without page overflow. */
+  /* Four related areas, rearranged by the viewport aspect ratio. */
   html,body{width:100%;height:100%;overflow:hidden}
   body{padding:6px}
-  .page{height:100dvh;min-height:0!important;padding-top:calc(var(--world-topbar-height) + 8px)!important}
-  #panel{max-height:calc(100dvh - var(--world-topbar-height) - 14px)}
-  @media (orientation:portrait){
+  .page{
+    height:100vh;
+    height:100svh;
+    min-height:0!important;
+    padding-top:calc(var(--world-topbar-height) + 8px)!important;
+  }
+  #panel{
+    height:calc(100svh - var(--world-topbar-height) - 14px);
+    max-height:calc(100svh - var(--world-topbar-height) - 14px);
+    overflow:hidden;
+  }
+  .statusLayout{width:100%;height:100%;min-height:0;display:grid}
+  .statusLayout>.categorySection{min-width:0;min-height:0;overflow:hidden}
+  .characterSection{grid-area:character;display:flex;border:0}
+  .statsSection{grid-area:stats;border:0}
+  .equipmentPanel{grid-area:equipment;border:0}
+  .itemBag{grid-area:bag;border:0}
+  .avatarWrap{width:100%;height:100%;min-height:0}
+  .avatar{width:100%;height:100%;max-width:100%;aspect-ratio:auto}
+  .avatar img{object-fit:cover}
+
+  /* Tall and square-ish: CHARACTER | STATUS / EQUIPMENT | ITEM BAG. */
+  @media (max-aspect-ratio:4/3){
     .page{align-items:flex-start}
-    .statusLayout{grid-template-columns:1fr}
-    .characterSection{height:clamp(142px,24dvh,196px);min-height:0;border-right:0;border-bottom:1px solid var(--status-line)}
-    .avatarWrap{min-height:0}
-    .avatar{width:auto;height:100%;max-width:100%;aspect-ratio:1}
-    .categorySection{padding:26px 11px 10px}
-    .sectionHeading{top:8px;left:11px}
+    .statusLayout{
+      grid-template-areas:
+        "character stats"
+        "equipment bag";
+      grid-template-columns:minmax(0,42fr) minmax(0,58fr);
+      grid-template-rows:clamp(150px,42vw,260px) minmax(0,1fr);
+    }
+    .characterSection{border-right:1px solid var(--status-line);border-bottom:1px solid var(--status-line)}
+    .statsSection{border-bottom:1px solid var(--status-line)}
+    .equipmentPanel{border-right:1px solid var(--status-line)}
+    .categorySection{padding:26px 10px 9px}
+    .sectionHeading{top:8px;left:10px}
     .meta{margin-bottom:8px}
-    .pill{padding:5px 7px;font-size:11px}
+    .pill{padding:5px 6px;font-size:10px}
     .vitals{gap:6px}
+    .row{grid-template-columns:34px minmax(0,1fr) 68px;gap:5px;font-size:11px}
     .atkBox{margin-top:8px;padding-top:7px}
-    .atkMain strong{font-size:25px}
-    .equipmentLayout{grid-template-columns:minmax(125px,.8fr) minmax(0,1.2fr)}
-    .equipmentPanel{padding-right:10px}
-    .itemBag{padding-left:10px;border-top:0;border-left:1px solid var(--status-line)}
-    .subsectionHeading,.bagHead{margin-bottom:6px}
-    .equipped{grid-template-columns:30px minmax(0,1fr);gap:6px;min-height:44px}
-    .equippedIcon{font-size:22px}
+    .atkMain strong{font-size:24px}
+    .subsectionHeading,.bagHead{margin-bottom:7px}
+    .equipped{grid-template-columns:28px minmax(0,1fr);gap:5px;min-height:44px}
+    .equippedIcon{font-size:21px}
     .equippedBonus{grid-column:1/-1;text-align:center}
     .weaponGrid{gap:4px}
-    .bagNote{margin-top:5px;line-height:1.25}
+    .bagNote{margin-top:6px;line-height:1.25}
   }
-  @media (orientation:landscape) and (max-height:500px){
+
+  /* Wide: STATUS over CHARACTER | EQUIPMENT | ITEM BAG. */
+  @media (min-aspect-ratio:4/3){
+    .statusLayout{
+      grid-template-areas:
+        "stats equipment bag"
+        "character equipment bag";
+      grid-template-columns:minmax(230px,34fr) minmax(180px,25fr) minmax(260px,41fr);
+      grid-template-rows:auto minmax(0,1fr);
+    }
+    .statsSection{border-right:1px solid var(--status-line);border-bottom:1px solid var(--status-line)}
+    .characterSection{border-right:1px solid var(--status-line)}
+    .equipmentPanel{border-right:1px solid var(--status-line)}
+    .categorySection{padding:27px 12px 10px}
+    .sectionHeading{top:8px;left:12px}
+    .equipmentPanel,.itemBag{display:flex;flex-direction:column}
+    .equipped{grid-template-columns:34px minmax(0,1fr);align-content:start}
+    .equippedBonus{grid-column:1/-1;text-align:center}
+    .weaponGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  }
+
+  @media (max-height:500px){
     :root{--world-topbar-height:48px}
     .page{padding-top:calc(var(--world-topbar-height) + 5px)!important}
-    #panel{max-height:calc(100dvh - var(--world-topbar-height) - 10px)}
-    .statusLayout{grid-template-columns:minmax(180px,.78fr) minmax(0,1.22fr)}
-    .characterSection{border-right:1px solid var(--status-line);border-bottom:0}
-    .categorySection{padding:23px 10px 7px}
-    .sectionHeading{top:7px;left:10px}
-    .avatar{width:auto;height:min(100%,240px);max-width:100%}
+    #panel{
+      height:calc(100svh - var(--world-topbar-height) - 10px);
+      max-height:calc(100svh - var(--world-topbar-height) - 10px);
+    }
+    .categorySection{padding:23px 8px 6px}
+    .sectionHeading{top:7px;left:8px}
     .meta{margin-bottom:6px}
     .pill{padding:4px 6px;font-size:10px}
     .vitals{gap:5px}
     .row{grid-template-columns:34px minmax(0,1fr) 70px;gap:6px;font-size:11px}
     .atkBox{margin-top:6px;padding-top:5px}
     .atkMain strong{font-size:23px}
-    .equipmentLayout{grid-template-columns:minmax(120px,.8fr) minmax(0,1.2fr)}
-    .equipmentPanel{padding-right:8px}
-    .itemBag{padding-left:8px}
     .subsectionHeading,.bagHead{margin-bottom:4px}
     .equipped{grid-template-columns:28px minmax(0,1fr);gap:4px;min-height:38px}
     .equippedIcon{font-size:20px}
@@ -285,54 +327,50 @@
         </div>
       </section>
 
-      <div class="detailsColumn">
-        <section class="categorySection statsSection" aria-labelledby="statsTitle">
-          <h2 id="statsTitle" class="sectionHeading">STATUS</h2>
-          <div class="meta">
-            <div class="pill"><span>Lv</span><span id="lv">1</span></div>
-            <div class="pill"><span>総EXP</span><span id="totalExp">0</span></div>
-            <div class="pill"><span>次Lvまで</span><span id="toNext">20</span></div>
+      <section class="categorySection statsSection" aria-labelledby="statsTitle">
+        <h2 id="statsTitle" class="sectionHeading">STATUS</h2>
+        <div class="meta">
+          <div class="pill"><span>Lv</span><span id="lv">1</span></div>
+          <div class="pill"><span>総EXP</span><span id="totalExp">0</span></div>
+          <div class="pill"><span>次Lvまで</span><span id="toNext">20</span></div>
+        </div>
+        <div class="vitals">
+          <div class="row">
+            <span class="label">EXP</span>
+            <div class="barWrap"><div id="expBar" class="barInner barExp"></div></div>
+            <span id="expText" class="barText">0 / 20</span>
           </div>
-          <div class="vitals">
-            <div class="row">
-              <span class="label">EXP</span>
-              <div class="barWrap"><div id="expBar" class="barInner barExp"></div></div>
-              <span id="expText" class="barText">0 / 20</span>
-            </div>
-            <div class="row">
-              <span class="label">HP</span>
-              <div class="barWrap"><div id="hpBar" class="barInner barHp"></div></div>
-              <span id="hpText" class="barText">30 / 30</span>
-            </div>
+          <div class="row">
+            <span class="label">HP</span>
+            <div class="barWrap"><div id="hpBar" class="barInner barHp"></div></div>
+            <span id="hpText" class="barText">30 / 30</span>
           </div>
-          <div class="atkBox">
-            <div class="atkMain"><span>ATK</span><strong id="atk">5</strong></div>
-            <small id="atkDetail">基礎 5</small>
-          </div>
-        </section>
+        </div>
+        <div class="atkBox">
+          <div class="atkMain"><span>ATK</span><strong id="atk">5</strong></div>
+          <small id="atkDetail">基礎 5</small>
+        </div>
+      </section>
 
-        <section class="categorySection gearSection" aria-labelledby="gearTitle">
-          <h2 id="gearTitle" class="sectionHeading">EQUIPMENT</h2>
-          <div class="equipmentLayout">
-            <div class="equipmentPanel" role="group" aria-labelledby="currentEquipmentTitle">
-              <h3 id="currentEquipmentTitle" class="subsectionHeading">EQUIPPED</h3>
-              <div id="equippedWeapon" class="equipped emptyEquipment">
-                <span class="equippedIcon">◌</span>
-                <span><strong class="equippedName">装備なし</strong><small class="equippedRank">AUTO EQUIP</small></span>
-                <strong class="equippedBonus">ATK +0%</strong>
-              </div>
-            </div>
-            <div class="itemBag" role="group" aria-labelledby="itemBagTitle">
-              <div class="bagHead">
-                <h3 id="itemBagTitle" class="subsectionHeading">INVENTORY</h3>
-                <span id="bagCount">所持 0</span>
-              </div>
-              <div id="weaponGrid" class="weaponGrid" aria-label="武器一覧"></div>
-              <p class="bagNote">同じランクが3個そろうと自動強化</p>
-            </div>
-          </div>
-        </section>
-      </div>
+      <section class="categorySection equipmentPanel" aria-labelledby="gearTitle">
+        <h2 id="gearTitle" class="sectionHeading">EQUIPMENT</h2>
+        <h3 id="currentEquipmentTitle" class="subsectionHeading">EQUIPPED</h3>
+        <div id="equippedWeapon" class="equipped emptyEquipment">
+          <span class="equippedIcon">◌</span>
+          <span><strong class="equippedName">装備なし</strong><small class="equippedRank">AUTO EQUIP</small></span>
+          <strong class="equippedBonus">ATK +0%</strong>
+        </div>
+      </section>
+
+      <section class="categorySection itemBag" aria-labelledby="itemBagSectionTitle">
+        <h2 id="itemBagSectionTitle" class="sectionHeading">ITEM BAG</h2>
+        <div class="bagHead">
+          <h3 id="itemBagTitle" class="subsectionHeading">INVENTORY</h3>
+          <span id="bagCount">所持 0</span>
+        </div>
+        <div id="weaponGrid" class="weaponGrid" aria-label="武器一覧"></div>
+        <p class="bagNote">同じランクが3個そろうと自動強化</p>
+      </section>
     </div>
   </section>
 </div>
