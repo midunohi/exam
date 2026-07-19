@@ -73,11 +73,19 @@
       throw new Error("FlashcardCore: getFiles, loadCategory and renderItem are required");
     }
 
+    const rewardSettings = config.reward || {};
     const rewards = global.RPGStudyRewards && typeof global.RPGStudyRewards.create === "function"
       ? global.RPGStudyRewards.create({
           slot: config.rewardSlot || "#rewardSlot",
           icon: config.rewardIcon || "📖",
-          dropEvery: Number(config.dropEvery) || 3,
+          exp: Number(rewardSettings.exp) || 1,
+          dropChance: Number.isFinite(Number(rewardSettings.dropChance))
+            ? Number(rewardSettings.dropChance)
+            : 1 / 3,
+          rankWeights: Array.isArray(rewardSettings.rankWeights)
+            ? rewardSettings.rankWeights
+            : [1],
+          dropEvery: 0,
         })
       : { award() {}, hide() {} };
 
@@ -261,7 +269,7 @@
 
       if (total === 0) {
         if (!state.rewarded) {
-          rewards.award({ exp: 1 });
+          rewards.award();
           state.rewarded = true;
           updateMeta();
           return;
@@ -274,7 +282,7 @@
         state.revealStep += 1;
         await renderCurrent();
         if (state.revealStep >= total && !state.rewarded) {
-          rewards.award({ exp: 1 });
+          rewards.award();
           state.rewarded = true;
         }
         return;

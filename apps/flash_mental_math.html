@@ -16,8 +16,7 @@
   .box.is-startable:hover{border-color:#ffffff33}
   .box.is-startable:active{box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  input,button{font:inherit;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(12,18,38,.48);color:#eef2ff;padding:10px 12px}
-  input{width:110px}
+  button{font:inherit;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(12,18,38,.48);color:#eef2ff;padding:10px 12px}
   button{cursor:pointer;background:rgba(42,58,102,.58);-webkit-tap-highlight-color:transparent}
   button:active{border-color:#ffffff33;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
   button:focus{outline:none}
@@ -37,6 +36,10 @@
   .choice.correct{background:rgba(31,122,58,.68);border-color:#2aa84f}
   .choice.wrong{background:rgba(122,31,31,.68);border-color:#a82a2a}
   .startRow{min-height:44px}
+  .settings-row{flex-wrap:nowrap;overflow-x:auto;padding:10px 12px}
+  .setting-chip{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;color:#b8c6da;font-size:13px;font-weight:750;white-space:nowrap}
+  .setting-value{display:inline-block;min-width:2.3em;color:#f8fafc;font-size:15px;font-weight:900;text-align:center}
+  .setting-level{color:#7CFFB2}
 </style>
 <link rel="stylesheet" href="./lib/app_world_ui.css" />
 <script src="./lib/rpg_progression.js"></script>
@@ -54,10 +57,11 @@
   <div class="center">
     <div class="frame">
       <div class="box" id="box">
-        <div class="row" style="flex-wrap:nowrap;overflow:auto">
-          <label>個数 <input id="k" type="number" min="2" max="200" value="5"></label>
-          <label>桁 <input id="d" type="number" min="1" max="6" value="1"></label>
-          <label>間隔ms <input id="ms" type="number" min="50" max="3000" value="1000"></label>
+        <div class="row settings-row" aria-label="現在の難易度設定">
+          <div class="setting-chip setting-level">難易度 <strong>Lv.<output id="difficultyLevel" class="setting-value">11</output></strong></div>
+          <div class="setting-chip">個数 <output id="k" class="setting-value">5</output></div>
+          <div class="setting-chip">桁 <output id="d" class="setting-value">1</output></div>
+          <div class="setting-chip">間隔 <output id="ms" class="setting-value">1000</output> ms</div>
         </div>
 
         <div class="displayArea">
@@ -79,9 +83,35 @@
 </div>
 
 <script>
+// ===== フラッシュ暗算の難易度・報酬バランス（調整はここだけ） =====
+const MENTAL_MATH_CONFIG = Object.freeze({
+  difficulty: Object.freeze({
+    minLevel: 0,
+    levelsPerDigit: 20,
+    maxDigits: 6,
+    defaultLevel: 10,
+    startCount: 3,
+    countUpEvery: 5,
+    intervalStepMs: 25,
+    // 桁が上がるたびに個数を戻し、表示時間も長くして急な難化を防ぐ。
+    baseIntervalMsByDigits: Object.freeze([1000, 1100, 1200, 1300, 1400, 1500]),
+  }),
+  reward: Object.freeze({
+    minExp: 3,
+    maxExp: 21,
+    minDropChance: 0.12,
+    maxDropChance: 0.45,
+    // RANK 1 の重みを100とした、最低〜最高難易度での相対抽選重み。
+    rank2Weight: Object.freeze([1, 25]),
+    rank3Weight: Object.freeze([0, 7]),
+    rank4Weight: Object.freeze([0, 2]),
+    rank5Weight: Object.freeze([0, 0.5]),
+  }),
+});
+
 (() => {
   const $ = (id) => document.getElementById(id);
-  const kEl=$('k'), dEl=$('d'), msEl=$('ms');
+  const kEl=$('k'), dEl=$('d'), msEl=$('ms'), difficultyLevelEl=$('difficultyLevel');
   const boxEl=$('box');
   const nEl=$('n'), msgEl=$('msg');
   const choicesEl=$('choices');
@@ -89,13 +119,57 @@
   const rewards = window.RPGStudyRewards.create({
     slot:'#rewardSlot',
     icon:'🧮',
-    dropEvery:3
+    dropEvery:0
   });
   const results = window.StudyAppCore.createResultHistory({
     target:'#hint',
     limit:6
   });
   let seq=[], sum=0, i=0, t=null, running=false, readyForChoice=false;
+  const difficultyConfig = MENTAL_MATH_CONFIG.difficulty;
+  const maxDifficultyLevel = difficultyConfig.levelsPerDigit * difficultyConfig.maxDigits - 1;
+  let difficultyLevel = difficultyConfig.defaultLevel;
+  let activeDifficultyLevel = difficultyLevel;
+
+  const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+  const mix=(from,to,ratio)=>from+(to-from)*ratio;
+
+  function settingsForDifficulty(level){
+    const safeLevel=Math.round(clamp(Number(level)||0,difficultyConfig.minLevel,maxDifficultyLevel));
+    const digits=Math.floor(safeLevel/difficultyConfig.levelsPerDigit)+1;
+    const phase=safeLevel%difficultyConfig.levelsPerDigit;
+    const count=difficultyConfig.startCount+Math.floor(phase/difficultyConfig.countUpEvery);
+    const speedPhase=phase%difficultyConfig.countUpEvery;
+    const intervalMs=difficultyConfig.baseIntervalMsByDigits[digits-1]
+      - speedPhase*difficultyConfig.intervalStepMs;
+    return {level:safeLevel,count,digits,intervalMs};
+  }
+
+  function applyDifficulty(level){
+    difficultyLevel=Math.round(clamp(Number(level)||0,difficultyConfig.minLevel,maxDifficultyLevel));
+    const settings=settingsForDifficulty(difficultyLevel);
+    difficultyLevelEl.textContent=String(difficultyLevel+1);
+    kEl.textContent=String(settings.count);
+    dEl.textContent=String(settings.digits);
+    msEl.textContent=String(settings.intervalMs);
+  }
+
+  function rewardForDifficulty(level){
+    const reward=MENTAL_MATH_CONFIG.reward;
+    const ratio=clamp((Number(level)-difficultyConfig.minLevel)
+      /(maxDifficultyLevel-difficultyConfig.minLevel),0,1);
+    return {
+      exp:Math.max(1,Math.round(mix(reward.minExp,reward.maxExp,ratio))),
+      dropChance:mix(reward.minDropChance,reward.maxDropChance,ratio),
+      rankWeights:[
+        100,
+        mix(reward.rank2Weight[0],reward.rank2Weight[1],ratio),
+        mix(reward.rank3Weight[0],reward.rank3Weight[1],ratio*ratio),
+        mix(reward.rank4Weight[0],reward.rank4Weight[1],ratio*ratio*ratio),
+        mix(reward.rank5Weight[0],reward.rank5Weight[1],ratio*ratio*ratio*ratio),
+      ],
+    };
+  }
 
   const rangeForDigits=(d)=>{
     d=Math.max(1,Math.min(6,Number(d)||1));
@@ -104,7 +178,6 @@
 
   function setRunning(on){
     running=on;
-    kEl.disabled=on; dEl.disabled=on; msEl.disabled=on;
     updateStartable();
   }
 
@@ -137,7 +210,7 @@
     }
     nEl.textContent=String(seq[i]);
     i++;
-    t=setTimeout(showNext, Math.max(50, Number(msEl.value)||300));
+    t=setTimeout(showNext, Math.max(50, Number(msEl.textContent)||300));
   }
 
   function makeChoices(correct){
@@ -175,17 +248,19 @@
   function revealResult(chosen){
     const correctVal=String(sum);
     let gain = 0;
+    const ok = Boolean(chosen && chosen.dataset.value===correctVal);
     choiceBtns.forEach(b=>{
       if(b.dataset.value===correctVal) b.classList.add('correct');
     });
-    if(chosen && chosen.dataset.value===correctVal){
-      gain = Math.max(1, Math.floor(Number(kEl.value)||0)) * Math.max(1, Math.floor(Number(dEl.value)||0));
-      rewards.award({ exp:gain });
+    if(ok){
+      const reward=rewardForDifficulty(activeDifficultyLevel);
+      gain=reward.exp;
+      rewards.award(reward);
     }
-    if(chosen && chosen.dataset.value!==correctVal){
+    if(chosen && !ok){
       chosen.classList.add('wrong');
     }
-    const ok = chosen && chosen.dataset.value===correctVal;
+    applyDifficulty(activeDifficultyLevel+(ok ? 1 : -1));
     results.add(ok, ok ? `🎉 正解 +${gain} EXP` : `✖ 不正解 +0 EXP`);
     choiceBtns.forEach(b=>b.disabled=true);
     setTimeout(reset, 1400);
@@ -194,8 +269,9 @@
   function start(){
     reset();
     window.StudyAppCore.blurActiveElement();
-    const k=Math.max(2, Math.min(200, Number(kEl.value)||10));
-    const [lo,hi]=rangeForDigits(dEl.value);
+    activeDifficultyLevel=difficultyLevel;
+    const k=Math.max(2, Math.min(200, Number(kEl.textContent)||10));
+    const [lo,hi]=rangeForDigits(dEl.textContent);
     seq=[];
     for(let idx=0; idx<k; idx++){
       let next = window.StudyAppCore.randomInt(lo, hi);
@@ -224,7 +300,7 @@
   if(boxEl){
     boxEl.addEventListener('click', (e)=>{
       if(running || readyForChoice) return;
-      if(e.target.closest('input,button,label')) return;
+      if(e.target.closest('button,.settings-row')) return;
       start();
     });
   }
@@ -235,12 +311,9 @@
     });
   }
 
+  applyDifficulty(difficultyLevel);
   reset();
 })();
 </script>
 </body>
 </html>
-
-
-
-

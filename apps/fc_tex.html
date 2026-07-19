@@ -103,6 +103,11 @@
 
       FlashcardCore.create({
         rewardIcon: "📖",
+        reward: {
+          exp: 1,
+          dropChance: 1 / 3,
+          rankWeights: [1],
+        },
         getFiles() {
           return typeof files_qaMath !== "undefined" && Array.isArray(files_qaMath)
             ? files_qaMath
@@ -145,7 +150,6 @@
   </script>
 </body>
 </html>
-
 
 
 

@@ -18,6 +18,29 @@
     const number = Number(value);
     return Number.isFinite(number) && number > 0 ? Math.floor(number) : 0;
   }
+  function toProbability(value, fallback = null) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return fallback;
+    return Math.max(0, Math.min(1, number));
+  }
+  function normalizeRankWeights(value) {
+    if (!Array.isArray(value) || !value.length) return [1];
+    const weights = value.map((weight) => {
+      const number = Number(weight);
+      return Number.isFinite(number) && number > 0 ? number : 0;
+    });
+    return weights.some((weight) => weight > 0) ? weights : [1];
+  }
+  function pickWeightedRank(weights) {
+    const safeWeights = normalizeRankWeights(weights);
+    const total = safeWeights.reduce((sum, weight) => sum + weight, 0);
+    let cursor = Math.random() * total;
+    for (let index = 0; index < safeWeights.length; index += 1) {
+      cursor -= safeWeights[index];
+      if (cursor < 0) return index + 1;
+    }
+    return 1;
+  }
   function readExp() {
     if (global.RPGProgression && typeof global.RPGProgression.readTotalExp === "function") {
       return global.RPGProgression.readTotalExp();
@@ -103,6 +126,11 @@
       this.detail = this.message.querySelector(".study-reward-detail");
       this.gain = this.message.querySelector(".study-reward-gain");
       this.defaultIcon = settings.icon || "📖";
+      this.defaultExp = toAmount(settings.exp ?? 1) || 1;
+      this.defaultDropChance = settings.dropChance == null
+        ? null
+        : toProbability(settings.dropChance, 0);
+      this.defaultRankWeights = normalizeRankWeights(settings.rankWeights);
       this.dropEvery = Math.max(0, Math.floor(Number(settings.dropEvery ?? CONFIG.weaponDropEvery) || 0));
       this.rewardCount = 0;
       this.onExpChange = typeof settings.onExpChange === "function" ? settings.onExpChange : null;
@@ -115,7 +143,7 @@
 
     award(input) {
       const options = typeof input === "number" ? { exp: input } : (input || {});
-      const amount = toAmount(options.exp ?? 1);
+      const amount = toAmount(options.exp ?? this.defaultExp);
       if (!amount) return null;
       let totalExp;
       if (global.RPGProgression && typeof global.RPGProgression.addExp === "function") {
@@ -128,13 +156,21 @@
       if (options.countForDrop !== false) this.rewardCount += 1;
       const periodicDrop = this.dropEvery > 0 && this.rewardCount > 0
         && this.rewardCount % this.dropEvery === 0;
+      const dropChance = options.dropChance == null
+        ? this.defaultDropChance
+        : toProbability(options.dropChance, 0);
+      const randomDrop = dropChance != null && Math.random() < dropChance;
       const shouldDrop = options.dropWeapon === true
-        || (options.dropWeapon !== false && periodicDrop);
+        || (options.dropWeapon !== false
+          && (randomDrop || (dropChance == null && periodicDrop)));
       let weaponDrop = null;
-      if (shouldDrop && global.RPGEquipment
-          && typeof global.RPGEquipment.dropRankOne === "function") {
+      const rankWeights = normalizeRankWeights(options.rankWeights || this.defaultRankWeights);
+      const dropRank = pickWeightedRank(rankWeights);
+      if (shouldDrop && global.RPGEquipment) {
         try {
-          weaponDrop = global.RPGEquipment.dropRankOne();
+          weaponDrop = typeof global.RPGEquipment.addWeapon === "function"
+            ? global.RPGEquipment.addWeapon(dropRank, 1)
+            : global.RPGEquipment.dropRankOne?.();
         } catch (_error) {
           weaponDrop = null;
         }
@@ -144,10 +180,10 @@
       if (this.onExpChange) this.onExpChange(totalExp);
       if (typeof global.dispatchEvent === "function" && typeof global.CustomEvent === "function") {
         global.dispatchEvent(new global.CustomEvent("rpg-exp-change", {
-          detail: { amount, totalExp, weaponDrop, rewardCount: this.rewardCount }
+          detail: { amount, totalExp, weaponDrop, rewardCount: this.rewardCount, dropChance, dropRank }
         }));
       }
-      return { amount, totalExp, weaponDrop, rewardCount: this.rewardCount };
+      return { amount, totalExp, weaponDrop, rewardCount: this.rewardCount, dropChance, dropRank };
     }
 
     show(result) {

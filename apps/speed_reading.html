@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>英語速読4択</title>
+  <title>英文速読4択</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
@@ -98,9 +98,14 @@
       flex-direction: column;
       padding: 24px 24px 48px;
       gap: 18px;
+      overflow: hidden;
       box-shadow: 0 12px 30px rgba(0,0,0,.28);
       -webkit-tap-highlight-color: transparent;
       caret-color: transparent;
+    }
+    .word-box > .flashcard-category-row {
+      flex: 0 0 auto;
+      margin: 0;
     }
     .word-box.is-startable { cursor: pointer; }
     .word-box.is-startable:hover { border-color:#2b3a55; }
@@ -108,13 +113,29 @@
       border-color:#334155;
       box-shadow: 0 8px 24px rgba(0,0,0,.32), inset 0 0 0 1px rgba(148,163,184,.16);
     }
-    .top-controls {
+    .reading-controls {
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      left: 0;
+      right: 0;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
       gap: 16px;
       font-size: 13px;
       flex-wrap: wrap;
+      padding: 10px 16px 0;
+      pointer-events: none;
+    }
+    .reading-controls :is(input, label) { pointer-events: auto; }
+    .reading-body {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
     .progress {
       font-size: 0.85rem;
@@ -262,6 +283,10 @@
         border-radius: 16px;
         gap: 14px;
       }
+      .word-box > .flashcard-category-row {
+        margin: 0;
+      }
+      .reading-controls { padding: 9px 12px 0; }
       .speed {
         width: 100%;
         justify-content: space-between;
@@ -278,6 +303,8 @@
     }
   </style>
   <link rel="stylesheet" href="./lib/app_world_ui.css" />
+  <link rel="stylesheet" href="./lib/flashcard_shared.css" />
+  <script src="../qa_speed_reading/files.js"></script>
   <script src="./lib/rpg_progression.js"></script>
 <script src="./lib/rpg_equipment.js"></script>
   <script src="./lib/rpg_study_rewards.js"></script>
@@ -286,7 +313,7 @@
 <body class="world-app" data-app="speed">
   <div class="top-bar">
     <div class="top-bar-inner">
-      <h1 class="title">英語速読4択</h1>
+      <h1 class="title">英文速読4択</h1>
       <a class="back-btn" href="../index.html" aria-label="トップへ戻る">← 戻る</a>
     </div>
   </div>
@@ -294,25 +321,48 @@
   <main class="page">
     <div class="frame">
       <section class="word-box" aria-live="polite">
-      <div class="top-controls">
-        <div class="progress" id="progressLabel">0 / 0</div>
-
-        <label class="speed">
-          速度
-          <!-- デフォルトを「ネイティブより速くない」範囲の学習向けに調整 -->
-          <input type="range" id="speedSlider" min="120" max="500" step="10" value="200" />
-          <span id="speedLabel">240 wpm</span>
-        </label>
+      <div class="category-row flashcard-category-row" aria-label="カテゴリと進捗">
+        <div class="flashcard-category-main">
+          <div class="flashcard-category-label">カテゴリ</div>
+          <div id="totalCount" class="flashcard-category-count">全0問</div>
+          <div id="categoryLabel" class="flashcard-category-name">--</div>
+        </div>
+        <div class="flashcard-category-actions">
+          <div class="flashcard-meta-pill">
+            <span class="flashcard-meta-label">QUEST</span>
+            <span id="countLabel">0 / 3</span>
+            <div id="progressTrack" class="flashcard-progress-track" role="progressbar"
+              aria-label="解答済みの進捗" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0">
+              <div id="progressFill" class="flashcard-progress-fill"></div>
+            </div>
+          </div>
+          <button id="randomBtn" class="flashcard-switch" type="button"
+            aria-label="別のカテゴリへランダムに切り替える">
+            <span class="flashcard-switch-icon" aria-hidden="true">🎲</span>
+            <span class="flashcard-switch-label">切り替え</span>
+          </button>
+        </div>
       </div>
 
-      <div class="word-area">
-        <div id="wordDisplay" class="word"></div>
-      </div>
+      <div class="reading-body">
+        <div class="reading-controls">
+          <div class="progress" id="progressLabel">0 / 0</div>
+          <label class="speed">
+            速度
+            <input type="range" id="speedSlider" min="60" max="300" step="1" value="200" />
+            <span id="speedLabel">200 wpm</span>
+          </label>
+        </div>
 
-      <div id="quizArea" class="quiz-area" aria-live="polite">
-        <p class="quiz-title">本文の内容に合うものを選んでください。</p>
-        <div id="choices" class="choices"></div>
-        <div id="feedback" class="feedback"></div>
+        <div class="word-area">
+          <div id="wordDisplay" class="word"></div>
+        </div>
+
+        <div id="quizArea" class="quiz-area" aria-live="polite">
+          <p class="quiz-title">本文の内容に合うものを選んでください。</p>
+          <div id="choices" class="choices"></div>
+          <div id="feedback" class="feedback"></div>
+        </div>
       </div>
 
       <div id="resultHistory" class="result-history" aria-live="polite"></div>
@@ -323,7 +373,29 @@
   </main>
 
   <script>
-const passages = [
+// ===== 速読の難易度・報酬バランス（調整はここだけ） =====
+const SPEED_REWARD_CONFIG = Object.freeze({
+  speed: Object.freeze({
+    minWpm: 60,
+    maxWpm: 300,
+    defaultWpm: 200,
+    correctDeltaWpm: 3,
+    wrongDeltaWpm: 3,
+    keyboardDeltaWpm: 5,
+  }),
+  reward: Object.freeze({
+    minExp: 2,
+    maxExp: 7,
+    minDropChance: 0.14,
+    maxDropChance: 0.40,
+    // RANK 1 の重みを100とした、最低速〜最高速での相対抽選重み。
+    rank2Weight: Object.freeze([1, 18]),
+    rank3Weight: Object.freeze([0, 4]),
+    rank4Weight: Object.freeze([0, 0.8]),
+  }),
+});
+
+const fallbackPassages = [
   [
     "Choose the academic word that means to guess something from evidence. Entrance exams often ask readers to do this when the writer's opinion is not stated directly.",
     ["infer", "deny", "copy", "delay"]
@@ -506,10 +578,18 @@ const passages = [
   ]
 ];
 
+    let questionGroups = [];
+
     const speedSlider  = document.getElementById('speedSlider');
     const speedLabel   = document.getElementById('speedLabel');
     const wordDisplay  = document.getElementById('wordDisplay');
     const progressLabel = document.getElementById('progressLabel');
+    const categoryLabel = document.getElementById('categoryLabel');
+    const totalCount = document.getElementById('totalCount');
+    const countLabel = document.getElementById('countLabel');
+    const progressTrack = document.getElementById('progressTrack');
+    const progressFill = document.getElementById('progressFill');
+    const randomBtn = document.getElementById('randomBtn');
     const wordBox = document.querySelector('.word-box');
     const wordArea = document.querySelector('.word-area');
     const quizArea = document.getElementById('quizArea');
@@ -518,7 +598,7 @@ const passages = [
     const rewards = window.RPGStudyRewards.create({
       slot: '#rewardSlot',
       icon: '📜',
-      dropEvery: 3
+      dropEvery: 0
     });
     const results = window.StudyAppCore.createResultHistory({
       target: '#resultHistory',
@@ -529,13 +609,55 @@ const passages = [
     let index = 0;
     let running = false;
     let timerId = null;
-    let lastPick = -1;
     let currentPassage = null;
     let answered = false;
     let resetTimerId = null;
+    let ready = false;
+    let loadError = "";
+    let currentCategoryIndex = -1;
+    let categoryPool = [];
+    let remainingItemIndices = [];
+    let cycleCount = 0;
+    let completedInCategory = 0;
 
     function wpmToIntervalMs(wpm) {
       return 60000 / Math.max(1, wpm);
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function mix(from, to, ratio) {
+      return from + (to - from) * ratio;
+    }
+
+    function rewardForWpm(wpm) {
+      const speed = SPEED_REWARD_CONFIG.speed;
+      const reward = SPEED_REWARD_CONFIG.reward;
+      const ratio = clamp((Number(wpm) - speed.minWpm) / (speed.maxWpm - speed.minWpm), 0, 1);
+      return {
+        exp: Math.max(1, Math.round(mix(reward.minExp, reward.maxExp, ratio))),
+        dropChance: mix(reward.minDropChance, reward.maxDropChance, ratio),
+        rankWeights: [
+          100,
+          mix(reward.rank2Weight[0], reward.rank2Weight[1], ratio),
+          mix(reward.rank3Weight[0], reward.rank3Weight[1], ratio * ratio),
+          mix(reward.rank4Weight[0], reward.rank4Weight[1], ratio * ratio * ratio),
+        ],
+      };
+    }
+
+    function setWpm(value) {
+      const speed = SPEED_REWARD_CONFIG.speed;
+      speedSlider.value = String(Math.round(
+        clamp(Number(value) || speed.defaultWpm, speed.minWpm, speed.maxWpm)
+      ));
+      updateSpeedLabel();
+    }
+
+    function adjustWpm(delta) {
+      setWpm(Number(speedSlider.value) + Number(delta || 0));
     }
 
     function updateSpeedLabel() {
@@ -545,6 +667,11 @@ const passages = [
     }
 
     function updateDisplay() {
+      if (!ready) {
+        wordDisplay.textContent = loadError ? "読込失敗" : "loading…";
+        progressLabel.textContent = "0 / 0";
+        return;
+      }
       if (!words.length) {
         wordDisplay.textContent = "開始";
         progressLabel.textContent = "0 / 0";
@@ -555,23 +682,119 @@ const passages = [
       progressLabel.textContent = current + " / " + words.length;
     }
 
+    function updateCategoryMeta() {
+      const group = questionGroups[currentCategoryIndex];
+      const completed = Math.min(completedInCategory, 3);
+      if (categoryLabel) categoryLabel.textContent = group?.subject || "--";
+      if (totalCount) totalCount.textContent = `全${group?.items?.length || 0}問`;
+      if (countLabel) countLabel.textContent = `${Math.min(cycleCount, 3)} / 3`;
+      if (progressFill) progressFill.style.width = `${(completed / 3) * 100}%`;
+      if (progressTrack) {
+        progressTrack.setAttribute("aria-valuenow", String(completed));
+        progressTrack.setAttribute("aria-valuetext", `${completed}問解答済み`);
+      }
+      if (randomBtn) randomBtn.disabled = !ready;
+    }
+
+    function selectRandomCategory(exceptIndex = currentCategoryIndex) {
+      if (!questionGroups.length) return;
+      if (!categoryPool.length || categoryPool.some((value) => value < 0 || value >= questionGroups.length)) {
+        categoryPool = questionGroups.map((_group, index) => index);
+      }
+      let candidates = categoryPool.filter((value) => questionGroups.length === 1 || value !== exceptIndex);
+      if (!candidates.length) {
+        categoryPool = questionGroups.map((_group, index) => index);
+        candidates = categoryPool.filter((value) => questionGroups.length === 1 || value !== exceptIndex);
+      }
+      const selected = candidates[Math.floor(Math.random() * candidates.length)] ?? 0;
+      categoryPool = categoryPool.filter((value) => value !== selected);
+      currentCategoryIndex = selected;
+      remainingItemIndices = questionGroups[selected].items.map((_item, index) => index);
+      cycleCount = 0;
+      completedInCategory = 0;
+      updateCategoryMeta();
+    }
+
     function isQuizVisible() {
       return !!(quizArea && quizArea.classList.contains("is-visible"));
     }
 
     function updateStartable() {
-      const canStart = !running && !answered && !isQuizVisible();
+      const canStart = ready && !running && !answered && !isQuizVisible();
       if (wordBox) wordBox.classList.toggle("is-startable", canStart);
     }
 
-    function normalizePassage(entry) {
+    function normalizePassage(entry, subject = "") {
       if (Array.isArray(entry)) {
         return {
           text: String(entry[0] || ""),
-          choices: Array.isArray(entry[1]) ? entry[1].map(String).filter(Boolean) : []
+          choices: Array.isArray(entry[1]) ? entry[1].map(String).filter(Boolean) : [],
+          subject: String(subject || entry[2] || "")
         };
       }
-      return { text: String(entry || ""), choices: [] };
+      if (entry && typeof entry === "object") {
+        return {
+          text: String(entry.text || ""),
+          choices: Array.isArray(entry.choices) ? entry.choices.map(String).filter(Boolean) : [],
+          subject: String(entry.subject || subject || "")
+        };
+      }
+      return { text: String(entry || ""), choices: [], subject: String(subject || "") };
+    }
+
+    function readGlobal(name) {
+      try {
+        return (0, eval)(name);
+      } catch (_error) {
+        return undefined;
+      }
+    }
+
+    function injectScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = () => reject(new Error(`load failed: ${src}`));
+        document.head.appendChild(script);
+      });
+    }
+
+    function toVariableSuffix(value) {
+      return String(value).replace(/[^A-Za-z0-9_$\u0080-\uFFFF]/g, "_");
+    }
+
+    async function loadQuestionBank() {
+      const entries = typeof files_qaSpeedReading !== "undefined" && Array.isArray(files_qaSpeedReading)
+        ? files_qaSpeedReading
+        : [];
+      try {
+        const groups = await Promise.all(entries.map(async (entry) => {
+          const subject = String(Array.isArray(entry) ? entry[0] : entry).trim();
+          if (!subject) return null;
+          await injectScript(encodeURI(`../qa_speed_reading/${subject}.js`));
+          const raw = readGlobal(`qaSpeedReading_${toVariableSuffix(subject)}`);
+          if (!Array.isArray(raw)) throw new Error(`${subject}.js に問題がありません`);
+          const items = raw.map((item) => normalizePassage(item, subject)).filter((item) =>
+            item.text && item.choices.length === 4 && new Set(item.choices).size === 4
+          );
+          return items.length ? { subject, items } : null;
+        }));
+        questionGroups = groups.filter(Boolean);
+        if (!questionGroups.length) throw new Error("有効な問題がありません");
+        ready = true;
+      } catch (error) {
+        console.error(error);
+        const items = fallbackPassages.map((item) => normalizePassage(item, "英語"));
+        questionGroups = items.length ? [{ subject: "英語", items }] : [];
+        ready = questionGroups.length > 0;
+        loadError = ready ? "" : String(error?.message || error);
+      }
+      if (ready) selectRandomCategory(-1);
+      updateDisplay();
+      updateCategoryMeta();
+      updateStartable();
     }
 
     function hideQuiz() {
@@ -608,6 +831,8 @@ const passages = [
     function answerChoice(selectedBtn, isCorrect) {
       if (answered) return;
       answered = true;
+      completedInCategory = Math.min(cycleCount, 3);
+      updateCategoryMeta();
       selectedBtn.blur();
       updateStartable();
 
@@ -621,14 +846,17 @@ const passages = [
         selectedBtn.classList.add("is-correct");
         let gain = 0;
         if (!expAwarded) {
-          gain = 5;
+          const reward = rewardForWpm(speedSlider.value);
+          gain = reward.exp;
           expAwarded = true;
-          rewards.award({ exp:gain });
+          rewards.award(reward);
         }
+        adjustWpm(SPEED_REWARD_CONFIG.speed.correctDeltaWpm);
         feedbackEl.textContent = "🎉 正解";
         results.add(true, `🎉 正解 +${gain} EXP`);
       } else {
         selectedBtn.classList.add("is-wrong");
+        adjustWpm(-SPEED_REWARD_CONFIG.speed.wrongDeltaWpm);
         feedbackEl.textContent = "✖ 不正解";
         results.add(false, "✖ 不正解 +0 EXP");
       }
@@ -641,6 +869,10 @@ const passages = [
         resetTimerId = null;
       }
       running = false;
+      if (timerId) {
+        clearTimeout(timerId);
+        timerId = null;
+      }
       rewards.hide();
       answered = false;
       words = [];
@@ -661,14 +893,23 @@ const passages = [
     }
 
     function pickRandomPassage() {
-      if (!passages.length) return { text: "", choices: [] };
-      if (passages.length === 1) return normalizePassage(passages[0]);
+      if (!questionGroups.length) return { text: "", choices: [], subject: "" };
+      if (currentCategoryIndex < 0 || cycleCount >= 3 || !remainingItemIndices.length) {
+        selectRandomCategory(currentCategoryIndex);
+      }
+      const group = questionGroups[currentCategoryIndex];
+      if (!group || !remainingItemIndices.length) return { text: "", choices: [], subject: "" };
+      const queueIndex = Math.floor(Math.random() * remainingItemIndices.length);
+      const itemIndex = remainingItemIndices.splice(queueIndex, 1)[0];
+      cycleCount += 1;
+      updateCategoryMeta();
+      return group.items[itemIndex];
+    }
 
-      // 連続で同じ例文になりにくくする
-      let k = Math.floor(Math.random() * passages.length);
-      if (k === lastPick) k = (k + 1) % passages.length;
-      lastPick = k;
-      return normalizePassage(passages[k]);
+    function switchCategory() {
+      if (!ready || !questionGroups.length) return;
+      resetToStart();
+      selectRandomCategory(currentCategoryIndex);
     }
 
     function advance() {
@@ -699,7 +940,7 @@ const passages = [
     }
 
     function play() {
-      if (running || answered || isQuizVisible()) return;
+      if (!ready || running || answered || isQuizVisible()) return;
       window.StudyAppCore.blurActiveElement();
       rewards.hide();
       if (resetTimerId) {
@@ -731,11 +972,15 @@ const passages = [
 
     // UI events
     wordBox.addEventListener("click", (e) => {
-      if (e.target.closest("button, input, label, a")) return;
+      if (e.target.closest("button, input, label, a, .flashcard-category-row")) return;
       play();
     });
 
     speedSlider.addEventListener("input", updateSpeedLabel);
+    randomBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      switchCategory();
+    });
 
     // Key controls
     document.addEventListener("keydown", (e) => {
@@ -745,25 +990,23 @@ const passages = [
         play();
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        const v = Math.min(Number(speedSlider.max), Number(speedSlider.value) + 20);
-        speedSlider.value = v;
-        updateSpeedLabel();
+        adjustWpm(SPEED_REWARD_CONFIG.speed.keyboardDeltaWpm);
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
-        const v = Math.max(Number(speedSlider.min), Number(speedSlider.value) - 20);
-        speedSlider.value = v;
-        updateSpeedLabel();
+        adjustWpm(-SPEED_REWARD_CONFIG.speed.keyboardDeltaWpm);
       }
     });
 
     // 初期化
+    speedSlider.min = String(SPEED_REWARD_CONFIG.speed.minWpm);
+    speedSlider.max = String(SPEED_REWARD_CONFIG.speed.maxWpm);
+    speedSlider.step = "1";
+    speedSlider.value = String(SPEED_REWARD_CONFIG.speed.defaultWpm);
     updateSpeedLabel();
     updateDisplay();
+    updateCategoryMeta();
     updateStartable();
+    loadQuestionBank();
   </script>
 </body>
 </html>
-
-
-
-
