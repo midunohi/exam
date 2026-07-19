@@ -4,469 +4,148 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>各科目 フラッシュカード</title>
-
-  <style>
-    :root{
-      color-scheme:dark;
-      --bg-deep:#050b18; --surface:rgba(7,17,35,.24); --surface-strong:rgba(8,20,40,.76);
-      --line:rgba(148,197,221,.28); --fg:#f3f7ff; --muted:#a9b7cc;
-      --cyan:#42e8e0; --mint:#7cffb2; --gold:#ffe47a;
-      --shadow:0 22px 60px rgba(0,0,0,.48); --radius-lg:22px;
-    }
-    *,*::before,*::after{box-sizing:border-box}
-    html{min-height:100%;background:var(--bg-deep)}
-    body{
-      min-height:100vh;min-height:100dvh;margin:0;overflow-x:hidden;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
-      line-height:1.7;color:var(--fg);
-      background:url("../img/フィールド_草原_夜.png") center/cover no-repeat fixed;
-    }
-    body::before,body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none}
-    body::before{background:linear-gradient(180deg,rgba(1,7,19,.3),transparent 28%,transparent 68%,rgba(1,7,19,.24)),radial-gradient(circle at 50% 45%,transparent 32%,rgba(1,7,19,.16) 100%)}
-    body::after{
-      opacity:.42;
-      background:radial-gradient(circle at 14% 21%,rgba(255,244,168,.85) 0 1px,transparent 2px),radial-gradient(circle at 73% 17%,rgba(113,238,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 88% 38%,rgba(255,255,255,.72) 0 1px,transparent 2px),radial-gradient(circle at 35% 8%,rgba(255,255,255,.7) 0 1px,transparent 2px);
-      background-size:260px 220px,310px 270px,380px 320px,440px 390px;
-    }
-    button,a{font:inherit}
-
-    /* Header */
-    .topbar{
-      position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:center;
-      min-height:60px;padding:7px 18px;background:linear-gradient(180deg,rgba(3,12,28,.52),rgba(5,17,36,.28));
-      box-shadow:0 6px 22px rgba(0,0,0,.14);backdrop-filter:blur(8px) saturate(112%);
-    }
-    .topbar::after{display:none}
-    .topbar-inner{width:min(1100px,100%);display:flex;align-items:center;gap:16px}
-    .topbar-inner .spacer{flex:1}
-    .app-title{display:flex;align-items:center;gap:8px;min-width:0;color:var(--fg);font-size:clamp(18px,3.2vw,22px);font-weight:900;letter-spacing:.03em;text-shadow:0 2px 8px rgba(0,0,0,.9),0 0 18px rgba(97,181,255,.18)}
-    .title-accent{color:#dffcff}
-    .back-link{display:inline-flex;align-items:center;gap:7px;padding:4px 2px;color:var(--fg);text-decoration:none;font-size:.9rem;font-weight:800;border:0;background:none;box-shadow:none;transition:color .2s ease,transform .2s ease}
-    .back-link:hover{color:var(--cyan);transform:translateX(-2px)}
-    .back-link:focus-visible{outline:2px solid rgba(66,232,224,.7);outline-offset:4px;border-radius:4px}
-    .back-icon{color:var(--cyan);font-size:1.08em}
-
-    /* Main card */
-    .page{position:relative;z-index:1;min-height:100vh;min-height:100dvh;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 16px 12px}
-    .flashcard{
-      position:relative;width:min(980px,96vw);padding:0;overflow:hidden;cursor:pointer;user-select:none;
-      -webkit-tap-highlight-color:transparent;color:var(--fg);
-      background:linear-gradient(145deg,rgba(17,37,63,.5),rgba(5,15,31,.58)),var(--surface);
-      border:1px solid var(--line);border-radius:var(--radius-lg);
-      box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.06),inset 0 0 36px rgba(38,126,152,.04);
-      backdrop-filter:blur(6px) saturate(110%);
-    }
-    .flashcard:focus{outline:none}.flashcard:focus-visible{outline:2px solid rgba(66,232,224,.72);outline-offset:4px}
-    .flashcard[aria-busy="true"]{cursor:wait}
-
-    /* Integrated info, question and answer */
-    .category-row{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;min-width:0;margin:0;padding:11px 16px;border-bottom:1px solid rgba(148,197,221,.2);background:rgba(7,20,39,.2)}
-    .category-main{display:flex;align-items:center;justify-content:flex-start;gap:7px;min-width:0;overflow:hidden}
-    .category-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0}
-    .category-label{display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;padding:0;color:#b8d7e5;font-size:.68rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;border:0;background:none}
-    .category-name{min-width:0;overflow:hidden;color:var(--fg);font-size:clamp(15px,2.6vw,19px);font-weight:850;letter-spacing:.01em;white-space:nowrap;text-overflow:ellipsis;text-shadow:0 2px 7px rgba(0,0,0,.88)}
-    .category-count{color:var(--muted);font-size:.78rem;font-weight:750;white-space:nowrap}
-    .meta-pill{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:4px 9px;color:var(--muted);font-size:.76rem;font-weight:750;white-space:nowrap;border:1px solid rgba(148,197,221,.18);border-radius:999px;background:rgba(5,15,30,.36)}
-    .meta-label{color:#6fd8df;font-size:.57rem;letter-spacing:.09em}
-    .progress{color:#d8e8f2}
-    button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:31px;padding:4px 9px;color:var(--fg);font-weight:850;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;border:1px solid rgba(91,219,215,.3);border-radius:10px;background:rgba(9,31,47,.46);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
-    button:hover{border-color:rgba(66,232,224,.68);box-shadow:0 0 14px rgba(66,232,224,.1)}
-    button:focus{outline:none}button:focus-visible{outline:2px solid rgba(66,232,224,.72);outline-offset:2px}
-    button:disabled{opacity:.56;cursor:wait}.button-icon{font-size:1.05em;line-height:1}
-    .progress-track{position:relative;width:76px;height:4px;overflow:hidden;border-radius:999px;background:rgba(116,154,180,.2);box-shadow:inset 0 1px 2px rgba(0,0,0,.38)}
-    .progress-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#27c8d0,var(--mint),var(--gold));box-shadow:0 0 9px rgba(76,229,196,.62)}
-
-    .qa{position:relative;z-index:1;min-height:clamp(280px,44vh,460px);display:flex;flex-direction:column;color:var(--fg);font-size:clamp(18px,3.4vw,24px);text-align:center;white-space:normal;background:linear-gradient(180deg,rgba(3,14,30,.72),rgba(3,11,24,.82))}
-    .card-section{position:relative;display:flex;align-items:center;justify-content:center;flex:1 1 0;min-height:140px;padding:18px clamp(18px,4vw,44px)}
-    .card-section + .card-section{border-top:1px solid rgba(124,255,178,.24)}
-    .card-section::before{content:attr(data-label);position:absolute;z-index:0;top:10px;left:14px;color:rgba(111,216,223,.16);font-size:clamp(18px,2.8vw,30px);font-weight:900;letter-spacing:.14em;line-height:1;pointer-events:none;text-shadow:none}
-    .card-content{position:relative;z-index:1;width:100%;white-space:pre-line;overflow-wrap:anywhere;text-shadow:0 2px 7px rgba(0,0,0,.95),0 0 18px rgba(18,76,116,.24)}
-    .card-content mjx-container{margin:.15em 0!important;max-width:100%;overflow-x:auto;overflow-y:hidden}
-    .card-answer-content{color:var(--mint);opacity:1;text-shadow:0 0 18px rgba(51,255,163,.2),0 2px 7px rgba(0,0,0,.9)}
-    .card-answer-content.is-hidden{opacity:0;pointer-events:none}
-
-    @media(max-width:760px){.topbar{min-height:56px;padding:6px 12px}.page{padding:64px 10px 8px}.flashcard{width:100%;border-radius:17px}.category-row{gap:8px;padding:10px 13px}.category-main{max-width:100%}.qa{min-height:clamp(270px,50vh,420px)}.card-section{min-height:135px}}
-    @media(max-width:460px){.topbar-inner{gap:8px}.app-title{gap:6px;font-size:15px;letter-spacing:.015em}.app-title-mark{font-size:16px}.back-link{padding:4px 0;font-size:.8rem}.page{padding-inline:7px}.category-row{grid-template-columns:1fr;gap:6px;padding:9px 11px}.category-main{gap:6px}.category-actions{justify-self:end}.category-label{font-size:.59rem}.category-name{font-size:14px}.category-count{font-size:.7rem}.meta-pill{min-height:29px;padding:3px 7px;font-size:.68rem}.progress-track{width:58px}button{min-height:29px;padding:3px 7px;font-size:.72rem}.qa{min-height:clamp(250px,50vh,380px);font-size:17px}.card-section{min-height:125px;padding:14px 12px}.card-section::before{top:9px;left:11px;font-size:20px}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}}
-  </style>
-  <link rel="stylesheet" href="./app_world_ui.css" />
-
-  <!-- MathJax 設定 -->
+  <link rel="stylesheet" href="./lib/app_world_ui.css" />
+  <link rel="stylesheet" href="./lib/flashcard_shared.css" />
   <script>
     window.MathJax = {
       tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] },
       svg: { fontCache: "global" }
     };
   </script>
-  <script id="MathJax-script" async
-    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-  <script src="../qa_tex/files.js"></script>
-  <script src="./rpg_progression.js"></script>
-<script src="./rpg_equipment.js"></script>
-  <script src="./rpg_study_rewards.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
-
-<body class="world-app" data-app="fc-tex">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="app-title">
-        <span>各科目 <span class="title-accent">フラッシュカード</span></span>
+<body class="world-app" data-app="fc-tex" data-flashcard-app>
+  <header class="topbar flashcard-topbar">
+    <div class="topbar-inner flashcard-topbar-inner">
+      <div class="flashcard-title">
+        各科目 <span class="flashcard-title-accent">フラッシュカード</span>
       </div>
       <div class="spacer"></div>
-      <a class="back-link" href="../index.html" aria-label="トップへ戻る">← 戻る</a>
+      <a class="back-link flashcard-back" href="../index.html" aria-label="トップへ戻る">← 戻る</a>
     </div>
   </header>
 
-  <div class="page">
-    <section class="flashcard" id="flashcard" aria-busy="false">
-      <div class="category-row" aria-label="カテゴリと進捗">
-        <div class="category-main">
-          <div class="category-label">カテゴリ</div>
-          <div id="totalCount" class="category-count">全0問</div>
-          <div id="categoryLabel" class="category-name">--</div>
+  <main class="page flashcard-page">
+    <section class="flashcard-shell" id="flashcard" role="button" tabindex="0"
+      aria-live="polite" aria-busy="false" aria-label="問題カード。押すと答えを表示します">
+      <div class="category-row flashcard-category-row" aria-label="カテゴリと進捗">
+        <div class="flashcard-category-main">
+          <div class="flashcard-category-label">カテゴリ</div>
+          <div id="totalCount" class="flashcard-category-count">全0問</div>
+          <div id="categoryLabel" class="flashcard-category-name">--</div>
         </div>
-        <div class="category-actions">
-          <div class="progress meta-pill">
-            <span class="meta-label">QUEST</span><span id="countLabel">0 / 3</span>
-            <div id="progressTrack" class="progress-track" role="progressbar" aria-label="解答済みの進捗" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0">
-              <div id="progressFill" class="progress-fill"></div>
+        <div class="flashcard-category-actions">
+          <div class="flashcard-meta-pill">
+            <span class="flashcard-meta-label">QUEST</span>
+            <span id="countLabel">0 / 3</span>
+            <div id="progressTrack" class="flashcard-progress-track" role="progressbar"
+              aria-label="解答済みの進捗" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0">
+              <div id="progressFill" class="flashcard-progress-fill"></div>
             </div>
           </div>
-          <button id="randomBtn" type="button" aria-label="別のカテゴリへランダムに切り替える">
-            <span class="button-icon" aria-hidden="true">🎲</span><span>切り替え</span>
+          <button id="randomBtn" class="flashcard-switch" type="button"
+            aria-label="別のカテゴリへランダムに切り替える">
+            <span class="flashcard-switch-icon" aria-hidden="true">🎲</span>
+            <span class="flashcard-switch-label">切り替え</span>
           </button>
         </div>
       </div>
-      <div class="qa">
-        <div class="card-section card-question-section" data-label="QUESTION">
-          <div class="card-content" id="problemQuestion"></div>
+
+      <div class="tex-card-body">
+        <div class="tex-card-section" data-label="QUESTION">
+          <div class="tex-card-content" id="problemQuestion"></div>
         </div>
-        <div class="card-section card-answer-section" data-label="ANSWER">
-          <div class="card-content card-answer-content is-hidden" id="problemAnswer"></div>
+        <div class="tex-card-section" data-label="ANSWER">
+          <div class="tex-card-content tex-card-answer is-hidden" id="problemAnswer"></div>
         </div>
       </div>
     </section>
-
     <div id="rewardSlot"></div>
-  </div>
+  </main>
 
+  <script src="../qa_tex/files.js"></script>
+  <script src="./lib/rpg_progression.js"></script>
+  <script src="./lib/rpg_equipment.js"></script>
+  <script src="./lib/rpg_study_rewards.js"></script>
+  <script src="./lib/flashcard_core.js"></script>
   <script>
-    // ---------- Shared rewards ----------
-    const rewards = window.RPGStudyRewards.create({
-      slot: "#rewardSlot",
-      icon: "📖",
-      dropEvery: 3
-    });
-    const countLabelEl = document.getElementById("countLabel");
-    const totalCountEl = document.getElementById("totalCount");
-    const progressTrackEl = document.getElementById("progressTrack");
-    const progressFillEl = document.getElementById("progressFill");
+    (() => {
+      "use strict";
 
-    // ---------- Problems ----------
-    const fallbackProblems = [
-      ["\\(x^2\\) の微分は？", "\\(2x\\)"],
-      ["\\(\\int_0^1 x\\,dx\\) は？", "\\(\\frac{1}{2}\\)"],
-      ["\\(\\sin^2 x + \\cos^2 x\\) は？", "\\(1\\)"]
-    ];
-    let problems = [];
-    let currentCategory = "--";
-    let currentFileIndex = -1;
-    let categoryPool = [];
-    let remainingProblemIndices = [];
-    const QUESTIONS_PER_CATEGORY = 3;
+      const fallbackProblems = [
+        ["\\(x^2\\) の微分は？", "\\(2x\\)"],
+        ["\\(\\int_0^1 x\\,dx\\) は？", "\\(\\frac{1}{2}\\)"],
+        ["\\(\\sin^2 x + \\cos^2 x\\) は？", "\\(1\\)"],
+      ];
+      const question = document.getElementById("problemQuestion");
+      const answer = document.getElementById("problemAnswer");
 
-    const problemQuestionEl = document.getElementById("problemQuestion");
-    const problemAnswerEl = document.getElementById("problemAnswer");
-    const flashcardEl = document.getElementById("flashcard");
-    const randomBtnEl = document.getElementById("randomBtn");
-    const categoryLabelEl = document.getElementById("categoryLabel");
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    let currentIndex = 0;
-    let showingAnswer = false;
-    let cycleCount = 0;
-    let busy = false;
-    let filesCache = null;
-
-    function pickRandomIndex(len, except) {
-      if (len <= 1) return 0;
-      let i = 0;
-      do { i = Math.floor(Math.random() * len); } while (i === except);
-      return i;
-    }
-
-    function normalizeFileEntries(files) {
-      return files.map((entry) => {
-        if (Array.isArray(entry)) {
-          const name = String(entry[0] ?? "").trim();
-          const weight = Number(entry[1]);
-          return {
-            name,
-            weight: Number.isFinite(weight) && weight > 0 ? weight : 0,
-          };
-        }
-        return { name: String(entry ?? "").trim(), weight: 1 };
-      }).filter(file => file.name && file.weight > 0);
-    }
-
-    function pickWeightedFileIndex(files, except) {
-      if (!categoryPool.length) categoryPool = files.map((_file, index) => index);
-      let pool = categoryPool.map(index => ({ file: files[index], index }));
-      if (pool.length > 1) {
-        const withoutCurrent = pool.filter(({ index }) => index !== except);
-        if (withoutCurrent.length) pool = withoutCurrent;
-      }
-      const total = pool.reduce((sum, item) => sum + item.file.weight, 0);
-      if (total <= 0) {
-        const fallbackIndex = pool[Math.floor(Math.random() * pool.length)].index;
-        categoryPool = categoryPool.filter(index => index !== fallbackIndex);
-        return fallbackIndex;
-      }
-      let r = Math.random() * total;
-      for (const item of pool) {
-        r -= item.file.weight;
-        if (r < 0) {
-          categoryPool = categoryPool.filter(index => index !== item.index);
-          return item.index;
-        }
-      }
-      const fallbackIndex = pool[pool.length - 1].index;
-      categoryPool = categoryPool.filter(index => index !== fallbackIndex);
-      return fallbackIndex;
-    }
-
-    function resetProblemQueue() {
-      remainingProblemIndices = problems.map((_problem, index) => index);
-    }
-
-    function hasReachedCategoryLimit() {
-      return cycleCount >= QUESTIONS_PER_CATEGORY || !remainingProblemIndices.length;
-    }
-
-    function takeRandomProblemIndex() {
-      if (!remainingProblemIndices.length) return -1;
-      const queueIndex = Math.floor(Math.random() * remainingProblemIndices.length);
-      const [problemIndex] = remainingProblemIndices.splice(queueIndex, 1);
-      return problemIndex;
-    }
-
-    // ---------- UI state ----------
-    function setBusyState(nextBusy) {
-      busy = Boolean(nextBusy);
-      flashcardEl.setAttribute("aria-busy", String(busy));
-      if (randomBtnEl) randomBtnEl.disabled = busy;
-    }
-
-    function updateCardState(answerVisible) {
-      flashcardEl.classList.toggle("answer-visible", answerVisible);
-    }
-
-    function updateProgressDisplay(answerRevealed = false) {
-      const current = Math.min(cycleCount, QUESTIONS_PER_CATEGORY);
-      const completed = Math.max(0, current - (answerRevealed ? 0 : 1));
-      const percent = (completed / QUESTIONS_PER_CATEGORY) * 100;
-      if (totalCountEl) totalCountEl.textContent = "全" + problems.length + "問";
-      if (countLabelEl) countLabelEl.textContent = current + " / " + QUESTIONS_PER_CATEGORY;
-      if (progressFillEl) progressFillEl.style.width = percent + "%";
-      if (progressTrackEl) {
-        progressTrackEl.setAttribute("aria-valuenow", String(completed));
-        progressTrackEl.setAttribute("aria-valuetext", completed + "問解答済み");
-      }
-    }
-
-    // ---------- MathJax helpers ----------
-    function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
-
-    async function waitForMathJax(maxMs = 5000) {
-      const t0 = performance.now();
-      while (performance.now() - t0 < maxMs) {
-        const mj = window.MathJax;
-        if (mj && mj.typesetPromise && mj.startup && mj.startup.promise) {
-          await mj.startup.promise; // 完全起動待ち
-          return mj;
-        }
-        await delay(25);
-      }
-      return null; // MathJax来ない場合も落ちないようにする
-    }
-
-    async function typesetElements(els) {
-      const mj = await waitForMathJax();
-      if (!mj) return; // MathJax未到着なら素表示で進む
-      if (mj.typesetClear) mj.typesetClear(els);
-      await mj.typesetPromise(els);
-    }
-
-    // ---------- Render ----------
-    async function renderProblem() {
-      const row = problems[currentIndex] || [];
-      const question = row[0] ?? "";
-      const answer = row[1] ?? "";
-
-      // TeXの < や > をHTMLタグとして解釈させず、MathJaxにはテキストとして渡す。
-      problemQuestionEl.textContent = String(question);
-      problemAnswerEl.textContent = String(answer);
-
-      problemAnswerEl.classList.add("is-hidden");
-      showingAnswer = false;
-      updateCardState(false);
-      updateProgressDisplay();
-
-      // その後にMathJaxで整える（準備できた時点で反映）
-      await typesetElements([problemQuestionEl, problemAnswerEl]);
-    }
-
-    function safeGlobalEval(name) {
-      try {
-        return (0, eval)(name);
-      } catch (_e) {
-        return undefined;
-      }
-    }
-
-    function injectScript(src) {
-      return new Promise((resolve, reject) => {
-        window.__examLoadedScripts = window.__examLoadedScripts || {};
-        if (window.__examLoadedScripts[src]) {
-          resolve(true);
-          return;
-        }
-        const s = document.createElement("script");
-        s.src = src;
-        s.async = true;
-        s.onload = () => {
-          window.__examLoadedScripts[src] = true;
-          resolve(true);
-        };
-        s.onerror = () => reject(new Error(`load failed: ${src}`));
-        document.head.appendChild(s);
-      });
-    }
-
-    async function useFallback(reason) {
-      console.warn(reason);
-      problems = fallbackProblems;
-      currentCategory = "stub";
-      cycleCount = 0;
-      resetProblemQueue();
-      updateRandomButton();
-      await showRandomProblem(-1);
-    }
-
-    async function loadFilesList() {
-      if (filesCache) return filesCache;
-      const files = (typeof files_qaMath !== "undefined" && Array.isArray(files_qaMath)) ? files_qaMath : [];
-      filesCache = normalizeFileEntries(files);
-      return filesCache;
-    }
-
-    async function loadCategory(name) {
-      const base = String(name || "").replace(/\.js$/i, "");
-      const variableBase = base.split(/[\\/]/).pop();
-      const jsSrc = encodeURI(`../qa_tex/${base}.js`);
-
-      await injectScript(jsSrc);
-      const raw = safeGlobalEval(`qa_${variableBase}`);
-      const data = Array.isArray(raw) ? raw : [];
-
-      if (!data.length) throw new Error(`qa_tex/${base}.js にカードがありません`);
-      problems = data;
-      currentCategory = base;
-      cycleCount = 0;
-      resetProblemQueue();
-      updateRandomButton();
-      await showRandomProblem(-1);
-    }
-
-    async function loadRandomCategory(exceptIndex = -1) {
-      const files = await loadFilesList();
-      if (!files.length) {
-        await useFallback("qa_tex/files.js にカテゴリがありません");
-        return -1;
-      }
-      const idx = pickWeightedFileIndex(files, exceptIndex);
-      try {
-        await loadCategory(files[idx].name);
-        currentFileIndex = idx;
-        return idx;
-      } catch (e) {
-        await useFallback(e);
-        return -1;
-      }
-    }
-
-    function updateRandomButton() {
-      if (categoryLabelEl) categoryLabelEl.textContent = currentCategory;
-    }
-
-    async function showRandomProblem(_exceptIndex = -1) {
-      if (!problems.length) {
-        await useFallback("カードが読み込まれていないためスタブを表示します");
-        return;
-      }
-      const nextIndex = takeRandomProblemIndex();
-      if (nextIndex < 0) {
-        await loadRandomCategory(currentFileIndex);
-        return;
-      }
-      currentIndex = nextIndex;
-      cycleCount += 1;
-      await renderProblem();
-    }
-
-    // ---------- Click behavior ----------
-    flashcardEl.addEventListener("click", async () => {
-      if (busy) return;
-      setBusyState(true);
-      try {
-        if (!showingAnswer) {
-          problemAnswerEl.classList.remove("is-hidden");
-          showingAnswer = true;
-          updateCardState(true);
-          updateProgressDisplay(true);
-          rewards.award({ exp: 1 });
-        } else {
-          rewards.hide();
-
-          if (hasReachedCategoryLimit()) {
-            try {
-              currentFileIndex = await loadRandomCategory(currentFileIndex);
-            } catch (err) {
-              console.error(err);
-            }
-          } else {
-            await showRandomProblem(currentIndex);
+      async function waitForMathJax(maxMs = 5000) {
+        const startedAt = performance.now();
+        while (performance.now() - startedAt < maxMs) {
+          if (window.MathJax?.typesetPromise && window.MathJax?.startup?.promise) {
+            await window.MathJax.startup.promise;
+            return window.MathJax;
           }
+          await delay(25);
         }
-      } finally {
-        setBusyState(false);
+        return null;
       }
-    });
 
-    // ---------- Boot ----------
-    (async () => {
-      try {
-        updateRandomButton();
-        await loadRandomCategory(-1);
-      } catch (e) {
-        await useFallback(e);
+      async function typeset(elements) {
+        const mathJax = await waitForMathJax();
+        if (!mathJax) return;
+        if (mathJax.typesetClear) mathJax.typesetClear(elements);
+        await mathJax.typesetPromise(elements);
       }
-    })();
 
-    if (randomBtnEl) {
-      randomBtnEl.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        if (busy) return;
-        setBusyState(true);
-        rewards.hide();
-        try {
-          currentFileIndex = await loadRandomCategory(currentFileIndex);
-        } catch (err) {
-          console.error(err);
-        } finally {
-          setBusyState(false);
-        }
+      FlashcardCore.create({
+        rewardIcon: "📖",
+        getFiles() {
+          return typeof files_qaMath !== "undefined" && Array.isArray(files_qaMath)
+            ? files_qaMath
+            : [];
+        },
+        async loadCategory(name, helpers) {
+          if (name === "stub") throw new Error("qa_tex/files.js にカテゴリがありません");
+          const base = String(name).replace(/\.js$/i, "");
+          const variableBase = base.split(/[\\/]/).pop();
+          await helpers.injectScript(encodeURI(`../qa_tex/${base}.js`));
+          const items = helpers.readGlobal(`qa_${variableBase}`);
+          if (!Array.isArray(items) || !items.length) {
+            throw new Error(`qa_tex/${base}.js にカードがありません`);
+          }
+          return { category: base, items };
+        },
+        getFallback(error) {
+          console.warn(error);
+          return { category: "stub", items: fallbackProblems };
+        },
+        getRevealTotal: () => 1,
+        renderLoading() {
+          question.textContent = "loading…";
+          answer.textContent = "";
+          answer.classList.add("is-hidden");
+        },
+        renderEmpty() {
+          question.textContent = "…";
+          answer.textContent = "";
+          answer.classList.add("is-hidden");
+        },
+        async renderItem({ item, revealStep }) {
+          question.textContent = String(item?.[0] ?? "");
+          answer.textContent = String(item?.[1] ?? "");
+          answer.classList.toggle("is-hidden", revealStep < 1);
+          await typeset([question, answer]);
+        },
       });
-    }
+    })();
   </script>
 </body>
 </html>
+
+
+
+

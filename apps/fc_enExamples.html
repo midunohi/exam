@@ -1,574 +1,212 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>英単語・例文 フラッシュカード</title>
-  <style>
-    :root{ --bg:#0f172a; --panel:#0a0f1a; --card:#0b1220; --border:#1f2937; --fg:#e5e7eb; --muted:#9ca3af; --acc:#22d3ee; --answer:#7CFFB2; }
-    html, body{ height:100%; margin:0; background: url("../img/ダンジョン_洞窟.png"); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; font-family: system-ui,-apple-system,Segoe UI,Roboto, "Hiragino Kaku Gothic ProN",Meiryo,sans-serif; color:var(--fg); text-shadow:0 2px 5px rgba(0,0,0,.9), 0 0 12px rgba(0,0,0,.65); }
-    .page{
-      min-height:100vh;
-      min-height:100dvh;
-      width:100%;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:0;
-      padding:80px 16px 24px;
-      box-sizing:border-box;
-    }
-    .topbar{
-      position:fixed;
-      top:0;
-      left:0;
-      right:0;
-      z-index:10;
-      padding:8px 16px;
-      display:flex;
-      justify-content:center;
-      background: linear-gradient(180deg, rgba(15,23,42,.58), rgba(15,23,42,.2) 60%, transparent);
-      backdrop-filter: blur(6px);
-    }
-    .topbar-inner{
-      width:min(960px,96vw);
-      display:flex;
-      align-items:center;
-      gap:14px;
-      flex-wrap:wrap;
-    }
-    .topbar-inner .spacer{flex:1;}
-    .title{font-weight:900; letter-spacing:.03em; white-space:normal; word-break:break-word; line-height:1.15; font-size:clamp(18px,3.6vw,22px)}
-    .title-accent{color:#dffcff}
-    .meta{margin-top:8px; color:var(--muted); font-size:13px}
-    .category-row{display:flex; align-items:center; gap:10px;}
-    .category-label{font-size:0.75rem; font-weight:700; letter-spacing:0.08em; color:var(--muted); text-transform:uppercase;}
-    .category-name{font-size:clamp(16px,3.2vw,20px); font-weight:800; letter-spacing:0.01em; color:var(--fg); text-align:left;}
-    .category-count{font-size:0.85rem; color:var(--muted);}
-    .progress{font-size:0.85rem; color:var(--muted);}
-    .category-spacer{flex:1;}
-    button{background:rgba(10,19,34,.48); color:var(--fg); border:1px solid rgba(148,163,184,.28); border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer; -webkit-tap-highlight-color:transparent}
-    button:hover{border-color:#2b3a55}
-    button:active{border-color:#334155; box-shadow:inset 0 0 0 1px rgba(148,163,184,.14)}
-    button:focus{outline:none}
-    button:focus-visible{outline:2px solid rgba(34,211,238,.45); outline-offset:2px}
-
-    .card{width:min(960px,96vw); background:linear-gradient(145deg,rgba(17,37,63,.5),rgba(5,15,31,.58)); border:1px solid rgba(148,197,221,.28); border-radius:20px; padding:24px; display:grid; grid-template-columns:1fr; gap:16px; align-items:start; box-shadow:0 22px 60px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.06); position:relative; -webkit-tap-highlight-color:transparent; cursor:default; caret-color:transparent; user-select:none;}
-    .card:active{border-color:#334155; box-shadow:0 8px 24px rgba(0,0,0,.32), inset 0 0 0 1px rgba(148,163,184,.16)}
-    .card:focus{outline:none}
-    .card:focus-visible{outline:2px solid rgba(34,211,238,.45); outline-offset:3px}
-    .term-mean{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
-    .term{line-height:1.2;}
-    .phrases{display:flex; flex-direction:column; gap:8px}
-    .phrase-line{display:flex; flex-direction:column; gap:2px; align-items:flex-start}
-    .phrase-ja{line-height:1.4; min-height:1.4em}
-    .q-text,.a-text{font-size:clamp(18px,3.6vw,24px); font-weight:700;}
-    .question{color:var(--muted);}
-    .question.is-active{color:var(--fg);}
-    .answer{color:var(--answer);}
-    .answer.is-hidden{display:none;}
-
-    .category-main,.category-actions{display:flex;align-items:center;gap:7px;min-width:0}
-    .category-main{overflow:hidden;flex-wrap:nowrap;white-space:nowrap;container-type:inline-size}
-    .category-main :is(.category-label,.category-count){flex:0 0 auto}
-    .category-main .category-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .category-actions{justify-content:flex-end;flex:0 0 auto;white-space:nowrap}
-    .meta-pill{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:4px 9px;border:1px solid rgba(148,197,221,.18);border-radius:999px;background:rgba(5,15,30,.36);white-space:nowrap}
-    .meta-label{color:#6fd8df;font-size:.57rem;font-weight:800;letter-spacing:.09em}
-    .progress-track{position:relative;width:76px;height:4px;overflow:hidden;border-radius:999px;background:rgba(116,154,180,.2);box-shadow:inset 0 1px 2px rgba(0,0,0,.38)}
-    .progress-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#27c8d0,#7cffb2,#ffe47a);box-shadow:0 0 9px rgba(76,229,196,.62);transition:width .24s ease}
-
-    a.back{color:var(--fg); text-decoration:none; font-size:14px; border:1px solid rgba(148,163,184,.28); border-radius:999px; padding:6px 12px; font-weight:700; background:rgba(10,19,34,.48);}
-    a.back:hover{border-color:#2b3a55}
-    @media (max-width: 640px){
-      .container{padding:12px 12px 56px;}
-      .card{padding:18px; border-radius:16px}
-      button{padding:10px 12px}
-    }
-  </style>
-  <link rel="stylesheet" href="./app_world_ui.css" />
-  <style>
-    /* app_world_ui.css の共通値を、このカードに適した密度へ調整 */
-    body[data-app="fc-en"] .card{cursor:default;caret-color:transparent;user-select:none;background:linear-gradient(160deg,rgba(5,20,39,.94),rgba(2,10,24,.97));border-color:rgba(181,224,241,.4);box-shadow:0 22px 60px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.07);backdrop-filter:blur(14px) saturate(108%);-webkit-backdrop-filter:blur(14px) saturate(108%)}
-    body[data-app="fc-en"] .category-row{display:grid;grid-template-columns:minmax(0,1fr) auto;min-height:0;padding:10px 16px;gap:10px}
-    body[data-app="fc-en"] #countLabel{padding:0;color:#d8e8f2}
-    body[data-app="fc-en"] .term-mean{min-height:0;padding:12px clamp(16px,3vw,28px);flex-direction:column;align-items:flex-start;gap:4px;text-align:left}
-    body[data-app="fc-en"] .term-mean>.q-text,
-    body[data-app="fc-en"] .term-mean>.a-text{width:100%;min-height:1.4em;line-height:1.4}
-    body[data-app="fc-en"] .phrase-line{display:grid;grid-template-rows:minmax(1.4em,auto) minmax(1.4em,auto);min-height:0;padding:8px clamp(16px,3vw,28px);gap:2px}
-    body[data-app="fc-en"] .phrase-line>.q-text,
-    body[data-app="fc-en"] .phrase-line>.a-text{width:100%;min-height:1.4em;line-height:1.4}
-    body[data-app="fc-en"] .answer.is-hidden{display:block;visibility:hidden}
-    body[data-app="fc-en"] #rewardSlot .study-reward-window{background:linear-gradient(135deg,rgba(7,18,36,.26),rgba(20,37,61,.16));border-color:rgba(181,224,241,.24);box-shadow:0 10px 28px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(6px) saturate(106%);-webkit-backdrop-filter:blur(6px) saturate(106%);text-shadow:0 2px 4px rgba(0,0,0,.98),0 0 10px rgba(0,0,0,.9)}
-    body[data-app="fc-en"] #rewardSlot :is(.study-reward-title,.study-reward-detail,.study-reward-gain){text-shadow:0 2px 4px rgba(0,0,0,1),0 0 9px rgba(0,0,0,.95)}
-    body[data-app="fc-en"] #rewardSlot .study-reward-detail{color:#d7e3ef}
-    body[data-app="fc-en"] button{cursor:pointer}
-    @container (max-width:420px){
-      body[data-app="fc-en"] .category-label{display:none}
-    }
-    @container (max-width:310px){
-      body[data-app="fc-en"] #totalCount{display:none}
-    }
-    @media(max-width:640px){
-      body[data-app="fc-en"] .category-row{grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:9px 11px}
-      body[data-app="fc-en"] .category-actions{justify-self:end}
-      body[data-app="fc-en"] .term-mean{min-height:0;padding:10px 12px}
-      body[data-app="fc-en"] .phrase-line{min-height:0;padding:7px 12px}
-      body[data-app="fc-en"] .progress-track{width:58px}
-    }
-    @media(max-width:480px){
-      body[data-app="fc-en"] .category-row{gap:6px}
-      body[data-app="fc-en"] .category-actions{gap:5px}
-      body[data-app="fc-en"] .category-actions .meta-label,
-      body[data-app="fc-en"] #randomBtn .button-label{display:none}
-      body[data-app="fc-en"] #randomBtn{min-width:36px;padding-inline:8px}
-      body[data-app="fc-en"] .progress-track{width:44px}
-    }
-    @media(max-width:360px){
-      body[data-app="fc-en"] .progress-track{display:none}
-    }
-  </style>
-
-  <!-- files.js を「普通の script」として先に読み込む（export無しでも使えるように） -->
-  <script src="../qa_en_examples/files.js"></script>
-  <script src="./rpg_progression.js"></script>
-<script src="./rpg_equipment.js"></script>
-  <script src="./rpg_study_rewards.js"></script>
+  <link rel="stylesheet" href="./lib/app_world_ui.css" />
+  <link rel="stylesheet" href="./lib/flashcard_shared.css" />
 </head>
-<body class="world-app" data-app="fc-en">
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="title">英単語・例文 <span class="title-accent">フラッシュカード</span></div>
+<body class="world-app" data-app="fc-en" data-flashcard-app>
+  <header class="topbar flashcard-topbar">
+    <div class="topbar-inner flashcard-topbar-inner">
+      <div class="flashcard-title">
+        英単語・例文 <span class="flashcard-title-accent">フラッシュカード</span>
+      </div>
       <div class="spacer"></div>
-      <a class="back" href="../index.html" aria-label="トップへ戻る">← 戻る</a>
+      <a class="back-link flashcard-back" href="../index.html" aria-label="トップへ戻る">← 戻る</a>
     </div>
-  </div>
+  </header>
 
-  <div class="page">
-    <section class="card" aria-live="polite" id="card">
-      <div class="category-row" aria-label="カテゴリと進捗">
-        <div class="category-main">
-          <div class="category-label">カテゴリ</div>
-          <div id="totalCount" class="category-count">全0問</div>
-          <div id="categoryLabel" class="category-name">--</div>
+  <main class="page flashcard-page">
+    <section class="flashcard-shell" id="flashcard" role="button" tabindex="0"
+      aria-live="polite" aria-busy="false" aria-label="英単語と例文のカード。押すと訳を順に表示します">
+      <div class="category-row flashcard-category-row" aria-label="カテゴリと進捗">
+        <div class="flashcard-category-main">
+          <div class="flashcard-category-label">カテゴリ</div>
+          <div id="totalCount" class="flashcard-category-count">全0問</div>
+          <div id="categoryLabel" class="flashcard-category-name">--</div>
         </div>
-        <div class="category-actions">
-          <div class="progress meta-pill">
-            <span class="meta-label">QUEST</span><span id="countLabel">0 / 3</span>
-            <div id="progressTrack" class="progress-track" role="progressbar" aria-label="解答済みの進捗" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0">
-              <div id="progressFill" class="progress-fill"></div>
+        <div class="flashcard-category-actions">
+          <div class="flashcard-meta-pill">
+            <span class="flashcard-meta-label">QUEST</span>
+            <span id="countLabel">0 / 3</span>
+            <div id="progressTrack" class="flashcard-progress-track" role="progressbar"
+              aria-label="解答済みの進捗" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0">
+              <div id="progressFill" class="flashcard-progress-fill"></div>
             </div>
           </div>
-          <button id="randomBtn" type="button" aria-label="別のカテゴリへランダムに切り替える">🎲 <span class="button-label">切り替え</span></button>
+          <button id="randomBtn" class="flashcard-switch" type="button"
+            aria-label="別のカテゴリへランダムに切り替える">
+            <span class="flashcard-switch-icon" aria-hidden="true">🎲</span>
+            <span class="flashcard-switch-label">切り替え</span>
+          </button>
         </div>
       </div>
-      <div class="term-mean">
-        <div class="term question q-text" id="term">...</div>
-        <div class="mean answer a-text is-hidden" id="meaning"></div>
+
+      <div class="english-term-meaning">
+        <div class="english-question" id="term">...</div>
+        <div class="english-answer is-hidden" id="meaning"></div>
       </div>
-      <div class="phrases" id="phrases"></div>
+      <div class="english-phrases" id="phrases"></div>
     </section>
     <div id="rewardSlot"></div>
-  </div>
+  </main>
 
+  <script src="../qa_en_examples/files.js"></script>
+  <script src="./lib/rpg_progression.js"></script>
+  <script src="./lib/rpg_equipment.js"></script>
+  <script src="./lib/rpg_study_rewards.js"></script>
+  <script src="./lib/flashcard_core.js"></script>
   <script>
-  // ============================
-  // Loader: qa_en_examples/* を読み込んで dataset[] に変換
-  // 期待する各ファイルの形式（例）：
-  //   [
-  //     [["planet","惑星"],["a rocky planet","岩石惑星"],["...","..."],["...","..."]],
-  //     ...
-  //   ]
-  // files.js：
-  //   const files_enExamples = ["astronomy", ...]
-  // ============================
+    (() => {
+      "use strict";
 
-  const STUB_EN_EXAMPLES = [
-    [
-      ["planet", "惑星"],
-      ["a rocky planet", "岩石惑星"],
-      ["clear its orbital neighborhood", "軌道近傍を一掃する"],
-      ["in the habitable zone", "ハビタブルゾーン内で"],
-    ],
-  ];
+      const fallbackExamples = [
+        [
+          ["planet", "惑星"],
+          ["a rocky planet", "岩石惑星"],
+          ["clear its orbital neighborhood", "軌道近傍を一掃する"],
+          ["in the habitable zone", "ハビタブルゾーン内で"],
+        ],
+      ];
+      const term = document.getElementById("term");
+      const meaning = document.getElementById("meaning");
+      const phrases = document.getElementById("phrases");
 
-  let currentCategory = '--';
-  let cycleCount = 0;
-  let currentFileIndex = -1;
-  let categoryPool = [];
-  let remainingProblemIndices = [];
-  const QUESTIONS_PER_CATEGORY = 3;
+      function ensureMinPhrases(items, minimum = 3) {
+        const result = Array.isArray(items) ? items.slice() : [];
+        while (result.length < minimum) result.push({ en: "", ja: "" });
+        return result;
+      }
 
-  function ensureMinPhrases(phrases, n=3){
-    const out = Array.isArray(phrases) ? phrases.slice(0) : [];
-    while(out.length < n) out.push({en:"", ja:""});
-    return out;
-  }
+      function toDataset(raw) {
+        if (Array.isArray(raw)) {
+          return raw.map((row) => {
+            if (!Array.isArray(row) || !row.length) return null;
+            const pairs = row.filter((pair) => Array.isArray(pair) && pair.length >= 1);
+            const head = pairs[0] || [];
+            return {
+              en: String(head[0] ?? ""),
+              ja: String(head[1] ?? ""),
+              phrases: ensureMinPhrases(pairs.slice(1).map((pair) => ({
+                en: String(pair?.[0] ?? ""),
+                ja: String(pair?.[1] ?? ""),
+              }))),
+            };
+          }).filter((item) => item && item.en
+            && (item.ja || item.phrases.some((phrase) => phrase.en || phrase.ja)));
+        }
 
-  function toDataset(enExamplesRaw){
-    if(!enExamplesRaw) return [];
+        if (raw && typeof raw === "object") {
+          return Object.entries(raw).map(([en, value]) => ({
+            en,
+            ja: String(value?.ja ?? ""),
+            phrases: ensureMinPhrases(
+              (value?.examples ?? value?.phrases ?? value?.ex ?? []).map((phrase) => ({
+                en: String(phrase?.en ?? ""),
+                ja: String(phrase?.ja ?? ""),
+              }))
+            ),
+          })).filter((item) => item.en
+            && (item.ja || item.phrases.some((phrase) => phrase.en || phrase.ja)));
+        }
+        return [];
+      }
 
-    if(Array.isArray(enExamplesRaw)){
-      const items = enExamplesRaw.map((row)=>{
-        if(!Array.isArray(row) || row.length === 0) return null;
-        const pairs = row.filter(p => Array.isArray(p) && p.length >= 1);
-        const head = pairs[0] || [];
-        const en = String(head[0] ?? "");
-        const ja = String(head[1] ?? "");
-        const phrases = ensureMinPhrases(
-          pairs.slice(1).map(p => ({ en: String(p?.[0] ?? ""), ja: String(p?.[1] ?? "") }))
-        );
-        return { en, ja, phrases };
-      }).filter(Boolean);
-      return items.filter(x => x.en && (x.ja || x.phrases.some(p=>p.en||p.ja)));
-    }
+      function normalizeBaseName(name) {
+        const base = String(name).replace(/\.(json|js)$/i, "");
+        return base === "quantity_degrees" ? "quantity_degree" : base;
+      }
 
-    if(typeof enExamplesRaw === 'object'){
-      const entries = Object.entries(enExamplesRaw);
-      const items = entries.map(([en, v])=>{
-        const ja = v?.ja ?? "";
-        const examples = v?.examples ?? v?.phrases ?? v?.ex ?? [];
-        const phrases = ensureMinPhrases(
-          examples.map(p => ({ en: String(p?.en ?? ""), ja: String(p?.ja ?? "") }))
-        );
-        return { en, ja, phrases };
+      function getRevealTotal(item) {
+        let total = item?.ja ? 1 : 0;
+        (item?.phrases || []).forEach((phrase) => {
+          if (phrase.ja) total += 1;
+        });
+        return total;
+      }
+
+      FlashcardCore.create({
+        rewardIcon: "📚",
+        getFiles() {
+          return typeof files_enExamples !== "undefined" && Array.isArray(files_enExamples)
+            ? files_enExamples
+            : ["astronomy"];
+        },
+        async loadCategory(name, helpers) {
+          const base = normalizeBaseName(name);
+          await helpers.injectScript(encodeURI(`../qa_en_examples/${base}.js`));
+          const raw = helpers.readGlobal(`enExamples_${helpers.toVariableSuffix(base)}`);
+          const items = toDataset(raw);
+          if (!items.length) throw new Error(`qa_en_examples/${base}.js にカードがありません`);
+          return { category: base, items };
+        },
+        getFallback(error, context) {
+          console.warn(error);
+          return {
+            category: context.name === "stub" ? "stub" : normalizeBaseName(context.name),
+            items: toDataset(fallbackExamples),
+          };
+        },
+        getRevealTotal,
+        renderLoading() {
+          term.textContent = "loading…";
+          meaning.textContent = "";
+          meaning.classList.add("is-hidden");
+          phrases.replaceChildren();
+        },
+        renderEmpty() {
+          term.textContent = "…";
+          meaning.textContent = "";
+          meaning.classList.add("is-hidden");
+          phrases.replaceChildren();
+        },
+        renderItem({ item, revealStep }) {
+          term.textContent = item.en;
+          meaning.textContent = item.ja;
+          meaning.classList.toggle("is-hidden", !item.ja || revealStep < 1);
+          phrases.replaceChildren();
+
+          let step = item.ja ? 1 : 0;
+          const questionElements = [term];
+          (item.phrases || []).forEach((phrase) => {
+            if (!phrase.en && !phrase.ja) return;
+
+            const line = document.createElement("div");
+            line.className = "english-phrase-line";
+            const english = document.createElement("div");
+            english.className = "english-question";
+            english.textContent = phrase.en;
+            const japanese = document.createElement("div");
+            japanese.className = "english-answer";
+            japanese.textContent = phrase.ja;
+
+            let answerVisible = false;
+            if (phrase.ja) {
+              step += 1;
+              answerVisible = revealStep >= step;
+            }
+            japanese.classList.toggle("is-hidden", !answerVisible);
+            line.append(english, japanese);
+            phrases.appendChild(line);
+            questionElements.push(english);
+          });
+
+          const total = getRevealTotal(item);
+          if (total === 0 || revealStep >= total) {
+            questionElements.forEach((element) => element.classList.add("is-active"));
+            return;
+          }
+          questionElements.forEach((element) => element.classList.remove("is-active"));
+          questionElements[Math.min(revealStep, questionElements.length - 1)]?.classList.add("is-active");
+        },
       });
-      return items.filter(x => x.en && (x.ja || x.phrases.some(p=>p.en||p.ja)));
-    }
-
-    return [];
-  }
-
-  function normalizeBaseName(name){
-    const base = name.replace(/\.(json|js)$/,'');
-    if(base === 'quantity_degrees') return 'quantity_degree';
-    return base;
-  }
-
-  function safeGlobalEval(name) {
-    try {
-      return (0, eval)(name);
-    } catch (_e) {
-      return undefined;
-    }
-  }
-
-  function toVarSuffix(base) {
-    return String(base).replace(/[^A-Za-z0-9_$]/g, "_");
-  }
-
-  function injectScript(src) {
-    return new Promise((resolve, reject) => {
-      window.__examLoadedScripts = window.__examLoadedScripts || {};
-      if (window.__examLoadedScripts[src]) {
-        resolve(true);
-        return;
-      }
-      const s = document.createElement('script');
-      s.src = src;
-      s.async = true;
-      s.onload = () => {
-        window.__examLoadedScripts[src] = true;
-        resolve(true);
-      };
-      s.onerror = () => reject(new Error(`load failed: ${src}`));
-      document.head.appendChild(s);
-    });
-  }
-
-  async function loadEnExamplesFile(name){
-    const base = normalizeBaseName(name);
-    const jsSrc = encodeURI(`../qa_en_examples/${base}.js`);
-
-    try{
-      await injectScript(jsSrc);
-      const obj = safeGlobalEval(`enExamples_${toVarSuffix(base)}`);
-      if(!obj) throw new Error(`data not found: enExamples_${toVarSuffix(base)}`);
-      return { ok:true, name:base, obj };
-    }catch(err){
-      console.warn(err);
-      return { ok:false, name:base, obj:STUB_EN_EXAMPLES, err };
-    }
-  }
-
-  function getFiles(){
-    const files = (typeof files_enExamples !== 'undefined' && Array.isArray(files_enExamples))
-      ? files_enExamples
-      : ["astronomy"];
-    const normalized = normalizeFileEntries(files);
-    return normalized.length ? normalized : normalizeFileEntries(["astronomy"]);
-  }
-
-  function pickRandomIndex(len, except){
-    if(len <= 1) return 0;
-    let n = 0;
-    do{ n = Math.floor(Math.random() * len); }while(n === except);
-    return n;
-  }
-
-  function normalizeFileEntries(files){
-    return files.map((entry)=>{
-      if(Array.isArray(entry)){
-        const name = String(entry[0] ?? "").trim();
-        const weight = Number(entry[1]);
-        return {
-          name,
-          weight: Number.isFinite(weight) && weight > 0 ? weight : 0,
-        };
-      }
-      return { name:String(entry ?? "").trim(), weight:1 };
-    }).filter(file => file.name && file.weight > 0);
-  }
-
-  function pickWeightedFileIndex(files, except){
-    if(!categoryPool.length) categoryPool = files.map((_file, index)=>index);
-    let pool = categoryPool.map(index => ({ file: files[index], index }));
-    if(pool.length > 1){
-      const withoutCurrent = pool.filter(({ index }) => index !== except);
-      if(withoutCurrent.length) pool = withoutCurrent;
-    }
-    const total = pool.reduce((sum, item)=>sum + item.file.weight, 0);
-    if(total <= 0){
-      const fallbackIndex = pool[Math.floor(Math.random() * pool.length)].index;
-      categoryPool = categoryPool.filter(index => index !== fallbackIndex);
-      return fallbackIndex;
-    }
-    let r = Math.random() * total;
-    for(const item of pool){
-      r -= item.file.weight;
-      if(r < 0){
-        categoryPool = categoryPool.filter(index => index !== item.index);
-        return item.index;
-      }
-    }
-    const fallbackIndex = pool[pool.length - 1].index;
-    categoryPool = categoryPool.filter(index => index !== fallbackIndex);
-    return fallbackIndex;
-  }
-
-  function resetProblemQueue(){
-    remainingProblemIndices = dataset.map((_item, index)=>index);
-  }
-
-  function hasReachedCategoryLimit(){
-    return cycleCount >= QUESTIONS_PER_CATEGORY || !remainingProblemIndices.length;
-  }
-
-  function takeRandomProblemIndex(){
-    if(!remainingProblemIndices.length) return -1;
-    const queueIndex = Math.floor(Math.random() * remainingProblemIndices.length);
-    const [problemIndex] = remainingProblemIndices.splice(queueIndex, 1);
-    return problemIndex;
-  }
-
-  function getRevealTotal(item){
-    let total = 0;
-    if(item.ja) total += 1;
-    (item.phrases || []).forEach(p=>{ if(p.ja) total += 1; });
-    return total;
-  }
-
-  // ============================
-  // Flashcards Core
-  // ============================
-
-  let dataset = []; // 動的にセット
-  let idx = 0;
-  let revealStep = 0;
-  let cardRewarded = false;
-
-  // --- Elements --------------------------------------------------------
-  const els = {
-    term: document.getElementById('term'),
-    meaning: document.getElementById('meaning'),
-    phrases: document.getElementById('phrases'),
-    card: document.getElementById('card'),
-    categoryLabel: document.getElementById('categoryLabel'),
-    countLabel: document.getElementById('countLabel'),
-    totalCount: document.getElementById('totalCount'),
-    randomBtn: document.getElementById('randomBtn'),
-    progressTrack: document.getElementById('progressTrack'),
-    progressFill: document.getElementById('progressFill')
-  };
-  const rewards = window.RPGStudyRewards.create({
-    slot: '#rewardSlot',
-    icon: '📚',
-    dropEvery: 3
-  });
-
-  // --- Rendering -------------------------------------------------------
-  function updateMeta(){
-    els.categoryLabel.textContent = `${currentCategory}`;
-    if(els.totalCount) els.totalCount.textContent = `全${dataset.length}問`;
-    const current = Math.min(cycleCount, QUESTIONS_PER_CATEGORY);
-    const item = dataset[idx];
-    const completed = item && revealStep >= getRevealTotal(item) ? current : Math.max(0, current - 1);
-    const percent = (completed / QUESTIONS_PER_CATEGORY) * 100;
-    if(els.countLabel) els.countLabel.textContent = `${current} / ${QUESTIONS_PER_CATEGORY}`;
-    if(els.progressFill) els.progressFill.style.width = `${percent}%`;
-    if(els.progressTrack){
-      els.progressTrack.setAttribute('aria-valuenow', String(completed));
-      els.progressTrack.setAttribute('aria-valuetext', `${completed}問解答済み`);
-    }
-  }
-
-  function render(){
-    if(!dataset.length){
-      els.term.textContent = '…';
-      els.meaning.textContent = '';
-      els.meaning.classList.add('is-hidden');
-      els.phrases.innerHTML = '';
-      updateMeta();
-      return;
-    }
-
-    const item = dataset[idx];
-    els.term.textContent = item.en;
-    els.meaning.textContent = item.ja || '';
-
-    const meaningVisible = item.ja && revealStep >= 1;
-    els.meaning.classList.toggle('is-hidden', !meaningVisible);
-
-    els.phrases.innerHTML = '';
-
-    let step = item.ja ? 1 : 0;
-    const questionEls = [];
-    questionEls.push(els.term);
-    (item.phrases || []).forEach((p, i) => {
-      if(!p.en && !p.ja) return;
-      const line = document.createElement('div');
-      line.className = 'phrase-line';
-      const en = document.createElement('div');
-      en.className = 'phrase-en question q-text';
-      en.textContent = p.en;
-      const ja = document.createElement('div');
-      ja.className = 'phrase-ja answer a-text';
-      ja.textContent = p.ja;
-      let jaVisible = false;
-      if(p.ja){
-        step += 1;
-        jaVisible = revealStep >= step;
-      }
-      ja.classList.toggle('is-hidden', !jaVisible);
-      line.appendChild(en);
-      line.appendChild(ja);
-      els.phrases.appendChild(line);
-      questionEls.push(en);
-    });
-
-    const total = getRevealTotal(item);
-    if(total === 0 || revealStep >= total){
-      questionEls.forEach(el => el.classList.add('is-active'));
-    }else{
-      questionEls.forEach(el => el.classList.remove('is-active'));
-      const activeIndex = Math.min(revealStep, questionEls.length - 1);
-      questionEls[activeIndex].classList.add('is-active');
-    }
-    updateMeta();
-  }
-
-  // --- Actions ---------------------------------------------------------
-  function nextCard(){
-    rewards.hide();
-    const nextIndex = takeRandomProblemIndex();
-    if(nextIndex < 0){
-      loadRandomCategory(currentFileIndex);
-      return;
-    }
-    idx = nextIndex;
-    revealStep = 0;
-    cardRewarded = false;
-    cycleCount += 1;
-    render();
-  }
-
-  function advance(){
-    if(!dataset.length) return;
-    const item = dataset[idx];
-    const total = getRevealTotal(item);
-
-    if(total === 0){
-      if(!cardRewarded){
-        rewards.award({ exp:1 });
-        cardRewarded = true;
-        return;
-      }
-      rewards.hide();
-      if(hasReachedCategoryLimit()){
-        loadRandomCategory(currentFileIndex);
-        return;
-      }
-      nextCard();
-      return;
-    }
-
-    if(revealStep < total){
-      revealStep += 1;
-      render();
-      if(revealStep >= total && !cardRewarded){
-        rewards.award({ exp:1 });
-        cardRewarded = true;
-      }
-      return;
-    }
-
-    rewards.hide();
-    if(hasReachedCategoryLimit()){
-      loadRandomCategory(currentFileIndex);
-      return;
-    }
-    nextCard();
-  }
-
-  // --- Events ----------------------------------------------------------
-  els.card.addEventListener('click', advance);
-
-  window.addEventListener('keydown', e=>{
-    if(['Space','Enter'].includes(e.code)) e.preventDefault();
-    if(e.code==='Space' || e.code==='Enter') advance();
-  }, {passive:false});
-
-  // ============================
-  // Boot
-  // ============================
-
-  async function loadRandomCategory(exceptIndex = -1){
-    rewards.hide();
-    const files = getFiles();
-    const idxFile = pickWeightedFileIndex(files, exceptIndex);
-    const filename = files[idxFile].name;
-    currentCategory = filename.replace(/\.(json|js)$/,'');
-
-    els.term.textContent = 'loading…';
-    els.meaning.textContent = '';
-    els.meaning.classList.add('is-hidden');
-    els.phrases.innerHTML = '';
-
-    const res = await loadEnExamplesFile(filename);
-    dataset = toDataset(res.obj);
-    if(!dataset.length){
-      dataset = toDataset(STUB_EN_EXAMPLES);
-    }
-
-    resetProblemQueue();
-    idx = takeRandomProblemIndex();
-    revealStep = 0;
-    cardRewarded = false;
-    cycleCount = 1;
-    currentFileIndex = idxFile;
-    render();
-  }
-
-  function boot(){
-    els.randomBtn.addEventListener('click', (event)=>{
-      event.stopPropagation();
-      loadRandomCategory(currentFileIndex);
-    });
-    loadRandomCategory(-1);
-  }
-
-  boot();
+    })();
   </script>
 </body>
 </html>
+
+
+
+
