@@ -281,6 +281,7 @@
   <script src="./lib/rpg_progression.js"></script>
 <script src="./lib/rpg_equipment.js"></script>
   <script src="./lib/rpg_study_rewards.js"></script>
+  <script src="./lib/study_app_core.js"></script>
 </head>
 <body class="world-app" data-app="speed">
   <div class="top-bar">
@@ -514,11 +515,14 @@ const passages = [
     const quizArea = document.getElementById('quizArea');
     const choicesEl = document.getElementById('choices');
     const feedbackEl = document.getElementById('feedback');
-    const resultHistoryEl = document.getElementById('resultHistory');
     const rewards = window.RPGStudyRewards.create({
       slot: '#rewardSlot',
       icon: '📜',
       dropEvery: 3
+    });
+    const results = window.StudyAppCore.createResultHistory({
+      target: '#resultHistory',
+      limit: 6
     });
     let expAwarded = false;
     let words = [];
@@ -529,17 +533,6 @@ const passages = [
     let currentPassage = null;
     let answered = false;
     let resetTimerId = null;
-
-    function addResult(ok, text) {
-      if (!resultHistoryEl) return;
-      const line = document.createElement("div");
-      line.className = ok ? "ok" : "ng";
-      line.textContent = text;
-      resultHistoryEl.prepend(line);
-      while (resultHistoryEl.children.length > 6) {
-        resultHistoryEl.lastElementChild.remove();
-      }
-    }
 
     function wpmToIntervalMs(wpm) {
       return 60000 / Math.max(1, wpm);
@@ -571,15 +564,6 @@ const passages = [
       if (wordBox) wordBox.classList.toggle("is-startable", canStart);
     }
 
-    function shuffle(list) {
-      const copy = list.slice();
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-      }
-      return copy;
-    }
-
     function normalizePassage(entry) {
       if (Array.isArray(entry)) {
         return {
@@ -602,7 +586,7 @@ const passages = [
     function showQuiz() {
       if (!currentPassage || !currentPassage.choices.length) return;
       const correct = currentPassage.choices[0];
-      const choices = shuffle(currentPassage.choices.slice(0, 4));
+      const choices = window.StudyAppCore.shuffle(currentPassage.choices.slice(0, 4));
 
       if (wordArea) wordArea.style.display = "none";
       if (quizArea) quizArea.classList.add("is-visible");
@@ -642,11 +626,11 @@ const passages = [
           rewards.award({ exp:gain });
         }
         feedbackEl.textContent = "🎉 正解";
-        addResult(true, `🎉 正解 +${gain} EXP`);
+        results.add(true, `🎉 正解 +${gain} EXP`);
       } else {
         selectedBtn.classList.add("is-wrong");
         feedbackEl.textContent = "✖ 不正解";
-        addResult(false, "✖ 不正解 +0 EXP");
+        results.add(false, "✖ 不正解 +0 EXP");
       }
       resetTimerId = setTimeout(resetToStart, 1400);
     }
@@ -716,7 +700,7 @@ const passages = [
 
     function play() {
       if (running || answered || isQuizVisible()) return;
-      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+      window.StudyAppCore.blurActiveElement();
       rewards.hide();
       if (resetTimerId) {
         clearTimeout(resetTimerId);
@@ -779,5 +763,7 @@ const passages = [
   </script>
 </body>
 </html>
+
+
 
 

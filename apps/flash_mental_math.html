@@ -42,6 +42,7 @@
 <script src="./lib/rpg_progression.js"></script>
 <script src="./lib/rpg_equipment.js"></script>
 <script src="./lib/rpg_study_rewards.js"></script>
+<script src="./lib/study_app_core.js"></script>
 </head>
 
 <body class="world-app" data-app="mental">
@@ -90,9 +91,12 @@
     icon:'🧮',
     dropEvery:3
   });
+  const results = window.StudyAppCore.createResultHistory({
+    target:'#hint',
+    limit:6
+  });
   let seq=[], sum=0, i=0, t=null, running=false, readyForChoice=false;
 
-  const randInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
   const rangeForDigits=(d)=>{
     d=Math.max(1,Math.min(6,Number(d)||1));
     return d===1 ? [1,9] : [10**(d-1), 10**d-1];
@@ -136,23 +140,15 @@
     t=setTimeout(showNext, Math.max(50, Number(msEl.value)||300));
   }
 
-  function shuffle(arr){
-    for(let j=arr.length-1;j>0;j--){
-      const r=Math.floor(Math.random()*(j+1));
-      [arr[j],arr[r]]=[arr[r],arr[j]];
-    }
-    return arr;
-  }
-
   function makeChoices(correct){
     const deltas=[-5,-4,-3,-2,-1,1,2,3,4,5];
     const picks=new Set([correct]);
     while(picks.size<4){
-      const delta=deltas[randInt(0,deltas.length-1)];
+      const delta=deltas[window.StudyAppCore.randomInt(0,deltas.length-1)];
       const candidate=correct+delta;
       if(candidate>=0) picks.add(candidate);
     }
-    return shuffle(Array.from(picks));
+    return window.StudyAppCore.shuffle(Array.from(picks));
   }
 
   function showChoices(){
@@ -176,14 +172,6 @@
     updateStartable();
   }
 
-  function addResult(ok, text){
-    const line=document.createElement('div');
-    line.className=ok ? 'ok' : 'ng';
-    line.textContent=text;
-    $('hint').prepend(line);
-    while($('hint').children.length>6) $('hint').lastElementChild.remove();
-  }
-
   function revealResult(chosen){
     const correctVal=String(sum);
     let gain = 0;
@@ -198,21 +186,21 @@
       chosen.classList.add('wrong');
     }
     const ok = chosen && chosen.dataset.value===correctVal;
-    addResult(ok, ok ? `🎉 正解 +${gain} EXP` : `✖ 不正解 +0 EXP`);
+    results.add(ok, ok ? `🎉 正解 +${gain} EXP` : `✖ 不正解 +0 EXP`);
     choiceBtns.forEach(b=>b.disabled=true);
     setTimeout(reset, 1400);
   }
 
   function start(){
     reset();
-    if(document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    window.StudyAppCore.blurActiveElement();
     const k=Math.max(2, Math.min(200, Number(kEl.value)||10));
     const [lo,hi]=rangeForDigits(dEl.value);
     seq=[];
     for(let idx=0; idx<k; idx++){
-      let next = randInt(lo, hi);
+      let next = window.StudyAppCore.randomInt(lo, hi);
       while(seq.length>0 && next===seq[seq.length-1]){
-        next = randInt(lo, hi);
+        next = window.StudyAppCore.randomInt(lo, hi);
       }
       seq.push(next);
     }
@@ -252,5 +240,7 @@
 </script>
 </body>
 </html>
+
+
 
 
