@@ -1,367 +1,510 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>qa tex editor</title>
-  <style>
-    :root { --bg: #111827; --panel: #1f2937; --panel2: #374151; --text: #f9fafb; --muted: #9ca3af; --border: #4b5563; --accent: #60a5fa; --danger: #f87171; --ok: #34d399; }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
-    button, label.fileButton { border: 1px solid var(--border); background: var(--panel2); color: var(--text); padding: 8px 11px; border-radius: 8px; cursor: pointer; font-size: 14px; }
-    button:hover, label.fileButton:hover { filter: brightness(1.1); }
-    button.primary, label.fileButton.primary { border-color: var(--accent); }
-    button.danger { border-color: var(--danger); color: #fecaca; }
-    button.ok { border-color: var(--ok); color: #bbf7d0; }
-    input[type="file"] { display: none; }
-    main { display: grid; grid-template-columns: 380px 1fr; gap: 0; height: 100vh; min-height: 0; }
-    aside { border-right: 1px solid var(--border); background: var(--panel); padding: 12px; overflow: hidden; display: flex; min-height: 0; flex-direction: column; }
-    section.editor { padding: 14px; overflow: auto; }
-    .meta { color: var(--muted); font-size: 13px; margin: 6px 0 12px; line-height: 1.5; }
-    .qaList { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; overflow-y: auto; padding-right: 4px; }
-    .qaItem { border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: #111827; cursor: pointer; }
-    .qaItem.active { border-color: var(--accent); outline: 1px solid var(--accent); }
-    .qaItem .q { font-weight: 700; font-size: 14px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .qaItem .a { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
-    .field { margin-bottom: 12px; }
-    .field label { display: block; color: var(--muted); font-size: 13px; margin-bottom: 6px; }
-    textarea, input[type="text"] { width: 100%; border: 1px solid var(--border); border-radius: 10px; background: #030712; color: var(--text); padding: 10px; font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-    textarea { height: 48px; min-height: 48px; resize: vertical; }
-    .previewBox { border: 1px solid var(--border); border-radius: 10px; background: #030712; min-height: 48px; padding: 10px; overflow: visible; line-height: 1.5; font-size: 15px; }
-    .small { font-size: 12px; color: var(--muted); }
-    .empty { border: 1px dashed var(--border); border-radius: 12px; padding: 24px; color: var(--muted); line-height: 1.7; }
-    .status { color: var(--muted); font-size: 13px; }
-    @media (max-width: 820px) { main { grid-template-columns: 1fr; height: auto; min-height: 100vh; } aside { border-right: 0; border-bottom: 1px solid var(--border); max-height: 45vh; } }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>QA TeX Editor</title>
   <script>
     window.MathJax = {
-      tex: { inlineMath: [["\\(", "\\)"], ["$", "$"]], displayMath: [["\\[", "\\]"], ["$$", "$$"]] },
-      options: { skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"] }
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        packages: {'[+]': ['ams']}
+      },
+      loader: { load: ['[tex]/ams'] },
+      startup: { typeset: false },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
     };
   </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --app-bg: #14171b;
+      --rail-bg: #1d2127;
+      --field-bg: #0d1117;
+      --preview-bg: #171b20;
+      --border: #3a414b;
+      --soft-border: rgb(174 182 194 / 24%);
+      --set-gap: #292f37;
+      --inner-divider: #697381;
+      --text: #f2f4f7;
+      --muted: #aeb6c2;
+      --accent: #7fc6ff;
+      --danger: #ff8b8b;
+      --rail-width: 176px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+    body {
+      background: var(--app-bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans JP",
+                   "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", sans-serif;
+    }
+    button, textarea, input, label.fileAction { font: inherit; }
+    button, label.fileAction {
+      display: flex;
+      width: 100%;
+      min-height: 38px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #2b313a;
+      color: var(--text);
+      padding: 8px 9px;
+      cursor: pointer;
+      user-select: none;
+    }
+    button:hover, label.fileAction:hover { background: #353c47; }
+    button.primary { border-color: #2a82c4; background: #1269a8; }
+    button.primary:hover { background: #1778bc; }
+    button.ok { border-color: #3f8f55; color: #c9ffd7; }
+    button.danger { color: #ffd3d3; }
+    .fileAction {
+      display: flex;
+      width: 100%;
+      min-height: 38px;
+      align-items: center;
+      justify-content: center;
+      border-width: 1px;
+      border-style: solid;
+      border-radius: 7px;
+      padding: 8px 10px;
+      color: #fff;
+      font: 600 14px/1 system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans JP", sans-serif;
+      box-shadow: inset 0 1px rgb(255 255 255 / 9%);
+    }
+    .fileAction.openAction { border-color: #2a82c4; background: #1269a8; }
+    .fileAction.openAction:hover { background: #1778bc; }
+    .fileAction.saveAction { border-color: #3f8f55; background: #23683b; color: #e9ffef; }
+    .fileAction.saveAction:hover { background: #2b7a47; }
+    input[type="file"] { display: none; }
+    main { display: grid; grid-template-columns: var(--rail-width) minmax(0, 1fr); height: 100vh; min-height: 0; }
+    aside {
+      display: flex;
+      min-width: 0;
+      min-height: 0;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px;
+      overflow: auto;
+      background: var(--rail-bg);
+      border-right: 1px solid var(--border);
+    }
+    .fileInfo { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 3px 1px 5px; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .fileName { overflow: hidden; color: var(--text); text-overflow: ellipsis; white-space: nowrap; }
+    .status.error { color: var(--danger); }
+    .railSpacer { flex: 1 1 auto; min-height: 8px; }
+    .qaList { display: grid; gap: 8px; min-width: 0; min-height: 0; padding-bottom: 8px; overflow: auto; align-content: start; background: var(--set-gap); }
+    .qaItem { display: grid; grid-template-columns: 42px minmax(260px, 1fr) minmax(260px, 1fr); min-width: 0; border: 0; background: var(--app-bg); }
+    .qaActions { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 0; padding: 7px 5px; border-right: 1px solid var(--border); background: var(--rail-bg); }
+    .qaActions button { width: 28px; min-height: 22px; height: 22px; padding: 0; border: 1px solid rgb(255 255 255 / 16%); border-radius: 0; background: rgb(255 255 255 / 4%); font-size: 13px; line-height: 1; }
+    .qaActions button + button { border-top: 0; }
+    .qaActions button:first-child { border-radius: 6px 6px 0 0; }
+    .qaActions button:last-child { border-radius: 0 0 6px 6px; }
+    .qaActions button:disabled { opacity: .3; cursor: default; }
+    .qaPair { display: grid; grid-template-rows: minmax(92px, 1fr) minmax(92px, 1fr); min-width: 0; }
+    .sourcePair { border-right: 1px solid var(--border); }
+    textarea, .previewBox { display: block; width: 100%; min-width: 0; min-height: 92px; margin: 0; border: 0; border-radius: 0; color: var(--text); }
+    textarea {
+      resize: vertical;
+      padding: 12px 14px;
+      background: var(--field-bg);
+      outline: none;
+      font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono", monospace;
+      white-space: pre-wrap;
+    }
+    textarea:focus { position: relative; z-index: 1; box-shadow: inset 0 0 0 2px var(--accent); }
+    textarea::placeholder { color: #707987; }
+    .previewBox { overflow: auto; padding: 12px 14px; background: var(--preview-bg); font-size: 16px; line-height: 1.5; white-space: pre-wrap; }
+    .qaPair > :first-child { border-bottom: 1px dashed var(--inner-divider); }
+    .previewBox mjx-container { margin: 0 !important; }
+    .empty { display: grid; min-height: 100%; place-items: center; color: var(--muted); font-size: 13px; }
+    @media (max-width: 820px) {
+      :root { --rail-width: 150px; }
+      .qaItem { grid-template-columns: 38px minmax(220px, 1fr) minmax(220px, 1fr); }
+    }
+    @media (max-width: 620px) {
+      html, body { height: auto; min-height: 100%; overflow: auto; }
+      main { grid-template-columns: 1fr; height: auto; min-height: 100vh; }
+      aside { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-right: 0; border-bottom: 1px solid var(--border); }
+      .fileInfo { grid-column: 1 / -1; }
+      .railSpacer { display: none; }
+      .qaItem { grid-template-columns: 38px minmax(0, 1fr); }
+      .sourcePair { border-right: 0; }
+      .previewPair { grid-column: 2; border-top: 1px solid var(--border); }
+    }
+  </style>
 </head>
 <body>
   <main>
     <aside>
-      <div class="row">
-        <label class="fileButton primary">
-          JSファイルを開く
-          <input id="fileInput" type="file" accept=".js" />
-        </label>
-        <button id="download" class="ok">保存</button>
+      <label class="fileAction openAction">
+        開く
+        <input id="fileInput" type="file" accept=".js">
+      </label>
+      <button id="download" class="fileAction saveAction" type="button">保存</button>
+      <div class="fileInfo" aria-live="polite">
+        <span id="fileName" class="fileName" title="未選択">未選択</span>
+        <span id="meta"></span>
+        <span id="status" class="status"></span>
       </div>
-      <div id="status" class="status">未読み込み</div>
-      <div id="meta" class="meta"></div>
-      <div class="row">
-        <button id="add">QA追加</button>
-        <button id="duplicate">複製</button>
-        <button id="remove" class="danger">削除</button>
-      </div>
-      <div id="qaList" class="qaList"></div>
+      <div class="railSpacer"></div>
+      <button id="add" type="button">末尾にQA追加</button>
     </aside>
-
-    <section class="editor">
-      <div id="empty" class="empty">
-        QA MathのJSファイルを開いてください<br />
-        対応形式は <code>const qa_名前 = [["問題","解答"], ...];</code> のみです<br />
-        編集後は「保存」でダウンロードします
-      </div>
-      <div id="editArea" hidden>
-        <div class="row">
-          <span class="small" id="currentIndex"></span>
-        </div>
-        <div class="field">
-          <label for="question">問題</label>
-          <textarea id="question"></textarea>
-        </div>
-        <div class="field">
-          <label for="answer">解答</label>
-          <textarea id="answer"></textarea>
-        </div>
-        <div class="field">
-          <label>問題TeX</label>
-          <div class="previewBox" id="questionPreview"></div>
-        </div>
-        <div class="field">
-          <label>解答TeX</label>
-          <div class="previewBox" id="answerPreview"></div>
-        </div>
-        <div class="small">
-          保存形式は現行JSと同じ、2要素配列 <code>["問題", "解答"]</code> の一覧です
-        </div>
-      </div>
-    </section>
+    <section id="qaList" class="qaList" aria-label="QA編集一覧"></section>
   </main>
+  <script>
+    (() => {
+      'use strict';
 
-<script>
-(() => {
-  const $ = (id) => document.getElementById(id);
+      const qas = [];
+      let fileName = 'qa_math.js';
+      let variableName = 'qa_math';
+      let leadingComment = '';
+      let opened = false;
+      let dirty = false;
+      let mathReady = false;
 
-  let qas = [];
-  let selected = -1;
-  let fileName = "qa_math.js";
-  let variableName = "qa_math";
-  let leadingComment = "";
-  let dirty = false;
+      const fileInput = document.getElementById('fileInput');
+      const downloadButton = document.getElementById('download');
+      const addButton = document.getElementById('add');
+      const qaList = document.getElementById('qaList');
+      const fileNameElement = document.getElementById('fileName');
+      const meta = document.getElementById('meta');
+      const status = document.getElementById('status');
+      const previewTimers = new WeakMap();
 
-  const state = {
-    fileInput: $("fileInput"), download: $("download"),
-    status: $("status"), meta: $("meta"), qaList: $("qaList"),
-    add: $("add"), duplicate: $("duplicate"), remove: $("remove"),
-    empty: $("empty"), editArea: $("editArea"), question: $("question"), answer: $("answer"),
-    questionPreview: $("questionPreview"), answerPreview: $("answerPreview"), currentIndex: $("currentIndex")
-  };
+      function normalizeNewlines(value) {
+        return String(value ?? '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      }
 
-  function renderFileState(note = "") {
-    const dirtyMark = dirty ? " *" : "";
-    state.status.textContent = note || (fileName ? `${fileName}${dirtyMark}` : "未読み込み");
-    state.meta.textContent = qas.length ? `${qas.length}件 / 変数: ${variableName}` : "";
-  }
+      function stripOuterMathDelimiters(value) {
+        const source = String(value ?? '').trim();
+        const pairs = [
+          ['$$', '$$'],
+          ['\\[', '\\]'],
+          ['\\(', '\\)'],
+          ['$', '$']
+        ];
 
-  function markDirty() {
-    dirty = true;
-    renderFileState();
-  }
-
-  function normalizeNewlines(s) { return String(s || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n"); }
-
-  function parseText(text) {
-    const source = normalizeNewlines(text);
-    const match = source.match(/^\s*((?:(?:\/\/[^\n]*|\/\*[\s\S]*?\*\/)\s*)*)const\s+([^\s=]+)\s*=\s*/);
-    if (!match) {
-      throw new Error("対応形式ではありません: const qa_名前 = [[\"問題\", \"解答\"], ...]; のJSファイルを開いてください");
-    }
-
-    const arrayStart = match[0].length;
-    const arrayEnd = findMatchingBracket(source, arrayStart);
-    if (arrayEnd < 0) {
-      throw new Error("QA配列の終端が見つかりません");
-    }
-
-    const arrayLiteral = source.slice(arrayStart, arrayEnd + 1);
-    const value = Function(`"use strict"; return (${arrayLiteral});`)();
-    if (!Array.isArray(value)) {
-      throw new Error("const の右辺が配列ではありません");
-    }
-
-    return {
-      variableName: match[2],
-      leadingComment: match[1] || "",
-      items: value.map((row, index) => {
-        if (!Array.isArray(row) || row.length < 2) {
-          throw new Error(`${index + 1}件目が ["問題", "解答"] 形式ではありません`);
+        for (const [open, close] of pairs) {
+          if (
+            source.startsWith(open) &&
+            source.endsWith(close) &&
+            source.length >= open.length + close.length
+          ) {
+            return source.slice(open.length, -close.length).trim();
+          }
         }
-        return { q: String(row[0] ?? ""), a: String(row[1] ?? "") };
-      })
-    };
-  }
-
-  function findMatchingBracket(source, start) {
-    while (/\s/.test(source[start] || "")) start++;
-    if (source[start] !== "[") return -1;
-
-    let depth = 0;
-    let quote = "";
-    let escaped = false;
-    let lineComment = false;
-    let blockComment = false;
-
-    for (let i = start; i < source.length; i++) {
-      const ch = source[i];
-      const next = source[i + 1];
-
-      if (lineComment) {
-        if (ch === "\n") lineComment = false;
-        continue;
+        return source;
       }
-      if (blockComment) {
-        if (ch === "*" && next === "/") {
-          blockComment = false;
-          i++;
+
+      function setPreviewMath(preview, value) {
+        preview.replaceChildren();
+        normalizeNewlines(value).split('\n').forEach(rawLine => {
+          const line = document.createElement('div');
+          const tex = stripOuterMathDelimiters(rawLine);
+          line.textContent = tex ? `\\(${tex}\\)` : '\\(\\vphantom{x}\\)';
+          preview.append(line);
+        });
+      }
+
+      function setStatus(message = '', isError = false) {
+        status.textContent = message || (dirty ? '未保存' : '');
+        status.classList.toggle('error', isError);
+      }
+
+      function updateFileInfo() {
+        const displayName = opened ? fileName : '未選択';
+        fileNameElement.textContent = displayName;
+        fileNameElement.title = displayName;
+        meta.textContent = `${qas.length}問${opened ? ` / ${variableName}` : ''}`;
+      }
+
+      function markDirty() {
+        dirty = true;
+        setStatus();
+      }
+
+      function makeActionButton(text, title, className, onClick, disabled = false) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = text;
+        button.title = title;
+        button.setAttribute('aria-label', title);
+        if (className) button.className = className;
+        button.disabled = disabled;
+        button.addEventListener('click', onClick);
+        return button;
+      }
+
+      function makeTextarea(value, placeholder, onInput) {
+        const textarea = document.createElement('textarea');
+        textarea.value = normalizeNewlines(value);
+        textarea.placeholder = placeholder;
+        textarea.setAttribute('aria-label', placeholder);
+        textarea.spellcheck = false;
+        textarea.addEventListener('input', event => onInput(event.target.value));
+        return textarea;
+      }
+
+      function renderList(focusIndex = -1) {
+        qaList.replaceChildren();
+
+        if (!qas.length) {
+          const empty = document.createElement('div');
+          empty.className = 'empty';
+          empty.textContent = 'QAなし';
+          qaList.append(empty);
+          updateFileInfo();
+          return;
         }
-        continue;
-      }
-      if (quote) {
-        if (escaped) {
-          escaped = false;
-        } else if (ch === "\\") {
-          escaped = true;
-        } else if (ch === quote) {
-          quote = "";
+
+        qas.forEach((qa, index) => {
+          const item = document.createElement('article');
+          item.className = 'qaItem';
+
+          const actions = document.createElement('div');
+          actions.className = 'qaActions';
+          actions.append(
+            makeActionButton('↑', 'このQAを上へ移動', '', () => moveQa(index, -1), index === 0),
+            makeActionButton('↓', 'このQAを下へ移動', '', () => moveQa(index, 1), index === qas.length - 1),
+            makeActionButton('+', 'このQAの前に追加', '', () => insertQa(index)),
+            makeActionButton('×', 'このQAを削除', 'danger', () => removeQa(index))
+          );
+
+          const sourcePair = document.createElement('div');
+          sourcePair.className = 'qaPair sourcePair';
+          const previewPair = document.createElement('div');
+          previewPair.className = 'qaPair previewPair';
+
+          const questionPreview = document.createElement('div');
+          questionPreview.className = 'previewBox';
+          questionPreview.setAttribute('aria-label', '問題のレンダリング');
+          const answerPreview = document.createElement('div');
+          answerPreview.className = 'previewBox';
+          answerPreview.setAttribute('aria-label', '解答のレンダリング');
+
+          const question = makeTextarea(qa.q, '問題', value => {
+            qas[index].q = value;
+            markDirty();
+            queuePreview(item, questionPreview, answerPreview, qas[index]);
+          });
+          const answer = makeTextarea(qa.a, '解答', value => {
+            qas[index].a = value;
+            markDirty();
+            queuePreview(item, questionPreview, answerPreview, qas[index]);
+          });
+
+          sourcePair.append(question, answer);
+          previewPair.append(questionPreview, answerPreview);
+          item.append(actions, sourcePair, previewPair);
+          qaList.append(item);
+          queuePreview(item, questionPreview, answerPreview, qa, 0);
+        });
+
+        updateFileInfo();
+        if (focusIndex >= 0) {
+          const target = qaList.querySelectorAll('.qaItem')[focusIndex];
+          target?.querySelector('textarea')?.focus();
+          target?.scrollIntoView({ block: 'nearest' });
         }
-        continue;
       }
 
-      if (ch === "/" && next === "/") {
-        lineComment = true;
-        i++;
-      } else if (ch === "/" && next === "*") {
-        blockComment = true;
-        i++;
-      } else if (ch === "\"" || ch === "'" || ch === "`") {
-        quote = ch;
-      } else if (ch === "[") {
-        depth++;
-      } else if (ch === "]") {
-        depth--;
-        if (depth === 0) return i;
+      function queuePreview(item, questionPreview, answerPreview, qa, delay = 140) {
+        window.clearTimeout(previewTimers.get(item));
+        previewTimers.set(item, window.setTimeout(
+          () => renderPreview(questionPreview, answerPreview, qa), delay
+        ));
       }
-    }
-    return -1;
-  }
 
-  function serialize() {
-    const rows = qas.map(x => `  [${jsString(x.q)}, ${jsString(x.a)}]`).join(",\n");
-    return `${leadingComment}const ${variableName} = [\n${rows}\n];\n`;
-  }
+      async function renderPreview(questionPreview, answerPreview, qa) {
+        setPreviewMath(questionPreview, qa.q);
+        setPreviewMath(answerPreview, qa.a);
+        if (!mathReady || !window.MathJax?.typesetPromise) return;
+        try {
+          MathJax.typesetClear([questionPreview, answerPreview]);
+          await MathJax.typesetPromise([questionPreview, answerPreview]);
+        } catch (error) {
+          console.error(error);
+        }
+      }
 
-  function jsString(value) {
-    return JSON.stringify(normalizeNewlines(value));
-  }
+      function moveQa(index, direction) {
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= qas.length) return;
+        [qas[index], qas[targetIndex]] = [qas[targetIndex], qas[index]];
+        markDirty();
+        renderList(targetIndex);
+      }
 
-  function firstLine(s) { return normalizeNewlines(s).split("\n")[0].trim(); }
+      function insertQa(index) {
+        qas.splice(index, 0, { q: '', a: '' });
+        markDirty();
+        renderList(index);
+      }
 
-  function renderList() {
-    state.qaList.innerHTML = "";
-    qas.forEach((qa, i) => {
-      const el = document.createElement("div");
-      el.className = "qaItem" + (i === selected ? " active" : "");
-      el.innerHTML = `<div class="q">${i + 1}. ${html(firstLine(qa.q) || "（問題なし）")}</div><div class="a">${html(firstLine(qa.a) || "（解答なし）")}</div>`;
-      el.onclick = () => select(i);
-      state.qaList.appendChild(el);
-    });
-    renderFileState();
-  }
+      function addQa() {
+        qas.push({ q: '', a: '' });
+        markDirty();
+        renderList(qas.length - 1);
+      }
 
-  function html(s) {
-    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  }
+      function removeQa(index) {
+        qas.splice(index, 1);
+        markDirty();
+        renderList(Math.min(index, qas.length - 1));
+      }
 
-  function renderPreview() {
-    state.questionPreview.innerHTML = html(state.question.value).replace(/\n/g, "<br>");
-    state.answerPreview.innerHTML = html(state.answer.value).replace(/\n/g, "<br>");
-    if (window.MathJax && MathJax.typesetPromise) {
-      MathJax.typesetPromise([state.questionPreview, state.answerPreview]).catch(() => {});
-    }
-  }
+      function parseText(text) {
+        const source = normalizeNewlines(text);
+        const match = source.match(/^\s*((?:(?:\/\/[^\n]*|\/\*[\s\S]*?\*\/)\s*)*)const\s+([^\s=]+)\s*=\s*/);
+        if (!match) throw new Error('const qa_名前 = [["問題", "解答"], ...]; 形式ではありません');
 
-  function select(i, shouldCommit = true) {
-    if (shouldCommit) commitCurrent();
-    selected = i;
-    const qa = qas[selected];
-    if (!qa) {
-      state.empty.hidden = false;
-      state.editArea.hidden = true;
-      renderList();
-      return;
-    }
-    state.empty.hidden = true;
-    state.editArea.hidden = false;
-    state.question.value = qa.q || "";
-    state.answer.value = qa.a || "";
-    state.currentIndex.textContent = `${selected + 1} / ${qas.length}`;
-    renderPreview();
-    renderList();
-  }
+        const arrayStart = match[0].length;
+        const arrayEnd = findMatchingBracket(source, arrayStart);
+        if (arrayEnd < 0) throw new Error('QA配列の終端が見つかりません');
 
-  function commitCurrent() {
-    if (selected < 0 || !qas[selected]) return;
-    const qa = qas[selected];
-    const nq = state.question.value;
-    const na = state.answer.value;
-    if (qa.q !== nq || qa.a !== na) {
-      qa.q = nq;
-      qa.a = na;
-      markDirty();
-    }
-  }
+        const value = Function(`"use strict"; return (${source.slice(arrayStart, arrayEnd + 1)});`)();
+        if (!Array.isArray(value)) throw new Error('const の右辺が配列ではありません');
 
-  async function loadFromFile(file) {
-    fileName = file.name || "qa_math.js";
-    const text = await file.text();
-    const parsed = parseText(text);
-    qas = parsed.items;
-    variableName = parsed.variableName;
-    leadingComment = parsed.leadingComment;
-    selected = -1;
-    dirty = false;
-    renderFileState();
-    select(qas.length ? 0 : -1, false);
-  }
+        return {
+          variableName: match[2],
+          leadingComment: match[1] || '',
+          items: value.map((row, index) => {
+            if (!Array.isArray(row) || row.length < 2) {
+              throw new Error(`${index + 1}件目が ["問題", "解答"] 形式ではありません`);
+            }
+            return { q: String(row[0] ?? ''), a: String(row[1] ?? '') };
+          })
+        };
+      }
 
-  function download() {
-    commitCurrent();
-    const blob = new Blob([serialize()], { type: "text/plain;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = fileName.replace(/(\.js)?$/, "_edited.js");
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(a.href);
-    a.remove();
-    dirty = false;
-    renderFileState(`${fileName} / ダウンロード済み`);
-  }
+      function findMatchingBracket(source, start) {
+        while (/\s/.test(source[start] || '')) start++;
+        if (source[start] !== '[') return -1;
 
-  function addQa() {
-    commitCurrent();
-    const insertAt = selected >= 0 ? selected + 1 : qas.length;
-    qas.splice(insertAt, 0, { q: "新しい問題", a: "" });
-    markDirty();
-    select(insertAt, false);
-  }
+        let depth = 0;
+        let quote = '';
+        let escaped = false;
+        let lineComment = false;
+        let blockComment = false;
 
-  function duplicateQa() {
-    commitCurrent();
-    if (selected < 0) return;
-    const qa = qas[selected];
-    qas.splice(selected + 1, 0, { q: qa.q, a: qa.a });
-    markDirty();
-    select(selected + 1, false);
-  }
+        for (let index = start; index < source.length; index++) {
+          const char = source[index];
+          const next = source[index + 1];
 
-  function removeQa() {
-    if (selected < 0) return;
-    if (!confirm("選択中のQAを削除しますか？")) return;
-    commitCurrent();
-    const next = Math.min(selected, qas.length - 2);
-    qas.splice(selected, 1);
-    markDirty();
-    selected = -1;
-    select(next, false);
-  }
+          if (lineComment) {
+            if (char === '\n') lineComment = false;
+            continue;
+          }
+          if (blockComment) {
+            if (char === '*' && next === '/') {
+              blockComment = false;
+              index++;
+            }
+            continue;
+          }
+          if (quote) {
+            if (escaped) escaped = false;
+            else if (char === '\\') escaped = true;
+            else if (char === quote) quote = '';
+            continue;
+          }
 
-  function handleEditInput() {
-    if (selected >= 0 && qas[selected]) {
-      qas[selected].q = state.question.value;
-      qas[selected].a = state.answer.value;
-    }
-    markDirty();
-    renderPreview();
-    renderList();
-  }
+          if (char === '/' && next === '/') {
+            lineComment = true;
+            index++;
+          } else if (char === '/' && next === '*') {
+            blockComment = true;
+            index++;
+          } else if (char === '"' || char === "'" || char === '`') {
+            quote = char;
+          } else if (char === '[') {
+            depth++;
+          } else if (char === ']') {
+            depth--;
+            if (depth === 0) return index;
+          }
+        }
+        return -1;
+      }
 
-  state.fileInput.onchange = e => {
-    const file = e.target.files && e.target.files[0];
-    if (file) loadFromFile(file).catch(err => alert(err.message || String(err)));
-  };
-  state.download.onclick = download;
-  state.add.onclick = addQa;
-  state.duplicate.onclick = duplicateQa;
-  state.remove.onclick = removeQa;
-  state.question.oninput = handleEditInput;
-  state.answer.oninput = handleEditInput;
+      function serialize() {
+        const rows = qas
+          .map(qa => `  [${JSON.stringify(normalizeNewlines(qa.q))}, ${JSON.stringify(normalizeNewlines(qa.a))}]`)
+          .join(',\n');
+        return `${leadingComment}const ${variableName} = [\n${rows}\n];\n`;
+      }
 
-  window.addEventListener("beforeunload", e => {
-    commitCurrent();
-    if (dirty) {
-      e.preventDefault();
-      e.returnValue = "";
-    }
-  });
-})();
-</script>
+      async function loadFromFile(file) {
+        const parsed = parseText(await file.text());
+        qas.splice(0, qas.length, ...parsed.items);
+        fileName = file.name || 'qa_math.js';
+        variableName = parsed.variableName;
+        leadingComment = parsed.leadingComment;
+        opened = true;
+        dirty = false;
+        setStatus('読み込み済み');
+        renderList();
+      }
+
+      function download() {
+        const blob = new Blob([serialize()], { type: 'text/javascript;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName.endsWith('.js') ? fileName : `${fileName}.js`;
+        document.body.append(link);
+        link.click();
+        URL.revokeObjectURL(link.href);
+        link.remove();
+        dirty = false;
+        setStatus('保存済み');
+      }
+
+      fileInput.addEventListener('change', event => {
+        const file = event.target.files?.[0];
+        if (file) {
+          loadFromFile(file).catch(error => {
+            console.error(error);
+            setStatus(error?.message || String(error), true);
+          });
+        }
+        event.target.value = '';
+      });
+      downloadButton.addEventListener('click', download);
+      addButton.addEventListener('click', addQa);
+
+      window.addEventListener('keydown', event => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+          event.preventDefault();
+          download();
+        }
+      });
+
+      window.addEventListener('beforeunload', event => {
+        if (!dirty) return;
+        event.preventDefault();
+        event.returnValue = '';
+      });
+
+      window.addEventListener('load', async () => {
+        renderList();
+        try {
+          if (!window.MathJax?.startup?.promise) throw new Error('MathJaxを読み込めませんでした');
+          await MathJax.startup.promise;
+          mathReady = true;
+          renderList();
+        } catch (error) {
+          console.error(error);
+          setStatus(error?.message || String(error), true);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
