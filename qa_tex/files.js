@@ -1,12 +1,12 @@
 const files_qaMathTree = [
   {
-    folder: "大学数学",
+    folder: ["大学数学", 0.1],
     files: [
       ["大学数学_ガロア理論", 1],
     ],
   },
   {
-    folder: "数学",
+    folder: ["数学", 10],
     files: [
       ["数学Ⅰ_数と式", 10],
       ["数学Ⅰ_図形と計量", 10],
@@ -32,7 +32,7 @@ const files_qaMathTree = [
     ],
   },
   {
-    folder: "化学",
+    folder: ["化学", 1],
     files: [
       ["化学基礎_化学と人間生活_物質の構成", 3],
       ["化学基礎_物質量と化学反応式", 3],
@@ -53,7 +53,7 @@ const files_qaMathTree = [
     ],
   },
   {
-    folder: "物理",
+    folder: ["物理", 1],
     files: [
       ["物理_力学", 3],
       ["物理_円運動_単振動", 3],
@@ -69,7 +69,7 @@ const files_qaMathTree = [
     ],
   },
   {
-    folder: "英語",
+    folder: ["英語", 0.5],
     files: [
       ["英語_英文法", 1],
       ["英語_重要例文和訳", 1],
@@ -81,7 +81,7 @@ const files_qaMathTree = [
     ],
   },
   {
-    folder: "国語",
+    folder: ["国語", 0.3],
     files: [
       ["国語_古文単語", 10],
       ["国語_現代文_評論語彙", 1],
@@ -95,7 +95,7 @@ const files_qaMathTree = [
     ],
   },
   {
-    folder: "情報",
+    folder: ["情報", 0.5],
     files: [
       ["情報I_情報社会の問題解決", 1],
       ["情報I_コンピュータの仕組み", 1],
@@ -114,6 +114,48 @@ const files_qaMathTree = [
   },
 ];
 
-function flattenQaFiles(entries, prefix = "") { const files = []; entries.forEach((entry) => { if (Array.isArray(entry)) { const name = prefix ? `${prefix}/${entry[0]}` : entry[0]; files.push([name, entry[1]]); return; } const folder = entry && entry.folder; const children = entry && entry.files; if (!folder || !Array.isArray(children)) return; const nextPrefix = prefix ? `${prefix}/${folder}` : folder; files.push(...flattenQaFiles(children, nextPrefix)); }); return files; }
+function qaFileEntryParts(entry) {
+  if (Array.isArray(entry)) {
+    return {
+      name: String(entry[0] ?? "").trim(),
+      weight: Number(entry[1]),
+      children: null,
+    };
+  }
+
+  const folder = Array.isArray(entry?.folder)
+    ? entry.folder
+    : [entry?.folder, 1];
+  return {
+    name: String(folder[0] ?? "").trim(),
+    weight: Number(folder[1]),
+    children: Array.isArray(entry?.files) ? entry.files : null,
+  };
+}
+
+function flattenQaFiles(entries, prefix = "", groupWeight = null) {
+  if (!Array.isArray(entries)) return [];
+
+  const validEntries = entries
+    .map(qaFileEntryParts)
+    .filter(({ name, weight }) => name && Number.isFinite(weight) && weight > 0);
+  const totalWeight = validEntries.reduce((sum, entry) => sum + entry.weight, 0);
+  const files = [];
+
+  validEntries.forEach(({ name, weight, children }) => {
+    const path = prefix ? `${prefix}/${name}` : name;
+    const effectiveWeight = groupWeight === null
+      ? weight
+      : groupWeight * weight / totalWeight;
+
+    if (children) {
+      files.push(...flattenQaFiles(children, path, effectiveWeight));
+    } else {
+      files.push([path, effectiveWeight]);
+    }
+  });
+
+  return files;
+}
 
 const files_qaMath = flattenQaFiles(files_qaMathTree);

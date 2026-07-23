@@ -140,6 +140,11 @@
           rankWeights: [1],
         },
         getFiles() {
+          if (typeof files_qaMathTree !== "undefined"
+              && Array.isArray(files_qaMathTree)
+              && typeof flattenQaFiles === "function") {
+            return flattenQaFiles(files_qaMathTree);
+          }
           return typeof files_qaMath !== "undefined" && Array.isArray(files_qaMath)
             ? files_qaMath
             : [];
