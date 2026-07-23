@@ -22,4 +22,9 @@ const qa_数学Ⅲ_微分法 = [
   ["\\(\\displaystyle {d\\over dx}\\sin x^2\\)","\\(2x\\cos x^2\\)"],
   ["\\(\\displaystyle {d\\over dx}\\log(1+x^2)\\)","\\(\\displaystyle \\dfrac{2x}{1+x^2}\\)"],
   ["\\(\\displaystyle {d\\over dx}e^{x^2}\\)","\\(2xe^{x^2}\\)"],
+  ["微分可能な関数 \\(f,g\\) が \\(g(a)\\ne0,\\ g'(a)\\ne0\\) を満たし、\\(f(x)/g(x)\\) が \\(x=a\\) で極値をとるとき、\\(f(a)/g(a)\\) を導関数で表せ。","商の微分から \\(f'(a)g(a)-f(a)g'(a)=0\\)。\\(g(a)g'(a)\\ne0\\) なので \\(\\dfrac{f(a)}{g(a)}=\\dfrac{f'(a)}{g'(a)}\\)"],
+  ["曲線 \\(x^2+xy+y^2=7\\) 上で \\(x+2y\\ne0\\) のとき、\\(dy/dx\\) を求めよ。","両辺を \\(x\\) で微分すると \\(2x+y+xy'+2yy'=0\\)。よって \\(\\dfrac{dy}{dx}=-\\dfrac{2x+y}{x+2y}\\)"],
+  ["媒介変数表示 \\(x=t^2+1,\\ y=t^3-3t\\) で表される曲線の \\(t=1\\) における接線の傾きを求めよ。","\\(dx/dt=2t,\\ dy/dt=3t^2-3\\)。\\(t=1\\) では \\(dx/dt=2\\ne0,\\ dy/dt=0\\) だから \\(dy/dx=0\\)"],
+  ["\\(x>0\\) で \\(y=x^{\\sin x}\\) とするとき、\\(y'\\) を求めよ。","\\(\\log y=\\sin x\\log x\\) を微分すると \\(y'/y=\\cos x\\log x+\\dfrac{\\sin x}{x}\\)。よって \\(y'=x^{\\sin x}\\left(\\cos x\\log x+\\dfrac{\\sin x}{x}\\right)\\)"],
+  ["\\(y=e^x\\sin x\\) の第2次導関数を求めよ。","\\(y'=e^x(\\sin x+\\cos x)\\)。さらに微分して \\(y''=e^x(\\sin x+\\cos x)+e^x(\\cos x-\\sin x)=2e^x\\cos x\\)"]
 ];

@@ -29,4 +29,9 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\sin A+\\sin B\\text{ を積の形にせよ}\\)","\\(\\displaystyle \\sin A+\\sin B=2\\sin\\dfrac{A+B}{2}\\cos\\dfrac{A-B}{2}\\)"],
   ["\\(\\cos A+\\cos B\\text{ を積の形にせよ}\\)","\\(\\displaystyle \\cos A+\\cos B=2\\cos\\dfrac{A+B}{2}\\cos\\dfrac{A-B}{2}\\)"],
   ["\\(\\cos A-\\cos B\\text{ を積の形にせよ}\\)","\\(\\displaystyle \\cos A-\\cos B=-2\\sin\\dfrac{A+B}{2}\\sin\\dfrac{A-B}{2}\\)"],
+  ["\\(\\sin A\\sin B\\) を和の形に変形せよ。","積和公式より \\(\\sin A\\sin B=\\dfrac{\\cos(A-B)-\\cos(A+B)}2\\)"],
+  ["\\(\\displaystyle\\sin x\\sin\\left(x+\\frac\\pi3\\right)\\sin\\left(x+\\frac{2\\pi}3\\right)\\) を簡単にせよ。","後ろ2因子の積は \\(\\dfrac{\\cos(-\\pi/3)-\\cos(2x+\\pi)}2=\\dfrac14+\\dfrac12\\cos2x\\)。これに \\(\\sin x\\) を掛けると \\(\\dfrac{3\\sin x-4\\sin^3x}{4}=\\dfrac{\\sin3x}{4}\\)"],
+  ["\\(0\\le x<2\\pi\\) で \\(2\\sin x\\cos x=\\dfrac12\\) を解け。","\\(\\sin2x=\\dfrac12\\) より \\(2x=\\dfrac\\pi6,\\dfrac{5\\pi}6\\pmod{2\\pi}\\)。したがって \\(x=\\dfrac\\pi{12},\\dfrac{5\\pi}{12},\\dfrac{13\\pi}{12},\\dfrac{17\\pi}{12}\\)"],
+  ["\\(0\\le x\\le\\dfrac\\pi2\\) における \\(\\sin x+\\cos x\\) の最大値と最小値を求めよ。","\\(\\sin x+\\cos x=\\sqrt2\\sin(x+\\pi/4)\\)。区間内で最大値は \\(x=\\pi/4\\) の \\(\\sqrt2\\)、最小値は両端で \\(1\\)"],
+  ["\\(0\\le x<2\\pi\\) で \\(\\cos2x=\\sin x\\) を解け。","\\(1-2\\sin^2x=\\sin x\\) より \\((2\\sin x-1)(\\sin x+1)=0\\)。したがって \\(x=\\dfrac\\pi6,\\dfrac{5\\pi}6,\\dfrac{3\\pi}2\\)"]
 ];

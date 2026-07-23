@@ -14,5 +14,10 @@ const qa_数学C_ベクトル = [
   ["\\(\\vec a\\cdot\\vec b\\text{ の定義}\\)", "\\(\\vec a\\cdot\\vec b=|\\vec a||\\vec b|\\cos\\theta\\)"],
   ["\\(\\vec a\\perp\\vec b\\text{ の条件}\\)", "\\(\\vec a\\cdot\\vec b=0\\)"],
   ["\\(\\text{コーシー・シュワルツの不等式}\\)", "\\(\\displaystyle (\\vec a\\cdot\\vec b)^2\\le |\\vec a|^2|\\vec b|^2\\)"],
-  ["\\(\\left(\\sum a_ib_i\\right)^2\\le ? \\)", "\\(\\displaystyle \\left(\\sum a_ib_i\\right)^2\\le\\left(\\sum a_i^2\\right)\\left(\\sum b_i^2\\right)\\)"]
+  ["\\(\\left(\\sum a_ib_i\\right)^2\\le ? \\)", "\\(\\displaystyle \\left(\\sum a_ib_i\\right)^2\\le\\left(\\sum a_i^2\\right)\\left(\\sum b_i^2\\right)\\)"],
+  ["\\(\\vec a=(2,-1),\\ \u000bec b=(t,4)\\) が垂直になる \\(t\\) を求めよ。","\\(\\vec a\\cdot\\vec b=2t-4=0\\) より \\(t=2\\)"],
+  ["点 \\(P(2,0)\\) から直線 \\(\\boldsymbol{x}=(1,0)+t(1,1)\\) に下ろした垂線の足と距離を求めよ。","足を \\(Q=(1+t,t)\\) とすると \\((P-Q)\\cdot(1,1)=1-2t=0\\) より \\(t=\\dfrac12\\)。したがって \\(Q=(\\dfrac32,\\dfrac12)\\)、距離は \\(\\dfrac1{\\sqrt2}\\)"],
+  ["\\(\\vec a=(2,1),\\ \u000bec b=(-1,3)\\) を2辺とする三角形の面積を求めよ。","平行四辺形の符号付き面積は \\(2\\cdot3-1\\cdot(-1)=7\\)。よって三角形の面積は \\(\\dfrac72\\)"],
+  ["点 \\(A(1,0,0)\\) を通り、法線ベクトルが \\((2,-1,3)\\) である平面の方程式を求めよ。","\\(2(x-1)-y+3z=0\\)、すなわち \\(2x-y+3z-2=0\\)"],
+  ["位置ベクトルが \\(\\vec p=\\dfrac{\\vec a+2\\vec b}{3}\\) である点 \\(P\\) は線分 \\(AB\\) をどの比に内分するか。","\\(\\vec p=\\dfrac13\\vec a+\\dfrac23\\vec b\\) なので、\\(A\\) から \\(B\\) へ \\(2/3\\) 進んだ点である。よって \\(AP:PB=2:1\\)"]
 ];

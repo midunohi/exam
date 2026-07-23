@@ -20,4 +20,11 @@ const qa_数学Ⅲ_積分法 = [
   ["\\(\\displaystyle\\int_0^1 \\dfrac{2x}{1+x^2}\\,dx\\)","\\(\\displaystyle =\\int_1^2\\dfrac1u\\,du=\\log2\\)"],
   ["\\(\\displaystyle\\int_0^1 \\dfrac1{1+x^2}\\,dx\\)","\\(\\displaystyle =\\arctan1-\\arctan0=\\dfrac\\pi4\\)"],
   ["\\(\\displaystyle\\int_0^{\\pi/3}\\tan x\\,dx\\)","\\(\\displaystyle =[-\\log\\cos x]_0^{\\pi/3}=\\log2\\)"],
+  ["\\(\\displaystyle\\int_0^1x^2e^x\\,dx\\) を求めよ。","部分積分を2回用いると原始関数は \\(e^x(x^2-2x+2)\\)。したがって \\(\\left[e^x(x^2-2x+2)\\right]_0^1=e-2\\)"],
+  ["単位円の上半円周の重心の \\(y\\) 座標を求めよ。","\\((x,y)=(\\cos\\theta,\\sin\\theta)\\ (0\\le\\theta\\le\\pi)\\) とおくと弧長要素は \\(d\\theta\\)。よって \\(\\bar y=\\dfrac{\\int_0^\\pi\\sin\\theta\\,d\\theta}{\\int_0^\\pi d\\theta}=\\dfrac2\\pi\\)"],
+  ["線分 \\(P=(1,t,t)\\ (-1\\le t\\le1)\\) を \\(z\\) 軸のまわりに回転してできる曲面と、平面 \\(z=-1,z=1\\) で囲まれる立体の体積を求めよ。","高さ \\(z=t\\) で回転半径の2乗は \\(1+t^2\\)。したがって体積は \\(\\displaystyle\\pi\\int_{-1}^{1}(1+t^2)\\,dt=\\frac{8\\pi}{3}\\)"],
+  ["\\(\\displaystyle\\int\\frac{dx}{x^2-1}\\) を求めよ。ただし \\(x\\ne\\pm1\\) とする。","\\(\\dfrac1{x^2-1}=\\dfrac12\\left(\\dfrac1{x-1}-\\dfrac1{x+1}\\right)\\) より \\(\\displaystyle\\frac12\\log\\left|\\frac{x-1}{x+1}\\right|+C\\)"],
+  ["\\(\\displaystyle\\int_0^{\\pi/2}\\sin^3x\\,dx\\) を求めよ。","\\(\\sin^3x=\\sin x(1-\\cos^2x)\\) とし \\(u=\\cos x\\) とおくと、\\(\\displaystyle\\int_0^1(1-u^2)\\,du=1-\\frac13=\\frac23\\)"],
+  ["\\(\\displaystyle\\int_0^1\\sqrt{1-x^2}\\,dx\\) を求めよ。","\\(y=\\sqrt{1-x^2}\\) は単位円の第1象限の弧である。積分はその面積だから \\(\\dfrac\\pi4\\)"],
+  ["曲線 \\(y=\\sqrt x\\ (0\\le x\\le1)\\) と \\(x\\) 軸で囲まれる部分を \\(x\\) 軸のまわりに回転してできる立体の体積を求めよ。","円板の半径は \\(\\sqrt x\\) なので、体積は \\(\\displaystyle\\pi\\int_0^1(\\sqrt x)^2\\,dx=\\pi\\int_0^1x\\,dx=\\frac\\pi2\\)"]
 ];

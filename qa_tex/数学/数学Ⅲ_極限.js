@@ -23,5 +23,10 @@ const qa_数学Ⅲ_極限 = [
   ["\\(\\displaystyle \\lim_{x\\to\\infty}(\\sqrt{x^2+x}-x)\\) を求めよ。", "有理化して分子・分母を \\(x\\) で割ると\n\\(\\displaystyle \\frac{x}{\\sqrt{x^2+x}+x}=\\frac1{\\sqrt{1+1/x}+1}\\to\\frac12\\)"],
   ["\\(\\displaystyle \\lim_{x\\to0+}\\frac1x\\) を求めよ。", "\\(x\\to0+\\) では \\(x>0\\) のまま分母が \\(0\\) に近づくので\n\\(\\displaystyle \\frac1x\\to+\\infty\\)"],
   ["\\(\\displaystyle \\lim_{x\\to\\infty}\\frac{\\log x}{x}\\) を求めよ。", "\\(x=e^t\\) とおくと \\(t\\to\\infty\\) で、\\(\\displaystyle \\frac{\\log x}{x}=\\frac{t}{e^t}\\)\n\\(e^t\\ge t^2/2\\) より\n\\(0\\le t/e^t\\le2/t\\to0\\)"],
-  ["\\(\\displaystyle \\lim_{x\\to\\infty}\\frac{\\sin x}{x}\\) を求めよ。", "\\(\\displaystyle \\left|\\frac{\\sin x}{x}\\right|\\le\\frac1x\\to0\\)\\nはさみうちの原理より \\(0\\)"]
+  ["\\(\\displaystyle \\lim_{x\\to\\infty}\\frac{\\sin x}{x}\\) を求めよ。", "\\(\\displaystyle \\left|\\frac{\\sin x}{x}\\right|\\le\\frac1x\\to0\\)\\nはさみうちの原理より \\(0\\)"],
+  ["\\(\\displaystyle\\lim_{n\\to\\infty}\\sum_{k=0}^{n}\\frac{n^k}{n^n}\\) を求めよ。","等比数列の和より \\(\\displaystyle\\sum_{k=0}^{n}\\frac{n^k}{n^n}=\\frac{n^{n+1}-1}{n^n(n-1)}=\\frac{n-n^{-n}}{n-1}\\to1\\)"],
+  ["\\(\\displaystyle\\lim_{x\\to\\infty}x(\\sqrt{x^2+1}-x)\\) を求めよ。","有理化すると \\(\\displaystyle\\frac{x}{\\sqrt{x^2+1}+x}=\\frac1{\\sqrt{1+1/x^2}+1}\\to\\frac12\\)"],
+  ["無限級数 \\(\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{n(n+2)}\\) の和を求めよ。","\\(\\dfrac1{n(n+2)}=\\dfrac12\\left(\\dfrac1n-\\dfrac1{n+2}\\right)\\)。部分和をとると途中が消え、極限は \\(\\dfrac12\\left(1+\\dfrac12\\right)=\\dfrac34\\)"],
+  ["\\(a_1=\\sqrt2,\\ a_{n+1}=\\sqrt{2+a_n}\\) で定める数列の極限を求めよ。","\\(0<a_n<2\\) では \\(a_{n+1}>a_n\\) で、上に \\(2\\) を上界にもつから収束する。極限を \\(L\\ge0\\) とすると \\(L=\\sqrt{2+L}\\)、よって \\(L=2\\)"],
+  ["\\(\\displaystyle\\lim_{x\\to0}\\frac{\\log(\\cos x)}{x^2}\\) を求めよ。","\\(\\displaystyle\\frac{\\log(\\cos x)}{x^2}=\\frac{\\log(1+u)}u\\cdot\\frac{\\cos x-1}{x^2}\\), \\(u=\\cos x-1\\) とおく。前者は \\(1\\)、後者は \\(-1/2\\) に収束するので \\(-1/2\\)"]
 ];
