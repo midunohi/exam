@@ -8,7 +8,11 @@
   <link rel="stylesheet" href="./lib/flashcard_shared.css" />
   <script>
     window.MathJax = {
-      tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] },
+      tex: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]],
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+        processEscapes: true
+      },
       svg: { fontCache: "global" }
     };
   </script>
@@ -80,6 +84,34 @@
       const question = document.getElementById("problemQuestion");
       const answer = document.getElementById("problemAnswer");
 
+      function normalizeNewlines(value) {
+        return String(value ?? "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+      }
+
+      function hasDelimitedMath(value) {
+        const source = normalizeNewlines(value);
+        return [
+          /\\\([\s\S]*?\\\)/,
+          /\\\[[\s\S]*?\\\]/,
+          /\$\$[\s\S]*?\$\$/,
+          /(^|[^\\$])\$(?!\$)(?:\\.|[^$\n])+\$(?!\$)/
+        ].some((pattern) => pattern.test(source));
+      }
+
+      function toMathJaxSource(value) {
+        const source = normalizeNewlines(value);
+        if (!source.trim()) return "";
+        return hasDelimitedMath(source) ? source : `\\(${source}\\)`;
+      }
+
+      function setCardText(questionValue, answerValue) {
+        if (window.MathJax?.typesetClear) {
+          window.MathJax.typesetClear([question, answer]);
+        }
+        question.textContent = questionValue;
+        answer.textContent = answerValue;
+      }
+
       const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
       async function waitForMathJax(maxMs = 5000) {
@@ -97,7 +129,6 @@
       async function typeset(elements) {
         const mathJax = await waitForMathJax();
         if (!mathJax) return;
-        if (mathJax.typesetClear) mathJax.typesetClear(elements);
         await mathJax.typesetPromise(elements);
       }
 
@@ -130,18 +161,15 @@
         },
         getRevealTotal: () => 1,
         renderLoading() {
-          question.textContent = "loading…";
-          answer.textContent = "";
+          setCardText("loading…", "");
           answer.classList.add("is-hidden");
         },
         renderEmpty() {
-          question.textContent = "…";
-          answer.textContent = "";
+          setCardText("…", "");
           answer.classList.add("is-hidden");
         },
         async renderItem({ item, revealStep }) {
-          question.textContent = String(item?.[0] ?? "");
-          answer.textContent = String(item?.[1] ?? "");
+          setCardText(toMathJaxSource(item?.[0]), toMathJaxSource(item?.[1]));
           answer.classList.toggle("is-hidden", revealStep < 1);
           await typeset([question, answer]);
         },
@@ -150,6 +178,4 @@
   </script>
 </body>
 </html>
-
-
 
