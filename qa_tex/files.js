@@ -6,7 +6,7 @@ const files_qaMathTree = [
     ],
   },
   {
-    folder: ["数学", 10],
+    folder: ["数学", 20],
     files: [
       ["数学Ⅰ_数と式", 10],
       ["数学Ⅰ_図形と計量", 10],
