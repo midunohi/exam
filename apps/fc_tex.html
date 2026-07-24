@@ -6,6 +6,14 @@
   <title>各科目 フラッシュカード</title>
   <link rel="stylesheet" href="./lib/app_world_ui.css" />
   <link rel="stylesheet" href="./lib/flashcard_shared.css" />
+  <style>
+    .tex-card-line {
+      display: block;
+      min-width: 0;
+      max-width: 100%;
+      white-space: pre-wrap;
+    }
+  </style>
   <script>
     window.MathJax = {
       tex: {
@@ -100,16 +108,33 @@
 
       function toMathJaxSource(value) {
         const source = normalizeNewlines(value);
-        if (!source.trim()) return "";
+        if (!source.trim()) return "\\(\\vphantom{x}\\)";
         return hasDelimitedMath(source) ? source : `\\(${source}\\)`;
       }
 
-      function setCardText(questionValue, answerValue) {
+      function setMathJaxContent(element, value) {
+        element.replaceChildren();
+        normalizeNewlines(value).split("\n").forEach((sourceLine) => {
+          const line = document.createElement("div");
+          line.className = "tex-card-line";
+          line.textContent = sourceLine
+            ? toMathJaxSource(sourceLine)
+            : "\\(\\vphantom{x}\\)";
+          element.append(line);
+        });
+      }
+
+      function setCardText(questionValue, answerValue, typesetMath = false) {
         if (window.MathJax?.typesetClear) {
           window.MathJax.typesetClear([question, answer]);
         }
-        question.textContent = questionValue;
-        answer.textContent = answerValue;
+        if (typesetMath) {
+          setMathJaxContent(question, questionValue);
+          setMathJaxContent(answer, answerValue);
+          return;
+        }
+        question.textContent = normalizeNewlines(questionValue);
+        answer.textContent = normalizeNewlines(answerValue);
       }
 
       const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -174,7 +199,7 @@
           answer.classList.add("is-hidden");
         },
         async renderItem({ item, revealStep }) {
-          setCardText(toMathJaxSource(item?.[0]), toMathJaxSource(item?.[1]));
+          setCardText(item?.[0], item?.[1], true);
           answer.classList.toggle("is-hidden", revealStep < 1);
           await typeset([question, answer]);
         },
