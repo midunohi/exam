@@ -34,6 +34,7 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(0\\le x\\le\\dfrac\\pi2\\) における \\(\\sin x+\\cos x\\) の最大値と最小値を求めよ。", "\\(\\sin x+\\cos x=\\sqrt2\\sin(x+\\pi/4)\\)。\n区間内で最大値は \\(x=\\pi/4\\) の \\(\\sqrt2\\)、最小値は両端で \\(1\\)"],
   ["\\(0\\le x<2\\pi\\) で \\(2\\sin x\\cos x=\\dfrac12\\) を解け。", "\\(\\sin2x=\\dfrac12\\) より \\(2x=\\dfrac\\pi6,\\dfrac{5\\pi}6\\pmod{2\\pi}\\)。\nしたがって \\(x=\\dfrac\\pi{12},\\dfrac{5\\pi}{12},\\dfrac{13\\pi}{12},\\dfrac{17\\pi}{12}\\)"],
   ["\\(0\\le x<2\\pi\\) で \\(\\cos2x=\\sin x\\) を解け。", "\\(1-2\\sin^2x=\\sin x\\) より \\((2\\sin x-1)(\\sin x+1)=0\\)。\nしたがって \\(x=\\dfrac\\pi6,\\dfrac{5\\pi}6,\\dfrac{3\\pi}2\\)"],
+  ["4x^3-3x=\\dfrac12", "x=\\cos\\theta\\text{ とおくと} \\cos3\\theta=\\dfrac12\n\\therefore x=\\cos\\dfrac{\\pi}{9},\\cos\\dfrac{5\\pi}{9},\\cos\\dfrac{7\\pi}{9}"],
   ["\\(\\displaystyle\\sin\\frac{\\pi}{12}\\) を求めよ。", "\\(\\displaystyle\\sin\\left(\\frac\\pi4-\\frac\\pi6\\right)=\\frac{\\sqrt2}2\\frac{\\sqrt3}2-\\frac{\\sqrt2}2\\frac12=\\frac{\\sqrt6-\\sqrt2}{4}\\)"],
   ["\\(\\displaystyle\\tan\\frac{\\pi}{12}\\) を求めよ。", "\\(\\displaystyle\\tan\\left(\\frac\\pi4-\\frac\\pi6\\right)=\\frac{1-1/\\sqrt3}{1+1/\\sqrt3}=2-\\sqrt3\\)"],
   ["\\(\\displaystyle\\sin\\frac{\\pi}{8}\\) を求めよ。", "\\(\\displaystyle\\cos\\frac\\pi4=1-2\\sin^2\\frac\\pi8\\) より\n\\(\\displaystyle\\sin\\frac\\pi8=\\sqrt{\\frac{1-1/\\sqrt2}{2}}=\\frac{\\sqrt{2-\\sqrt2}}2\\)"],
@@ -41,6 +42,7 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\displaystyle\\tan\\frac{\\pi}{8}\\) を求めよ。", "\\(t=\\tan\\frac\\pi8\\) とおくと \\(\\displaystyle1=\\tan\\frac\\pi4=\\frac{2t}{1-t^2}\\)。\nよって \\(t^2+2t-1=0\\)。\\(t>0\\) より \\(\\displaystyle t=\\sqrt2-1\\)"],
   ["\\(\\displaystyle\\cos\\frac{\\pi}{5}\\) を求めよ。", "\\(\\theta=\\frac\\pi5,\\ x=\\cos\\theta\\) とおく。\\(3\\theta=\\pi-2\\theta\\) より \\(\\cos3\\theta=-\\cos2\\theta\\)。\nしたがって \\(4x^3-3x=-(2x^2-1)\\)、すなわち \\((x+1)(4x^2-2x-1)=0\\)。\n\\(0<x<1\\) より \\(\\displaystyle x=\\frac{1+\\sqrt5}{4}\\)"],
   ["\\(\\displaystyle\\cos\\frac{2\\pi}{5}\\) を求めよ。", "\\(\\displaystyle\\cos\\frac{2\\pi}{5}=2\\cos^2\\frac\\pi5-1=2\\left(\\frac{1+\\sqrt5}{4}\\right)^2-1=\\frac{\\sqrt5-1}{4}\\)"],
+  ["\\displaystyle \\sin\\dfrac{\\pi}{10} =", "\\theta=\\dfrac{\\pi}{10},\\quad x=\\sin\\theta\\text{ とおく}\n\\sin3\\theta=\\cos2\\theta\n\\therefore 3x-4x^3=1-2x^2\n\\therefore 4x^3-2x^2-3x+1=0\n\\therefore (x-1)(4x^2+2x-1)=0\n答え\\space\\dfrac{\\sqrt5-1}{4}\\space(\\because 0<x<1)"],
   ["\\(\\displaystyle\\cos\\frac{\\pi}{10}\\) を求めよ。", "半角公式より\n\\(\\displaystyle\\cos\\frac\\pi{10}=\\sqrt{\\frac{1+\\cos(\\pi/5)}2}=\\frac{\\sqrt{10+2\\sqrt5}}4\\)"],
   ["\\(\\displaystyle\\sin\\frac{\\pi}{5}\\) を求めよ。", "\\(\\displaystyle\\sin\\frac\\pi5=\\sqrt{1-\\cos^2\\frac\\pi5}=\\sqrt{1-\\left(\\frac{1+\\sqrt5}{4}\\right)^2}=\\frac{\\sqrt{10-2\\sqrt5}}4\\)" ]
 ];

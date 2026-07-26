@@ -18,6 +18,7 @@ const qa_数学Ⅲ_積分法 = [
   ["\\(\\displaystyle\\int_0^1 2xe^{x^2}\\,dx\\)", "\\(\\displaystyle=\\int_0^1 e^u\\,du=e-1\\)"],
   ["\\(\\displaystyle\\int_0^1 \\dfrac{2x}{1+x^2}\\,dx\\)", "\\(\\displaystyle=\\int_1^2\\dfrac1u\\,du=\\log2\\)"],
   ["\\(\\displaystyle\\int_0^{\\pi/2}\\sin^3x\\,dx\\) を求めよ。", "\\(\\sin^3x=\\sin x(1-\\cos^2x)\\) とし \\(u=\\cos x\\) とおくと、\n\\(\\displaystyle\\int_0^1(1-u^2)\\,du=1-\\frac13=\\frac23\\)"],
+  ["n\\geqq1 とする\n\\displaystyle I_{2n} = \\int_0^{\\frac{\\pi}{2}}\\sin^{2n}x\\,dx", "\\displaystyle I_{2n} =[-\\cos x\\sin^{2n-1}x] \n+ (2n-1)\\int\\cos^2x\\sin^{2n-2}x\\,dx\n=(2n-1)(I_{2n-2}-I_{2n})\n=\\dfrac{2n-1}{2n}I_{2n-2}\n=\\dfrac{(2n-1)(2n-3)\\cdots1}{(2n)(2n-2)\\cdots2}\\cdot\\dfrac{\\pi}{2}"],
   ["\\(\\displaystyle\\int\\frac{dx}{x^2-1}\\) を求めよ。\nただし \\(x\\ne\\pm1\\) とする。", "\\(\\dfrac1{x^2-1}=\\dfrac12\\left(\\dfrac1{x-1}-\\dfrac1{x+1}\\right)\\) より\n\\(\\displaystyle\\frac12\\log\\left|\\frac{x-1}{x+1}\\right|+C\\)"],
   ["\\(\\displaystyle\\int x\\cos x\\,dx\\)", "\\(\\displaystyle=x\\sin x-\\int\\sin x\\,dx\\)\n\\(\\displaystyle=x\\sin x+\\cos x+C\\)"],
   ["\\(\\displaystyle\\int x e^x\\,dx\\)", "\\(\\displaystyle=xe^x-\\int e^x\\,dx\\)\n\\(\\displaystyle=e^x(x-1)+C\\)"],
