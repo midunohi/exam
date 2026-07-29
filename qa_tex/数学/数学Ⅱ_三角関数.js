@@ -20,6 +20,7 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\displaystyle\\sin^2\\dfrac\\theta2\\)", "\\(\\displaystyle=\\dfrac{1-\\cos\\theta}2\\)"],
   ["\\(\\displaystyle\\cos^2\\dfrac\\theta2\\)", "\\(\\displaystyle=\\dfrac{1+\\cos\\theta}2\\)"],
   ["\\(\\displaystyle\\tan^2\\dfrac\\theta2\\)", "\\(\\displaystyle=\\dfrac{1-\\cos\\theta}{1+\\cos\\theta}\\)"],
+  ["実数a,bに対し\n\\displaystyle 1-\\cos(a+b)\n\\leqq2(1-\\cos a\\space+\\space1-\\cos b)\n\\text{を証明}","\\displaystyle \\left|\\sin\\frac{a+b}{2}\\right|\\leqq\\left|\\sin\\frac a2\\right|+\\left|\\sin\\frac b2\\right|\n\\therefore \\displaystyle \\sin^2\\frac{a+b}{2} \\leqq 2\\left(\\sin^2\\frac a2+\\sin^2\\frac b2\\right)"],
   ["\\(\\sin 3\\theta\\) =", "\\(3\\sin\\theta-4\\sin^3\\theta\\)"],
   ["\\(\\sin3\\theta\\text{ を }\\sin\\theta\\text{ で表せ}\\)", "\\(\\sin3\\theta=3\\sin\\theta-4\\sin^3\\theta\\)"],
   ["\\(\\cos3\\theta\\text{ を }\\cos\\theta\\text{ で表せ}\\)", "\\(\\cos3\\theta=4\\cos^3\\theta-3\\cos\\theta\\)"],

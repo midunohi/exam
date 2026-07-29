@@ -9,6 +9,7 @@ const qa_数学C_平面上の曲線と複素数平面 = [
   ["直交座標から極座標への関係式は？", "\\(r^2=x^2+y^2,\\ \\tan\\theta=\\frac yx\\)"],
   ["直線 \\(x=a\\) の極方程式は？", "\\(r\\cos\\theta=a\\)"],
   ["極方程式 \\(r=2a\\sin\\theta\\) が表す図形は？", "中心 \\((0,a)\\)、半径 \\(a\\) の円"],
+  ["極方程式\\space \\displaystyle r=\\frac{1}{1-\\sin\\theta}\n\\text{を }x,y\\text{ で表すと}","r-r\\sin\\theta=1\\quad \\therefore r=y+1\n\\therefore x^2+y^2=(y+1)^2\\quad\\therefore y=\\dfrac{x^2-1}2"],
   ["極方程式 \\(r=2a(1+\\cos\\theta)\\ (a>0)\\) について、\n原点を通るときの \\(\\theta\\) と、\\(r\\) の最大値を求めよ。", "\\(r=0\\) は \\(1+\\cos\\theta=0\\) より \\(\\theta=\\pi\\)。\nまた \\(\\cos\\theta\\le1\\) より最大値は \\(\\theta=0\\) のとき \\(4a\\)"],
   ["ド・モアブルの定理は？", "\\((\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta\\)"],
   ["方程式 \\(z^n=1\\) の解は？", "\\(z=\\cos\\frac{2k\\pi}n+i\\sin\\frac{2k\\pi}n\\)\n\\(k=0,1,\\dots,n-1\\)"],
@@ -19,5 +20,6 @@ const qa_数学C_平面上の曲線と複素数平面 = [
   ["複素数 \\(z=x+iy\\) が \\(|z-1|=2|z+1|\\) を満たすとき、\nその軌跡を求めよ。", "2乗して \\((x-1)^2+y^2=4\\{(x+1)^2+y^2\\}\\)。\n整理すると \\(\\left(x+\\dfrac53\\right)^2+y^2=\\left(\\dfrac43\\right)^2\\)"],
   ["点 \\(z\\) を原点のまわりに角 \\(\\theta\\) だけ回転した点は？", "\\((\\cos\\theta+i\\sin\\theta)z\\)"],
   ["点 \\(z\\) を点 \\(a\\) のまわりに角 \\(\\theta\\) だけ回転した点 \\(w\\) は？", "\\(w-a=(\\cos\\theta+i\\sin\\theta)(z-a)\\)"],
+  ["複素数平面上にO(0),\\ A(\\alpha),\\ B(\\beta)\\text{ があるとき}\n\\overrightarrow{OA}\\cdot\\overrightarrow{OB} =\n\\triangle OAB\\text{ の面積}=","\n\\operatorname{Re}(\\alpha\\overline{\\beta})\n\\dfrac12\\left|\\operatorname{Im}(\\alpha\\overline{\\beta})\\right|"],
   ["相異なる複素数 \\(\\alpha,\\beta,\\gamma\\) が正三角形の頂点を表すことと、\n\\(\\alpha^2+\\beta^2+\\gamma^2=\\alpha\\beta+\\beta\\gamma+\\gamma\\alpha\\) が\n同値であることを示せ。", "相似変換で \\(\\alpha=-1,\\beta=1\\) としてよい。\n条件式は \\(2+\\gamma^2=-1\\) となるから\n\\(\\gamma=\\pm\\sqrt3i\\)。これは辺長2の正三角形の第3頂点であり、\n逆も同じ計算で成り立つ。"]
 ];
