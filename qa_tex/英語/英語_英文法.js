@@ -90,7 +90,6 @@ const qa_英語_英文法 = [
   ["意見文で主張を示す基本表現は？", "I think that ...\nIn my opinion, ..."],
   ["理由を追加する基本表現は？", "This is because ...\nAnother reason is that ..."],
   ["具体例を導く表現は？", "For example, ...\nFor instance, ..."],
-  ["譲歩して反論する表現は？", "It is true that ..., but ..."],
   ["結論を導く表現は？", "Therefore, ...\nFor these reasons, ..."],
   ["however が文と文をつなぐときの役割は？", "逆接・対比を示す"]
 ];
