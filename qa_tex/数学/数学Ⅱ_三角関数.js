@@ -33,6 +33,7 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\displaystyle\\sin x\\sin\\left(x+\\frac\\pi3\\right)\\sin\\left(x+\\frac{2\\pi}3\\right)\\) を簡単にせよ。", "後ろ2因子の積は \\(\\dfrac{\\cos(-\\pi/3)-\\cos(2x+\\pi)}2=\\dfrac14+\\dfrac12\\cos2x\\)。\nこれに \\(\\sin x\\) を掛けると \\(\\dfrac{3\\sin x-4\\sin^3x}4=\\dfrac{\\sin3x}4\\)"],
   ["\\(a\\sin x+b\\cos x\\) の最大値は？", "\\(\\sqrt{a^2+b^2}\\)"],
   ["\\(0\\le x\\le\\dfrac\\pi2\\) における \\(\\sin x+\\cos x\\) の最大値と最小値を求めよ。", "\\(\\sin x+\\cos x=\\sqrt2\\sin(x+\\pi/4)\\)。\n区間内で最大値は \\(x=\\pi/4\\) の \\(\\sqrt2\\)、最小値は両端で \\(1\\)"],
+  ["\\displaystyle 0\\leqq\\theta_k\\leqq\\frac{\\pi}{2},\n\\displaystyle \\sum_{k=1}^{n}\\cos\\theta_k=1\\text{ のとき}\n\\displaystyle \\sum_{k=1}^{n} \\sin\\theta_k の範囲は","\\sin\\theta\\geqq1-\\cos\\theta\\quadより\n\\displaystyle n-1 \\leqq \\sum\\sin\\theta\n\\{\\theta\\}= \\{0,\\frac{\\pi}{2},\\ldots,\\frac{\\pi}{2}\\} で等号成立\n\n\\left(\\sum\\sin\\theta\\right)^2 +\\left(\\sum\\cos\\theta\\right)^2\n\\leqq n\\{\\left(\\sum\\sin^2\\theta\\right)+\\left(\\sum\\cos^2\\theta\\right)\\}\n=n^2\n∴ \\sum\\sin\\theta\\leqq \\sqrt{n^2-1}\n\\space\\cos\\theta_1=\\cdots=\\cos\\theta_n=\\frac1n で等号成立"],
   ["\\(0\\le x<2\\pi\\) で \\(2\\sin x\\cos x=\\dfrac12\\) を解け。", "\\(\\sin2x=\\dfrac12\\) より \\(2x=\\dfrac\\pi6,\\dfrac{5\\pi}6\\pmod{2\\pi}\\)。\nしたがって \\(x=\\dfrac\\pi{12},\\dfrac{5\\pi}{12},\\dfrac{13\\pi}{12},\\dfrac{17\\pi}{12}\\)"],
   ["\\(0\\le x<2\\pi\\) で \\(\\cos2x=\\sin x\\) を解け。", "\\(1-2\\sin^2x=\\sin x\\) より \\((2\\sin x-1)(\\sin x+1)=0\\)。\nしたがって \\(x=\\dfrac\\pi6,\\dfrac{5\\pi}6,\\dfrac{3\\pi}2\\)"],
   ["4x^3-3x=\\dfrac12", "x=\\cos\\theta\\text{ とおくと} \\cos3\\theta=\\dfrac12\n\\therefore x=\\cos\\dfrac{\\pi}{9},\\cos\\dfrac{5\\pi}{9},\\cos\\dfrac{7\\pi}{9}"],
@@ -47,3 +48,4 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\displaystyle\\cos\\frac{\\pi}{10}\\) を求めよ。", "半角公式より\n\\(\\displaystyle\\cos\\frac\\pi{10}=\\sqrt{\\frac{1+\\cos(\\pi/5)}2}=\\frac{\\sqrt{10+2\\sqrt5}}4\\)"],
   ["\\(\\displaystyle\\sin\\frac{\\pi}{5}\\) を求めよ。", "\\(\\displaystyle\\sin\\frac\\pi5=\\sqrt{1-\\cos^2\\frac\\pi5}=\\sqrt{1-\\left(\\frac{1+\\sqrt5}{4}\\right)^2}=\\frac{\\sqrt{10-2\\sqrt5}}4\\)" ]
 ];
+

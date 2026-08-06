@@ -4,6 +4,7 @@ const qa_数学C_平面上の曲線と複素数平面 = [
   ["放物線 \\(x^2=4py\\) の焦点, 準線は？", "焦点 \\((0,p)\\)\n準線 \\(y=-p\\)"],
   ["放物線 \\(y^2=8x\\) 上の点を \\(P(2t^2,4t)\\) と表すとき、\n\\(P\\) における接線の方程式を求めよ。", "\\(y^2=4px\\) の接線 \\(yy_1=2p(x+x_1)\\) に \\(p=2\\) を代入すると \\(4ty=4(x+2t^2)\\)。\nよって \\(ty=x+2t^2\\)"],
   ["楕円 \\(\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=1\\ (a>b>0)\\)\nの焦点, 離心率は？", "焦点 \\((\\pm\\sqrt{a^2-b^2},0)\\)\n離心率 \\(\\frac{\\sqrt{a^2-b^2}}a\\)"],
+  ["(-4,0)からの距離\nA =\\sqrt{(x+4)^2+y^2}と\n(4,0) からの距離\nB =\\sqrt{(x-4)^2+y^2}\nの和が10である点の軌跡は","A-B = \\dfrac{A^2-B^2}{A+B} = \\dfrac{8x}5\n\\therefore A = 5 + \\dfrac{4x}5\n\\therefore (x+4)^2+y^2  = 25 + 8x + \\dfrac{16x^2}{25}\n\\therefore\\ \\dfrac{x^2}{25}+\\dfrac{y^2}{9}=1"],
   ["楕円 \\(\\dfrac{x^2}9+\\dfrac{y^2}4=1\\) 上の点 \\((3\\cos\\theta,2\\sin\\theta)\\) における\n接線を求めよ。", "楕円の接線公式より \\(\\dfrac{x(3\\cos\\theta)}9+\\dfrac{y(2\\sin\\theta)}4=1\\)。\nすなわち \\(\\dfrac{x\\cos\\theta}3+\\dfrac{y\\sin\\theta}2=1\\)"],
   ["双曲線 \\(\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=1\\) の焦点, 漸近線, 離心率は？", "焦点 \\((\\pm\\sqrt{a^2+b^2},0)\\)\n漸近線 \\(y=\\pm\\frac bax\\)\n離心率 \\(\\frac{\\sqrt{a^2+b^2}}a\\)"],
   ["直交座標から極座標への関係式は？", "\\(r^2=x^2+y^2,\\ \\tan\\theta=\\frac yx\\)"],
@@ -23,3 +24,4 @@ const qa_数学C_平面上の曲線と複素数平面 = [
   ["複素数平面上にO(0),\\ A(\\alpha),\\ B(\\beta)\\text{ があるとき}\n\\overrightarrow{OA}\\cdot\\overrightarrow{OB} =\n\\triangle OAB\\text{ の面積}=","\n\\operatorname{Re}(\\alpha\\overline{\\beta})\n\\dfrac12\\left|\\operatorname{Im}(\\alpha\\overline{\\beta})\\right|"],
   ["相異なる複素数 \\(\\alpha,\\beta,\\gamma\\) が正三角形の頂点を表すことと、\n\\(\\alpha^2+\\beta^2+\\gamma^2=\\alpha\\beta+\\beta\\gamma+\\gamma\\alpha\\) が\n同値であることを示せ。", "相似変換で \\(\\alpha=-1,\\beta=1\\) としてよい。\n条件式は \\(2+\\gamma^2=-1\\) となるから\n\\(\\gamma=\\pm\\sqrt3i\\)。これは辺長2の正三角形の第3頂点であり、\n逆も同じ計算で成り立つ。"]
 ];
+

@@ -6,6 +6,8 @@ const qa_数学C_ベクトル = [
   ["零ベクトルでない \\(\\vec a,\\vec b\\) が垂直である条件は？", "\\(\\vec a\\cdot\\vec b=0\\)"],
   ["\\(\\vec a\\perp\\vec b\\text{ の条件}\\)", "\\(\\vec a\\cdot\\vec b=0\\)"],
   ["\\(|\\vec a-\\vec b|^2\\text{ を展開}\\)", "\\(|\\vec a-\\vec b|^2=|\\vec a|^2-2\\vec a\\cdot\\vec b+|\\vec b|^2\\)"],
+  ["平行四辺形ABCD\nAC^2+BD^2 =","|\\overrightarrow{AB}+\\overrightarrow{AD}|^2+|-\\overrightarrow{AB}+\\overrightarrow{AD}|^2\n=2AB^2+2AD^2"],
+  ["△ABC,BCの中点M\nAB^2+AC^2 =","|\\overrightarrow{AM}+\\overrightarrow{MB}|^2+|\\overrightarrow{AM}-\\overrightarrow{MB}|^2\n=2AM^2+2BM^2"],
   ["\\(\\text{コーシー・シュワルツの不等式}\\)", "\\(\\displaystyle(\\vec a\\cdot\\vec b)^2\\le |\\vec a|^2|\\vec b|^2\\)"],
   ["\\(\\left(\\sum a_ib_i\\right)^2\\le ? \\)", "\\(\\displaystyle\\left(\\sum a_ib_i\\right)^2\\le\\left(\\sum a_i^2\\right)\\left(\\sum b_i^2\\right)\\)"],
   ["\\(\\vec a\\) の \\(\\vec b\\) 方向への正射影ベクトルは？ \\(\\vec b\\ne\\vec0\\)", "\\(\\displaystyle\\frac{\\vec a\\cdot\\vec b}{|\\vec b|^2}\\vec b\\)"],
@@ -26,3 +28,4 @@ const qa_数学C_ベクトル = [
   ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、\n位置ベクトル \\(\\overrightarrow{OG}\\) は？", "\\(\\displaystyle\\overrightarrow{OG}=\\frac{\\overrightarrow{OA}+\\overrightarrow{OB}+\\overrightarrow{OC}+\\overrightarrow{OD}}4\\)"],
   ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、底面 \\(BCD\\) からの \\(A,G\\) の高さの比は？", "\\(4:1\\)"]
 ];
+

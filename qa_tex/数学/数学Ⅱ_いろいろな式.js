@@ -16,5 +16,6 @@ const qa_数学Ⅱ_いろいろな式 = [
   ["\\(x^2+1=0\\) の解は？", "\\(x=\\pm i\\)"],
   ["三次方程式の実数係数で虚数解 \\(a+bi\\) をもつとき、もう一つの虚数解は？", "\\(a-bi\\)"],
   ["\\((1+i)^8\\) を求めよ。", "\\(1+i=\\sqrt2(\\cos\\dfrac\\pi4+i\\sin\\dfrac\\pi4)\\) だから、\nド・モアブルの定理より (1+i)^8=\n(\\sqrt2)^8(\\cos2\\pi+i\\sin2\\pi)=16"],
-  ["\\(a,b\\ge0\\) の相加相乗平均は？", "\\(\\dfrac{a+b}2\\ge\\sqrt{ab}\\)"]
+  ["\\(a,b\\ge0\\) の相加相乗平均は？", "\\(\\dfrac{a+b}2\\ge\\sqrt{ab}\\)"],
+  ["正の実数a_1,a_2,\\ldots,a_nに対し\n相加相乗平均の不等式を証明","指数関数は下に凸なので\n\\dfrac{e^{x_1}+e^{x_2}+\\cdots+e^{x_n}}{n} \\geqq e^{\\frac{x_1+x_2+\\cdots+x_n}{n}}\nx_k=\\log a_k\\text{ とおくと}\n\\displaystyle \\frac{a_1+a_2+\\cdots+a_n}{n}\\geqq \\sqrt[n]{a_1a_2\\cdots a_n}\n等号成立\\space a_1=a_2=\\cdots=a_n"],
 ];
