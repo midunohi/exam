@@ -15,6 +15,7 @@ const qa_数学C_平面上の曲線と複素数平面 = [
   ["ド・モアブルの定理は？", "\\((\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta\\)"],
   ["方程式 \\(z^n=1\\) の解は？", "\\(z=\\cos\\frac{2k\\pi}n+i\\sin\\frac{2k\\pi}n\\)\n\\(k=0,1,\\dots,n-1\\)"],
   ["複素数の方程式 \\(z^4=-16\\) の解を極形式で求めよ。", "絶対値は \\(2\\)、偏角は \\(\\dfrac{\\pi+2k\\pi}4\\) だから、\n\\(z=2\\left\\{\\cos\\left(\\dfrac\\pi4+\\dfrac{k\\pi}2\\right)+i\\sin\\left(\\dfrac\\pi4+\\dfrac{k\\pi}2\\right)\\right\\}\\ (k=0,1,2,3)\\)"],
+  ["z≠0\nz^3=z+\\overline z\nの複素数解は", "r^3e^{3i\\theta}=2r\\cos\\theta\\quad\\therefore \\theta=\\dfrac{k\\pi}{3}\nr^2(-1)^k=2\\cos\\dfrac{k\\pi}{3}\\quad\\therefore k=0,3\\space\n\\therefore z=\\pm\\sqrt2"],
   ["\\(|z-a|=r\\) が表す図形は？", "中心 \\(a\\)、半径 \\(r\\) の円"],
   ["\\(|z-a|=|z-b|\\) が表す図形は？", "点 \\(a,b\\) を結ぶ線分の垂直二等分線"],
   ["\\(\\left|\\frac{z-a}{z-b}\\right|=k\\ (k>0,\\ k\\neq1)\\) が表す図形は？", "アポロニウスの円"],

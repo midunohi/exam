@@ -4,6 +4,7 @@ const qa_数学B_数列 = [
   ["\\(\\displaystyle\\sum_{k=1}^n k\\)", "\\(\\displaystyle=\\dfrac{n(n+1)}2\\)"],
   ["\\(\\displaystyle\\sum_{k=1}^n k^2\\)", "\\(\\displaystyle=\\dfrac{n(n+1)(2n+1)}6\\)"],
   ["\\(\\displaystyle\\sum_{k=1}^n k^3\\)", "\\(\\displaystyle=\\left\\{\\dfrac{n(n+1)}2\\right\\}^2\\)"],
+  ["\\displaystyle \\sum_{k=1}^{n}k^3 =", "\\displaystyle \\sum_{k=1}^{n}\\left(\\left\\{\\dfrac{k(k+1)}2\\right\\}^2 -\\left\\{\\dfrac{k(k-1)}2\\right\\}^2 \\right) = \\left\\{\\dfrac{n(n+1)}2\\right\\}^2"],
   ["\\(r\\ne1\\) とする\n\\(1+r+\\cdots+r^{n-1}=\\)", "\\(\\displaystyle\\frac{r^n-1}{r-1}\\)"],
   ["\\(\\text{等比数列 }a_n=a_1r^{n-1}\\text{ の和 }(r\\ne1)\\)", "\\(\\displaystyle S_n=a_1\\dfrac{r^n-1}{r-1}\\)"],
   ["\\(\\displaystyle S_n=\\sum_{k=1}^nk2^{k-1}\\) を求めよ。", "\\(2S_n-S_n=n2^n-(1+2+\\cdots+2^{n-1})\\) であり、\n括弧内は \\(2^n-1\\)。\nしたがって \\(S_n=1+(n-1)2^n\\)"],
