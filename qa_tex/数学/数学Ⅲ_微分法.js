@@ -1,5 +1,6 @@
 // 数学Ⅲ: 微分法
 const qa_数学Ⅲ_微分法 = [
+  // 基本的な導関数
   ["\\(\\displaystyle{d\\over dx}x^n\\)", "\\(nx^{n-1}\\)"],
   ["\\((\\sin x)' =\\)", "\\(\\cos x\\)"],
   ["\\(\\displaystyle{d\\over dx}\\sin x\\)", "\\(\\cos x\\)"],
@@ -15,14 +16,17 @@ const qa_数学Ⅲ_微分法 = [
   ["\\(\\displaystyle{d\\over dx}\\log x\\)", "\\(\\displaystyle\\dfrac1x\\)"],
   ["\\((\\log_a x)' =\\)", "\\(\\frac1{x\\ln a}\\)"],
   ["\\(\\displaystyle{d\\over dx}\\log_a x\\)", "\\(\\displaystyle\\log_a x=\\dfrac{\\log x}{\\log a}\\text{ より }\\dfrac1{x\\log a}\\)"],
+  // 積と合成関数の微分
   ["\\((uv)' =\\)", "\\(u'v+uv'\\)"],
   ["\\((f(g(x)))' =\\)", "\\(f'(g(x))g'(x)\\)"],
   ["\\(\\displaystyle{d\\over dx}\\sin x^2\\)", "\\(2x\\cos x^2\\)"],
   ["\\(\\displaystyle{d\\over dx}\\log(1+x^2)\\)", "\\(\\displaystyle\\dfrac{2x}{1+x^2}\\)"],
   ["\\(\\displaystyle{d\\over dx}e^{x^2}\\)", "\\(2xe^{x^2}\\)"],
+  // 対数微分法
   ["\\(x>0\\) のとき、\\(y=x^x\\) の導関数は？", "\\(\\log y=x\\log x\\) の両辺を微分すると\n\\(y'=x^x(\\log x+1)\\)"],
   ["\\(\\displaystyle{d\\over dx}x^x\\quad(x>0)\\)", "\\(\\log y=x\\log x\\text{ とおく}\\)\n\\(\\therefore y'=x^x(\\log x+1)\\)"],
   ["\\(x>0\\) で \\(y=x^{\\sin x}\\) とするとき、\\(y'\\) を求めよ。", "\\(\\log y=\\sin x\\log x\\) を微分すると \\(y'/y=\\cos x\\log x+\\dfrac{\\sin x}x\\)。\nよって \\(y'=x^{\\sin x}\\left(\\cos x\\log x+\\dfrac{\\sin x}x\\right)\\)"],
+  // 陰関数・媒介変数・高次導関数
   ["微分可能な関数 \\(f,g\\) が \\(g(a)\\ne0,\\ g'(a)\\ne0\\) を満たし、\n\\(f(x)/g(x)\\) が \\(x=a\\) で極値をとるとき、\\(f(a)/g(a)\\) を導関数で表せ。", "商の微分から \\(f'(a)g(a)-f(a)g'(a)=0\\)。\n\\(g(a)g'(a)\\ne0\\) なので \\(\\dfrac{f(a)}{g(a)}=\\dfrac{f'(a)}{g'(a)}\\)"],
   ["曲線 \\(x^2+xy+y^2=7\\) 上で \\(x+2y\\ne0\\) のとき、\\(dy/dx\\) を求めよ。", "両辺を \\(x\\) で微分すると \\(2x+y+xy'+2yy'=0\\)。\nよって \\(\\dfrac{dy}{dx}=-\\dfrac{2x+y}{x+2y}\\)"],
   ["曲線 x^3+y^3=2xy 上の点\n(1,1) における接線の傾きは", "3x^2+3y^2 y'=2y+2xy'\n\\therefore y' = -1\n"],

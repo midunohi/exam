@@ -1,16 +1,19 @@
 // 数学Ⅱ: 三角関数
 const qa_数学Ⅱ_三角関数 = [
+  // 代表角の値
   ["\\(\\sin\\frac{\\pi}6\\) =", "\\(\\frac12\\)"],
   ["\\(\\cos\\frac{\\pi}6\\) =", "\\(\\frac{\\sqrt3}2\\)"],
   ["\\(\\sin\\frac{\\pi}3\\) =", "\\(\\frac{\\sqrt3}2\\)"],
   ["\\(\\cos\\frac{\\pi}3\\) =", "\\(\\frac12\\)"],
   ["\\(\\tan\\frac{\\pi}6\\) =", "\\(\\frac1{\\sqrt3}\\)"],
   ["\\(\\tan\\frac{\\pi}4\\) =", "\\(1\\)"],
+  // 基本関係と加法定理
   ["\\(\\sin^2 x+\\cos^2 x\\) =", "\\(1\\)"],
   ["\\(1+\\tan^2 x\\) =", "\\(\\frac1{\\cos^2 x}\\)"],
   ["\\(\\sin(\\alpha+\\beta)\\) =", "\\(\\sin\\alpha\\cos\\beta+\\cos\\alpha\\sin\\beta\\)"],
   ["\\(\\cos(\\alpha+\\beta)\\) =", "\\(\\cos\\alpha\\cos\\beta-\\sin\\alpha\\sin\\beta\\)"],
   ["\\(\\tan(\\alpha+\\beta)\\) =", "\\(\\displaystyle\\frac{\\tan\\alpha+\\tan\\beta}{1-\\tan\\alpha\\tan\\beta}\\)"],
+  // 倍角・半角・三倍角
   ["\\(\\sin2x\\) =", "\\(2\\sin x\\cos x\\)"],
   ["\\(\\cos2x\\) =", "\\(\\cos^2 x-\\sin^2 x\\)"],
   ["\\(\\cos2\\theta\\text{ を }\\cos\\theta\\text{ だけで表せ}\\)", "\\(\\cos2\\theta=2\\cos^2\\theta-1\\)"],
@@ -25,20 +28,25 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\sin3\\theta\\text{ を }\\sin\\theta\\text{ で表せ}\\)", "\\(\\sin3\\theta=3\\sin\\theta-4\\sin^3\\theta\\)"],
   ["\\(\\cos3\\theta\\text{ を }\\cos\\theta\\text{ で表せ}\\)", "\\(\\cos3\\theta=4\\cos^3\\theta-3\\cos\\theta\\)"],
   ["\\(\\displaystyle\\tan3\\theta\\)", "\\(\\displaystyle=\\dfrac{3\\tan\\theta-\\tan^3\\theta}{1-3\\tan^2\\theta}\\)"],
+  // 和積・積和公式
   ["\\(\\sin A+\\sin B\\text{ を積の形にせよ}\\)", "\\(\\displaystyle\\sin A+\\sin B=2\\sin\\dfrac{A+B}2\\cos\\dfrac{A-B}2\\)"],
   ["\\(\\cos A+\\cos B\\text{ を積の形にせよ}\\)", "\\(\\displaystyle\\cos A+\\cos B=2\\cos\\dfrac{A+B}2\\cos\\dfrac{A-B}2\\)"],
   ["\\(\\cos A-\\cos B\\text{ を積の形にせよ}\\)", "\\(\\displaystyle\\cos A-\\cos B=-2\\sin\\dfrac{A+B}2\\sin\\dfrac{A-B}2\\)"],
   ["\\(\\sin A\\sin B\\) を和の形に変形せよ。", "積和公式より \\(\\sin A\\sin B=\\dfrac{\\cos(A-B)-\\cos(A+B)}2\\)"],
+  // 式の変形
   ["\\(\\displaystyle\\sin^2x+\\sin^2\\left(x+\\frac{\\pi}3\\right)+\\sin^2\\left(x+\\frac{2\\pi}3\\right)\\) を簡単にすると？", "\\(\\displaystyle\\frac32\\)\n\\(\\because \\sin^2t=\\frac{1-\\cos2t}2\\)"],
   ["\\(\\displaystyle\\sin x\\sin\\left(x+\\frac\\pi3\\right)\\sin\\left(x+\\frac{2\\pi}3\\right)\\) を簡単にせよ。", "後ろ2因子の積は \\(\\dfrac{\\cos(-\\pi/3)-\\cos(2x+\\pi)}2=\\dfrac14+\\dfrac12\\cos2x\\)。\nこれに \\(\\sin x\\) を掛けると \\(\\dfrac{3\\sin x-4\\sin^3x}4=\\dfrac{\\sin3x}4\\)"],
+  // 最大・最小と不等式
   ["\\(a\\sin x+b\\cos x\\) の最大値は？", "\\(\\sqrt{a^2+b^2}\\)"],
   ["\\(0\\le x\\le\\dfrac\\pi2\\) における \\(\\sin x+\\cos x\\) の最大値と最小値を求めよ。", "\\(\\sin x+\\cos x=\\sqrt2\\sin(x+\\pi/4)\\)。\n区間内で最大値は \\(x=\\pi/4\\) の \\(\\sqrt2\\)、最小値は両端で \\(1\\)"],
   ["\\displaystyle 0\\leqq\\theta_k\\leqq\\frac{\\pi}{2},\n\\displaystyle \\sum_{k=1}^{n}\\cos\\theta_k=1\\text{ のとき}\n\\displaystyle \\sum_{k=1}^{n} \\sin\\theta_k の範囲は","\\sin\\theta\\geqq1-\\cos\\theta\\quadより\n\\displaystyle n-1 \\leqq \\sum\\sin\\theta\n\\{\\theta\\}= \\{0,\\frac{\\pi}{2},\\ldots,\\frac{\\pi}{2}\\} で等号成立\n\n\\left(\\sum\\sin\\theta\\right)^2 +\\left(\\sum\\cos\\theta\\right)^2\n\\leqq n\\{\\left(\\sum\\sin^2\\theta\\right)+\\left(\\sum\\cos^2\\theta\\right)\\}\n=n^2\n∴ \\sum\\sin\\theta\\leqq \\sqrt{n^2-1}\n\\space\\cos\\theta_1=\\cdots=\\cos\\theta_n=\\frac1n で等号成立"],
   ["\\displaystyle 0\\leqq\\theta_k\\leqq\\frac{\\pi}{2},\n\\displaystyle \\sum_{k=1}^{n}\\cos\\theta_k=1\\text{ のとき}\n\\displaystyle \\sum_{k=1}^{n} \\sin\\theta_k の範囲は", "\\sin\\theta\\geqq1-\\cos\\theta\\quadより\n\\displaystyle n-1 \\leqq \\sum\\sin\\theta\n\\theta_k\\text{ のうち1つが }0,\\text{ 残りが }\\frac{\\pi}{2}\\text{ で等号成立}\n\n\\left(\\sum\\sin\\theta\\right)^2 +\\left(\\sum\\cos\\theta\\right)^2≦n^2\\space より\n\\sum\\sin\\theta\\leqq \\sqrt{n^2-1}\n\\space\\cos\\theta_1=\\cdots=\\cos\\theta_n=\\frac1n で等号成立"],
   ["三角形の角をA,B,Cとする\n\\cos A+\\cos B+\\cos C>0\n\\text{を証明}", "A,B<\\dfrac{\\pi}{2}\\space で一般性を失わない\n\\cos A+\\cos B >\\cos(A+B)\n\\qquad\\qquad\\qquad= -\\cos C"],
+  // 三角方程式
   ["\\(0\\le x<2\\pi\\) で \\(2\\sin x\\cos x=\\dfrac12\\) を解け。", "\\(\\sin2x=\\dfrac12\\) より \\(2x=\\dfrac\\pi6,\\dfrac{5\\pi}6\\pmod{2\\pi}\\)。\nしたがって \\(x=\\dfrac\\pi{12},\\dfrac{5\\pi}{12},\\dfrac{13\\pi}{12},\\dfrac{17\\pi}{12}\\)"],
   ["\\(0\\le x<2\\pi\\) で \\(\\cos2x=\\sin x\\) を解け。", "\\(1-2\\sin^2x=\\sin x\\) より \\((2\\sin x-1)(\\sin x+1)=0\\)。\nしたがって \\(x=\\dfrac\\pi6,\\dfrac{5\\pi}6,\\dfrac{3\\pi}2\\)"],
   ["4x^3-3x=\\dfrac12", "x=\\cos\\theta\\text{ とおくと} \\cos3\\theta=\\dfrac12\n\\therefore x=\\cos\\dfrac{\\pi}{9},\\cos\\dfrac{5\\pi}{9},\\cos\\dfrac{7\\pi}{9}"],
+  // 特別な角の値
   ["\\(\\displaystyle\\sin\\frac{\\pi}{12}\\) を求めよ。", "\\(\\displaystyle\\sin\\left(\\frac\\pi4-\\frac\\pi6\\right)=\\frac{\\sqrt2}2\\frac{\\sqrt3}2-\\frac{\\sqrt2}2\\frac12=\\frac{\\sqrt6-\\sqrt2}{4}\\)"],
   ["\\(\\displaystyle\\tan\\frac{\\pi}{12}\\) を求めよ。", "\\(\\displaystyle\\tan\\left(\\frac\\pi4-\\frac\\pi6\\right)=\\frac{1-1/\\sqrt3}{1+1/\\sqrt3}=2-\\sqrt3\\)"],
   ["\\(\\displaystyle\\sin\\frac{\\pi}{8}\\) を求めよ。", "\\(\\displaystyle\\cos\\frac\\pi4=1-2\\sin^2\\frac\\pi8\\) より\n\\(\\displaystyle\\sin\\frac\\pi8=\\sqrt{\\frac{1-1/\\sqrt2}{2}}=\\frac{\\sqrt{2-\\sqrt2}}2\\)"],
