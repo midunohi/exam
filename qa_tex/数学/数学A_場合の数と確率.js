@@ -9,6 +9,7 @@ const qa_数学A_場合の数と確率 = [
   ["異なる8人が円卓に座るとき、\n特定の2人A、Bが隣り合う座り方は何通りか。", "A、Bを1つの組とみると7個の円順列で \\(6!\\) 通り。\n組の内部が2通りあるから \\(2\\cdot6!=1440\\) 通り"],
   // 組合せ
   ["異なる \\(n\\) 個から、順序を考えずに \\(r\\) 個を選ぶ方法は何通り?", "\\({}_nC_r=\\dfrac{n!}{r!(n-r)!}\\)"],
+  ["\\displaystyle {}_nC_r+{}_nC_{r-1} =", "\\frac{n\\cdots(n-r+1)}{r\\cdots1}+\\frac{n\\cdots(n-r+2)}{(r-1)\\cdots1}\n=\\{(n-r+1)+r\\}\\frac{n\\cdots(n-r+2)}{r\\cdots1}\n={}_{n+1}C_r"],
   ["\\displaystyle \\sum_{k=1}^{n}k{}_nC_k", "\\displaystyle F(x) = \\sum_{k=0}^{n} {}_nC_k x^k=(1+x)^n\nF'(1) = \\displaystyle\\sum_{k=1}^{n}k{}_nC_k = n 2^{n-1}"],
   ["n枚の平面で\n空間を分割できる最大数は", "1 + 平面 + 2平面の交線 + 3平面の交点\n= \\displaystyle \\sum_{k=0}^3 {}_nC_k"],
   ["\\(n\\ge2,\\ 0\\le r\\le n\\) とする。\n円形に並んだ \\(n\\) 個のボールから、隣り合わない \\(r\\) 個を選ぶ方法は何通り？", "\\(\\displaystyle\\begin{cases}\\dfrac n{n-r}\\binom{n-r}r & \\left(0\\le r\\le\\left\\lfloor\\dfrac n2\\right\\rfloor\\right)\\\\0 & \\left(r>\\left\\lfloor\\dfrac n2\\right\\rfloor\\right)\\end{cases}\\)"],

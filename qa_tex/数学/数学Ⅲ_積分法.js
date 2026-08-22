@@ -36,5 +36,6 @@ const qa_数学Ⅲ_積分法 = [
   ["\\(\\displaystyle\\int_0^1\\sqrt{1-x^2}\\,dx\\) を求めよ。", "\\(y=\\sqrt{1-x^2}\\) は単位円の第1象限の弧である。\n積分はその面積だから \\(\\dfrac\\pi4\\)"],
   ["曲線 \\(y=\\sqrt x\\ (0\\le x\\le1)\\) と \\(x\\) 軸で囲まれる部分を\n\\(x\\) 軸のまわりに回転してできる立体の体積を求めよ。", "円板の半径は \\(\\sqrt x\\) なので、\n体積は \\(\\displaystyle\\pi\\int_0^1(\\sqrt x)^2\\,dx=\\pi\\int_0^1x\\,dx=\\frac\\pi2\\)"],
   ["線分 \\(P=(1,t,t)\\ (-1\\le t\\le1)\\) を \\(z\\) 軸のまわりに回転してできる曲面と、\n平面 \\(z=-1,z=1\\) で囲まれる立体の体積を求めよ。", "高さ \\(z=t\\) で回転半径の2乗は \\(1+t^2\\)。\nしたがって体積は \\(\\displaystyle\\pi\\int_{-1}^1(1+t^2)\\,dt=\\frac{8\\pi}3\\)"],
+  ["x^2+z^2 \\leqq y \\leqq 4\n(x-1)^2+z^2\\leqq1\nを満たす領域の体積は", "x=r\\cos\\theta,\\ z=r\\sin\\theta\\text{ とおく}\nr\\leqq2\\cos\\theta\n高さ=4-r^2\n面積要素=r\\,dr\\,d\\theta\n\\displaystyle\\int_{-\\pi/2}^{\\pi/2}\\int_0^{2\\cos\\theta}(4-r^2)r\\,dr\\,d\\theta\n=\\int 8\\cos^2\\theta-4\\cos^4\\theta d\\theta\n=\\int 4\\cos^2\\theta+\\sin^22\\theta d\\theta\n=2\\pi+\\dfrac{\\pi}{2}=\\dfrac{5\\pi}{2}"],
   ["単位円の上半円周の重心の \\(y\\) 座標を求めよ。", "\\((x,y)=(\\cos\\theta,\\sin\\theta)\\ (0\\le\\theta\\le\\pi)\\) とおくと弧長要素は \\(d\\theta\\)。\nよって \\(\\bar y=\\dfrac{\\int_0^\\pi\\sin\\theta\\,d\\theta}{\\int_0^\\pi d\\theta}=\\dfrac2\\pi\\)"]
 ];

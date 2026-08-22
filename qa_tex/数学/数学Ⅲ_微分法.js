@@ -16,6 +16,7 @@ const qa_数学Ⅲ_微分法 = [
   ["\\(\\displaystyle{d\\over dx}\\log x\\)", "\\(\\displaystyle\\dfrac1x\\)"],
   ["\\((\\log_a x)' =\\)", "\\(\\frac1{x\\ln a}\\)"],
   ["\\(\\displaystyle{d\\over dx}\\log_a x\\)", "\\(\\displaystyle\\log_a x=\\dfrac{\\log x}{\\log a}\\text{ より }\\dfrac1{x\\log a}\\)"],
+  ["f(xy)=f(x)+f(y)\nf'(1) = 1\n正の実数上の関数fは\n", "f(1) = f(1) + f(1)\n\\therefore f(1)=0\n\\frac{f(x+xh) - f(x)}{xh} = \\frac{f(1+h) - f(1)}{xh}\nh\\to0\\space とすると\\space f'(x)=\\dfrac{f'(1)}x\n答え\\space f(x)=\\log x"],
   // 積と合成関数の微分
   ["\\((uv)' =\\)", "\\(u'v+uv'\\)"],
   ["\\((f(g(x)))' =\\)", "\\(f'(g(x))g'(x)\\)"],
@@ -31,5 +32,6 @@ const qa_数学Ⅲ_微分法 = [
   ["曲線 \\(x^2+xy+y^2=7\\) 上で \\(x+2y\\ne0\\) のとき、\\(dy/dx\\) を求めよ。", "両辺を \\(x\\) で微分すると \\(2x+y+xy'+2yy'=0\\)。\nよって \\(\\dfrac{dy}{dx}=-\\dfrac{2x+y}{x+2y}\\)"],
   ["曲線 x^3+y^3=2xy 上の点\n(1,1) における接線の傾きは", "3x^2+3y^2 y'=2y+2xy'\n\\therefore y' = -1\n"],
   ["媒介変数表示 \\(x=t^2+1,\\ y=t^3-3t\\) で表される曲線の\n\\(t=1\\) における接線の傾きを求めよ。", "\\(dx/dt=2t,\\ dy/dt=3t^2-3\\)。\n\\(t=1\\) では \\(dx/dt=2\\ne0,\\ dy/dt=0\\) だから \\(dy/dx=0\\)"],
+  ["P(1,0,0)\nまず原点Oを中心に\nxy平面上で\nPを角t回転する\n次にOを中心に\nxy平面に鉛直方向に\nPを角t回転する\nPの速さv(t)は", "\\boldsymbol u=(\\cos t,\\sin t,0)\n\\boldsymbol k=(0,0,1)\n\\overrightarrow{OP}=\\cos t\\,\\boldsymbol u+\\sin t\\,\\boldsymbol k\n\\overrightarrow{OP}'=-\\sin t\\,\\boldsymbol u+\\cos t\\,\\boldsymbol u'+\\cos t\\,\\boldsymbol k\n\\boldsymbol u,\\boldsymbol u',\\boldsymbol k\\text{ は正規直交するので}\nv(t)=\\sqrt{\\sin^2t+\\cos^2t+\\cos^2t}\n=\\sqrt{1+\\cos^2t}"],
   ["\\(y=e^x\\sin x\\) の第2次導関数を求めよ。", "\\(y'=e^x(\\sin x+\\cos x)\\)。\nさらに微分して \\(y''=e^x(\\sin x+\\cos x)+e^x(\\cos x-\\sin x)=2e^x\\cos x\\)"]
 ];
