@@ -2,8 +2,10 @@ const qa_数学B_統計的な推測 = [
   // 確率変数
   ["確率変数 \\(X\\) が値 \\(x_i\\) を確率 \\(p_i\\) でとるとき、\n期待値 \\(E(X) =\\)", "\\(\\displaystyle\\sum_i x_ip_i\\)"],
   ["確率変数 \\(X,Y\\) が独立であるとき、\n\\(E(XY)\\) と \\(E(X+Y)\\) を表せ。", "独立性より \\(E(XY)=E(X)E(Y)\\)。\nまた期待値の線形性より、独立性によらず \\(E(X+Y)=E(X)+E(Y)\\)"],
+  ["\\text{確率変数 }X,Y\\text{ が独立のとき}\nE[XY] =\nE[X+Y] =", "\nE[X]E[Y]\nE[X]+E[Y]"],
   ["確率変数 \\(X\\) の分散 \\(V(X) = \\)", "\\(E\\{(X-E(X))^2\\} = E(X^2)-\\{E(X)\\}^2\\)"],
   ["確率変数X,Yに対して\n\\operatorname{Cov}(X,Y)=", "\\displaystyle \\operatorname{Cov}(X,Y)\n=E[(X-E[X])(Y-E[Y])]\n=E[XY]-E[X]E[Y]\n-E[X]E[Y]+E[X]E[Y]\n=E[XY]-E[X]E[Y]"],
+  ["確率変数X,Y\n\\operatorname{Cov}(X,Y)=", "E[(X-E[X])(Y-E[Y])]\n=E[XY]-E[X]E[Y]-E[X]E[Y]+E[X]E[Y]\n=E[XY]-E[X]E[Y]"],
   ["確率変数X,Yに対して\n分散 V(X+Y)=", "\\displaystyle V(X+Y) = E[(X+Y)^2] - E[X+Y]^2\n= E[X^2] + 2E[XY] + E[Y^2] \n- E[X]^2 - 2E[X]E[Y] - E[Y]^2\n=V(X)+V(Y)+2\\operatorname{Cov}(X,Y)"],
   ["分散 \\(V(X)\\) のとき、\n標準偏差 \\(\\sigma(X) =\\) ", "\\(\\sqrt{V(X)}\\)"],
   // 二項分布

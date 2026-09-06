@@ -29,6 +29,7 @@ const qa_数学C_平面上の曲線と複素数平面 = [
   ["点 \\(z\\) を原点のまわりに角 \\(\\theta\\) だけ回転した点は？", "\\((\\cos\\theta+i\\sin\\theta)z\\)"],
   ["点 \\(z\\) を点 \\(a\\) のまわりに角 \\(\\theta\\) だけ回転した点 \\(w\\) は？", "\\(w-a=(\\cos\\theta+i\\sin\\theta)(z-a)\\)"],
   ["複素数平面上にO(0),\\ A(\\alpha),\\ B(\\beta)\\text{ があるとき}\n\\overrightarrow{OA}\\cdot\\overrightarrow{OB} =\n\\triangle OAB\\text{ の面積}=","\n\\operatorname{Re}(\\alpha\\overline{\\beta})\n\\dfrac12\\left|\\operatorname{Im}(\\alpha\\overline{\\beta})\\right|"],
-  ["相異なる複素数 \\(\\alpha,\\beta,\\gamma\\) が正三角形の頂点を表すことと、\n\\(\\alpha^2+\\beta^2+\\gamma^2=\\alpha\\beta+\\beta\\gamma+\\gamma\\alpha\\) が\n同値であることを示せ。", "相似変換で \\(\\alpha=-1,\\beta=1\\) としてよい。\n条件式は \\(2+\\gamma^2=-1\\) となるから\n\\(\\gamma=\\pm\\sqrt3i\\)。これは辺長2の正三角形の第3頂点であり、\n逆も同じ計算で成り立つ。"]
+  ["相異なる複素数 \\(\\alpha,\\beta,\\gamma\\) が正三角形の頂点を表すことと、\n\\(\\alpha^2+\\beta^2+\\gamma^2=\\alpha\\beta+\\beta\\gamma+\\gamma\\alpha\\) が\n同値であることを示せ。", "相似変換で \\(\\alpha=-1,\\beta=1\\) としてよい。\n条件式は \\(2+\\gamma^2=-1\\) となるから\n\\(\\gamma=\\pm\\sqrt3i\\)。これは辺長2の正三角形の第3頂点であり、\n逆も同じ計算で成り立つ。"],
+  ["相異なる複素数α,β,γが\n正三角形をなす \n⇔ α^2 + β^2 + γ^2 = αβ + βγ + γα\nを証明", "α=-1, β=1 となるように\n相似変換\\space z → uz + v (u \\neq 0)\nしたとき、元の条件は保存される\n2 + γ^2 = -1 ∴ γ = ±√3 i"],
 ];
 

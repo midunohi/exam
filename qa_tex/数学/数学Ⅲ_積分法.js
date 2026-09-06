@@ -16,15 +16,18 @@ const qa_数学Ⅲ_積分法 = [
   ["\\(\\displaystyle\\int_0^{\\pi/3}\\tan x\\,dx\\)", "\\(\\displaystyle=[-\\log\\cos x]_0^{\\pi/3}=\\log2\\)"],
   ["\\(\\displaystyle\\int \\frac1{1+x^2}\\,dx\\) =", "\\(\\arctan x+C\\)"],
   ["\\(\\displaystyle\\int_0^1 \\dfrac1{1+x^2}\\,dx\\)", "\\(\\displaystyle=\\arctan1-\\arctan0=\\dfrac\\pi4\\)"],
+  ["\\displaystyle \\int_0^1\\frac{dx}{1+x^2} =", "\\tan y = x を微分すると\n\\dfrac{y'}{\\cos^2 y} = 1\n\\therefore y' = \\dfrac1{1+\\tan^2y}\\quadより\n答え \\space [\\arctan x]_0^1 = \\dfrac{\\pi}4"],
   ["\\displaystyle\\int (1+x^2)^{-3/2} dx", "\\(x=\\tan\\theta\\ \\left(-\\dfrac{\\pi}{2}<\\theta<\\dfrac{\\pi}{2}\\right)\\) とおくと\n与式 = \\displaystyle\\int \\left(\\dfrac1{\\cos^2\\theta}\\right)^{-3/2} \\dfrac1{\\cos^2\\theta}d\\theta\n=\\sin\\theta+C\n= \\displaystyle\\frac{x}{\\sqrt{1+x^2}}+C"],
   ["\\displaystyle\\int_0^1\\frac{dx}{(2+x^2)\\sqrt{1+x^2}}", "x=\\tan\\theta とおくと\n与式 = \\displaystyle\\int_0^{\\pi/4}\\frac{\\cos\\theta}{1+\\cos^2\\theta}d\\theta\nt=\\sin\\theta とおくと\n=\\displaystyle\\int_0^{1/\\sqrt2}\\frac{dt}{2-t^2}\n=\\frac1{2\\sqrt2}\\left[\\log\\frac{\\sqrt2+t}{\\sqrt2-t}\\right]_0^{1/\\sqrt2}=\\frac{\\log3}{2\\sqrt2}"],
   ["\\displaystyle \\int\\frac{dx}{\\sqrt{1-x^2}}","\\sin y=x\\space \\left(-\\dfrac{\\pi}{2}<y<\\dfrac{\\pi}{2}\\right)\\space を微分すると\n\\cos y\\,y'=1\\quad\\therefore y'=\\dfrac1{\\sqrt{1-x^2}}\\quadより\n答え\\space\\arcsin x+C"],
   ["\\(\\displaystyle\\int_0^1 xe^{x^2}\\,dx\\) =", "\\(\\displaystyle\\frac12\\int_0^1e^u\\,du=\\frac{e-1}2\\)"],
+  ["\\displaystyle\\int_0^1 xe^{x^2}\\,dx", "\\displaystyle = \\dfrac12\\int_0^1e^u\\,du = \\dfrac{e-1}{2}"],
   ["\\(\\displaystyle\\int_0^1 2xe^{x^2}\\,dx\\)", "\\(\\displaystyle=\\int_0^1 e^u\\,du=e-1\\)"],
   ["\\(\\displaystyle\\int_0^1 \\dfrac{2x}{1+x^2}\\,dx\\)", "\\(\\displaystyle=\\int_1^2\\dfrac1u\\,du=\\log2\\)"],
   // 漸化式と特殊な積分
   ["\\(\\displaystyle\\int_0^{\\pi/2}\\sin^3x\\,dx\\) を求めよ。", "\\(\\sin^3x=\\sin x(1-\\cos^2x)\\) とし \\(u=\\cos x\\) とおくと、\n\\(\\displaystyle\\int_0^1(1-u^2)\\,du=1-\\frac13=\\frac23\\)"],
   ["n\\geqq1 とする\n\\displaystyle I_{2n} = \\int_0^{\\frac{\\pi}{2}}\\sin^{2n}x\\,dx", "\\displaystyle I_{2n} =[-\\cos x\\sin^{2n-1}x] \n+ (2n-1)\\int\\cos^2x\\sin^{2n-2}x\\,dx\n=(2n-1)(I_{2n-2}-I_{2n})\n=\\dfrac{2n-1}{2n}I_{2n-2}\n=\\dfrac{(2n-1)(2n-3)\\cdots1}{(2n)(2n-2)\\cdots2}\\cdot\\dfrac{\\pi}{2}"],
+  ["n\\geqq1 とする\n\\displaystyle I_{2n} = \\int_0^{\\frac{\\pi}{2}}\\sin^{2n}x\\,dx =", "\\displaystyle [-\\cos x\\sin^{2n-1}x] \n+ (2n-1)\\int\\cos^2x\\sin^{2n-2}x\\,dx\n=(2n-1)(I_{2n-2}-I_{2n})\n=\\dfrac{2n-1}{2n}I_{2n-2}\n=\\dfrac{(2n-1)(2n-3)\\cdots1}{(2n)(2n-2)\\cdots2}\\cdot\\dfrac{\\pi}{2}"],
   ["\\(\\displaystyle\\int\\frac{dx}{x^2-1}\\) を求めよ。\nただし \\(x\\ne\\pm1\\) とする。", "\\(\\dfrac1{x^2-1}=\\dfrac12\\left(\\dfrac1{x-1}-\\dfrac1{x+1}\\right)\\) より\n\\(\\displaystyle\\frac12\\log\\left|\\frac{x-1}{x+1}\\right|+C\\)"],
   ["\\displaystyle \\int\\frac{dx}{\\sqrt{x^2-1}}","\\dfrac{d}{dx}\\log\\left|x+\\sqrt{x^2-1}\\right|=\\frac{1+\\frac{x}{\\sqrt{x^2-1}}}{x+\\sqrt{x^2-1}}\n=\\frac1{\\sqrt{x^2-1}} \\quad より\n答え\\space\\log\\left|x+\\sqrt{x^2-1}\\right|+C\\quad(|x|>1)"],
   ["x>0\\text{ とする}\\quad\n\\displaystyle \\int\\frac{\\sqrt{x^2+1}}{x}\\,dx", "t=\\sqrt{x^2+1}\\text{ とおくと}\\quad\\displaystyle dt=\\frac{x}{t}dx\n\\displaystyle\\int\\frac{t^2}{t^2-1}dt\n=\\displaystyle\\int\\left(1+\\frac12\\left(\\frac1{t-1}-\\frac1{t+1}\\right)\\right)dt\n=t+\\dfrac12\\log\\dfrac{t-1}{t+1}+C\n=\\space\\sqrt{x^2+1}+\\log x-\\log\\left(1+\\sqrt{x^2+1}\\right)+C"],
@@ -33,10 +36,13 @@ const qa_数学Ⅲ_積分法 = [
   ["\\(\\displaystyle\\int x e^x\\,dx\\)", "\\(\\displaystyle=xe^x-\\int e^x\\,dx\\)\n\\(\\displaystyle=e^x(x-1)+C\\)"],
   ["\\(\\displaystyle\\int_0^\\pi x\\sin x\\,dx\\)", "\\(\\displaystyle=[-x\\cos x]_0^\\pi+\\int_0^\\pi\\cos x\\,dx\\)\n\\(\\displaystyle=\\pi\\)"],
   ["\\(\\displaystyle\\int_0^1x^2e^x\\,dx\\) を求めよ。", "部分積分を2回用いると原始関数は \\(e^x(x^2-2x+2)\\)。\nしたがって \\(\\left[e^x(x^2-2x+2)\\right]_0^1=e-2\\)"],
+  ["\\displaystyle\\int_0^1 x^2e^x\\,dx =", "\\displaystyle\\left[e^x(x^2-2x+2)\\right]_0^1\n=e-2"],
   // 面積・体積・重心
   ["\\(\\displaystyle\\int_0^1\\sqrt{1-x^2}\\,dx\\) を求めよ。", "\\(y=\\sqrt{1-x^2}\\) は単位円の第1象限の弧である。\n積分はその面積だから \\(\\dfrac\\pi4\\)"],
   ["曲線 \\(y=\\sqrt x\\ (0\\le x\\le1)\\) と \\(x\\) 軸で囲まれる部分を\n\\(x\\) 軸のまわりに回転してできる立体の体積を求めよ。", "円板の半径は \\(\\sqrt x\\) なので、\n体積は \\(\\displaystyle\\pi\\int_0^1(\\sqrt x)^2\\,dx=\\pi\\int_0^1x\\,dx=\\frac\\pi2\\)"],
   ["線分 \\(P=(1,t,t)\\ (-1\\le t\\le1)\\) を \\(z\\) 軸のまわりに回転してできる曲面と、\n平面 \\(z=-1,z=1\\) で囲まれる立体の体積を求めよ。", "高さ \\(z=t\\) で回転半径の2乗は \\(1+t^2\\)。\nしたがって体積は \\(\\displaystyle\\pi\\int_{-1}^1(1+t^2)\\,dt=\\frac{8\\pi}3\\)"],
+  ["\\text{線分 }A(1,1,1)B(1,-1,-1) \\text{ を }\nz\\text{ 軸のまわりに回転してできる曲面と}\nz=-1, z=1\n\\text{で囲まれる立体の体積は}", "P=(1,t,t)\\quad(-1\\leqq t\\leqq1)\\text{ とおく}\n\\displaystyle \\pi\\int_{-1}^{1}(1+t^2)\\,dt=\\dfrac{8\\pi}{3}"],
   ["x^2+z^2 \\leqq y \\leqq 4\n(x-1)^2+z^2\\leqq1\nを満たす領域の体積は", "x=r\\cos\\theta,\\ z=r\\sin\\theta\\text{ とおく}\nr\\leqq2\\cos\\theta\n高さ=4-r^2\n面積要素=r\\,dr\\,d\\theta\n\\displaystyle\\int_{-\\pi/2}^{\\pi/2}\\int_0^{2\\cos\\theta}(4-r^2)r\\,dr\\,d\\theta\n=\\int 8\\cos^2\\theta-4\\cos^4\\theta d\\theta\n=\\int 4\\cos^2\\theta+\\sin^22\\theta d\\theta\n=2\\pi+\\dfrac{\\pi}{2}=\\dfrac{5\\pi}{2}"],
-  ["単位円の上半円周の重心の \\(y\\) 座標を求めよ。", "\\((x,y)=(\\cos\\theta,\\sin\\theta)\\ (0\\le\\theta\\le\\pi)\\) とおくと弧長要素は \\(d\\theta\\)。\nよって \\(\\bar y=\\dfrac{\\int_0^\\pi\\sin\\theta\\,d\\theta}{\\int_0^\\pi d\\theta}=\\dfrac2\\pi\\)"]
+  ["単位円の上半円周の重心の \\(y\\) 座標を求めよ。", "\\((x,y)=(\\cos\\theta,\\sin\\theta)\\ (0\\le\\theta\\le\\pi)\\) とおくと弧長要素は \\(d\\theta\\)。\nよって \\(\\bar y=\\dfrac{\\int_0^\\pi\\sin\\theta\\,d\\theta}{\\int_0^\\pi d\\theta}=\\dfrac2\\pi\\)"],
+  ["\\text{単位円の }y>0\\text{ の部分の}\n\\text{重心の }y\\text{ 座標} =", "\\displaystyle\\frac{\\int_0^\\pi \\sin\\theta\\,d\\theta}{\\pi}=\\frac{2}{\\pi}"],
 ];

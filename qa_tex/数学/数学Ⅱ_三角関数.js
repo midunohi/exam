@@ -13,6 +13,7 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\sin(\\alpha+\\beta)\\) =", "\\(\\sin\\alpha\\cos\\beta+\\cos\\alpha\\sin\\beta\\)"],
   ["\\(\\cos(\\alpha+\\beta)\\) =", "\\(\\cos\\alpha\\cos\\beta-\\sin\\alpha\\sin\\beta\\)"],
   ["\\(\\tan(\\alpha+\\beta)\\) =", "\\(\\displaystyle\\frac{\\tan\\alpha+\\tan\\beta}{1-\\tan\\alpha\\tan\\beta}\\)"],
+  ["\\tan(\\alpha+\\beta)=", "\\dfrac{\\tan\\alpha+\\tan\\beta}{1-\\tan\\alpha\\tan\\beta}"],
   // 倍角・半角・三倍角
   ["\\(\\sin2x\\) =", "\\(2\\sin x\\cos x\\)"],
   ["\\(\\cos2x\\) =", "\\(\\cos^2 x-\\sin^2 x\\)"],
@@ -25,6 +26,7 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\displaystyle\\tan^2\\dfrac\\theta2\\)", "\\(\\displaystyle=\\dfrac{1-\\cos\\theta}{1+\\cos\\theta}\\)"],
   ["実数a,bに対し\n\\displaystyle 1-\\cos(a+b)\n\\leqq2(1-\\cos a\\space+\\space1-\\cos b)\n\\text{を証明}","\\displaystyle \\left|\\sin\\frac{a+b}{2}\\right|\\leqq\\left|\\sin\\frac a2\\right|+\\left|\\sin\\frac b2\\right|\n\\therefore \\displaystyle \\sin^2\\frac{a+b}{2} \\leqq 2\\left(\\sin^2\\frac a2+\\sin^2\\frac b2\\right)"],
   ["\\(\\sin 3\\theta\\) =", "\\(3\\sin\\theta-4\\sin^3\\theta\\)"],
+  ["\\sin 3\\theta=", "3\\sin\\theta-4\\sin^3\\theta"],
   ["\\(\\sin3\\theta\\text{ を }\\sin\\theta\\text{ で表せ}\\)", "\\(\\sin3\\theta=3\\sin\\theta-4\\sin^3\\theta\\)"],
   ["\\(\\cos3\\theta\\text{ を }\\cos\\theta\\text{ で表せ}\\)", "\\(\\cos3\\theta=4\\cos^3\\theta-3\\cos\\theta\\)"],
   ["\\(\\displaystyle\\tan3\\theta\\)", "\\(\\displaystyle=\\dfrac{3\\tan\\theta-\\tan^3\\theta}{1-3\\tan^2\\theta}\\)"],
@@ -33,11 +35,15 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\(\\cos A+\\cos B\\text{ を積の形にせよ}\\)", "\\(\\displaystyle\\cos A+\\cos B=2\\cos\\dfrac{A+B}2\\cos\\dfrac{A-B}2\\)"],
   ["\\(\\cos A-\\cos B\\text{ を積の形にせよ}\\)", "\\(\\displaystyle\\cos A-\\cos B=-2\\sin\\dfrac{A+B}2\\sin\\dfrac{A-B}2\\)"],
   ["\\(\\sin A\\sin B\\) を和の形に変形せよ。", "積和公式より \\(\\sin A\\sin B=\\dfrac{\\cos(A-B)-\\cos(A+B)}2\\)"],
+  ["\\sin A \\sin B =", "\\dfrac{\\cos(A-B) - \\cos(A+B)}2"],
   // 式の変形
   ["\\(\\displaystyle\\sin^2x+\\sin^2\\left(x+\\frac{\\pi}3\\right)+\\sin^2\\left(x+\\frac{2\\pi}3\\right)\\) を簡単にすると？", "\\(\\displaystyle\\frac32\\)\n\\(\\because \\sin^2t=\\frac{1-\\cos2t}2\\)"],
+  ["\\sin^2x+\\sin^2\\left(x+\\dfrac\\pi3\\right)\n+\\sin^2\\left(x+\\dfrac{2\\pi}3\\right)", "= \\dfrac32\\quad\\left(\\because \\sin^2t=\\dfrac{1-\\cos2t}{2}\\right)"],
   ["\\(\\displaystyle\\sin x\\sin\\left(x+\\frac\\pi3\\right)\\sin\\left(x+\\frac{2\\pi}3\\right)\\) を簡単にせよ。", "後ろ2因子の積は \\(\\dfrac{\\cos(-\\pi/3)-\\cos(2x+\\pi)}2=\\dfrac14+\\dfrac12\\cos2x\\)。\nこれに \\(\\sin x\\) を掛けると \\(\\dfrac{3\\sin x-4\\sin^3x}4=\\dfrac{\\sin3x}4\\)"],
+  ["\\displaystyle \\sin x\\sin\\left(x+\\dfrac{\\pi}{3}\\right)\n\\sin\\left(x+\\dfrac{2\\pi}{3}\\right) =", "\\omega=e^{-\\frac{2\\pi i}{3}},\\quad X=e^{2ix}\\text{ とおく}\n|X-1||X-\\omega||X-\\omega^2|=|X^3-1| より\n\\left|2\\sin x·2\\sin\\left(x+\\dfrac{\\pi}{3}\\right)·2\\sin\\left(x+\\dfrac{2\\pi}{3}\\right)\\right|\n=2|\\sin3x|\n答え:\\space\\dfrac{\\sin3x}{4}"],
   // 最大・最小と不等式
   ["\\(a\\sin x+b\\cos x\\) の最大値は？", "\\(\\sqrt{a^2+b^2}\\)"],
+  ["a\\sin x+b\\cos x\n\\text{の最大値は}", "\\sqrt{a^2+b^2}"],
   ["\\(0\\le x\\le\\dfrac\\pi2\\) における \\(\\sin x+\\cos x\\) の最大値と最小値を求めよ。", "\\(\\sin x+\\cos x=\\sqrt2\\sin(x+\\pi/4)\\)。\n区間内で最大値は \\(x=\\pi/4\\) の \\(\\sqrt2\\)、最小値は両端で \\(1\\)"],
   ["\\displaystyle 0\\leqq\\theta_k\\leqq\\frac{\\pi}{2},\n\\displaystyle \\sum_{k=1}^{n}\\cos\\theta_k=1\\text{ のとき}\n\\displaystyle \\sum_{k=1}^{n} \\sin\\theta_k の範囲は","\\sin\\theta\\geqq1-\\cos\\theta\\quadより\n\\displaystyle n-1 \\leqq \\sum\\sin\\theta\n\\{\\theta\\}= \\{0,\\frac{\\pi}{2},\\ldots,\\frac{\\pi}{2}\\} で等号成立\n\n\\left(\\sum\\sin\\theta\\right)^2 +\\left(\\sum\\cos\\theta\\right)^2\n\\leqq n\\{\\left(\\sum\\sin^2\\theta\\right)+\\left(\\sum\\cos^2\\theta\\right)\\}\n=n^2\n∴ \\sum\\sin\\theta\\leqq \\sqrt{n^2-1}\n\\space\\cos\\theta_1=\\cdots=\\cos\\theta_n=\\frac1n で等号成立"],
   ["\\displaystyle 0\\leqq\\theta_k\\leqq\\frac{\\pi}{2},\n\\displaystyle \\sum_{k=1}^{n}\\cos\\theta_k=1\\text{ のとき}\n\\displaystyle \\sum_{k=1}^{n} \\sin\\theta_k の範囲は", "\\sin\\theta\\geqq1-\\cos\\theta\\quadより\n\\displaystyle n-1 \\leqq \\sum\\sin\\theta\n\\theta_k\\text{ のうち1つが }0,\\text{ 残りが }\\frac{\\pi}{2}\\text{ で等号成立}\n\n\\left(\\sum\\sin\\theta\\right)^2 +\\left(\\sum\\cos\\theta\\right)^2≦n^2\\space より\n\\sum\\sin\\theta\\leqq \\sqrt{n^2-1}\n\\space\\cos\\theta_1=\\cdots=\\cos\\theta_n=\\frac1n で等号成立"],

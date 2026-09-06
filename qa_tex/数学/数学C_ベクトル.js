@@ -2,6 +2,7 @@
 const qa_数学C_ベクトル = [
   // 内積の基本
   ["\\(\\vec a,\\vec b\\) のなす角を \\(\\theta\\) とするとき、内積は？", "\\(\\vec a\\cdot\\vec b=|\\vec a||\\vec b|\\cos\\theta\\)"],
+  ["\\text{内積 }a\\cdot b=", "|a||b|\\cos\\theta"],
   ["\\(\\vec a\\cdot\\vec b\\text{ の定義}\\)", "\\(\\vec a\\cdot\\vec b=|\\vec a||\\vec b|\\cos\\theta\\)"],
   ["零ベクトルでない \\(\\vec a,\\vec b\\) のなす角 \\(\\theta\\) の余弦は？", "\\(\\displaystyle\\cos\\theta=\\frac{\\vec a\\cdot\\vec b}{|\\vec a||\\vec b|}\\)"],
   ["零ベクトルでない \\(\\vec a,\\vec b\\) が垂直である条件は？", "\\(\\vec a\\cdot\\vec b=0\\)"],
@@ -33,6 +34,7 @@ const qa_数学C_ベクトル = [
   ["x^2+y^2+z^2+2x-2z=0\nの原点における接平面は","球の中心は\\space(-1,0,1)\n接平面の法線ベクトルは\\space(1,0,-1)\n\\therefore x-z=0"],
   ["点 \\(P(x_0,y_0,z_0)\\) と平面 \\(ax+by+cz+d=0\\) の距離は？", "\\(\\displaystyle\\frac{|ax_0+by_0+cz_0+d|}{\\sqrt{a^2+b^2+c^2}}\\)"],
   ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、\n位置ベクトル \\(\\overrightarrow{OG}\\) は？", "\\(\\displaystyle\\overrightarrow{OG}=\\frac{\\overrightarrow{OA}+\\overrightarrow{OB}+\\overrightarrow{OC}+\\overrightarrow{OD}}4\\)"],
+  ["\\text{四面体 }ABCD\\text{ の重心を }G\\text{ とする}\n\\overrightarrow{OG}=", "\\int_{ABCD} \\frac{\\lambda_A\\overrightarrow{OA}+\\lambda_B\\overrightarrow{OB}+\\lambda_C\\overrightarrow{OC}+\\lambda_D\\overrightarrow{OD}}{V} dV\n= \\dfrac{\\overrightarrow{OA}+\\overrightarrow{OB}+\\overrightarrow{OC}+\\overrightarrow{OD}}{4}"],
   ["四面体 \\(ABCD\\) の重心を \\(G\\) とするとき、底面 \\(BCD\\) からの \\(A,G\\) の高さの比は？", "\\(4:1\\)"]
 ];
 

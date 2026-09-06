@@ -18,6 +18,7 @@ const qa_数学Ⅲ_極限 = [
   ["\\(\\displaystyle\\lim_{x\\to0}\\frac{1-\\cos x}{x^2}\\) を求めよ。", "\\(\\displaystyle\\frac{1-\\cos x}{x^2}=\\frac{2\\sin^2(x/2)}{x^2}=\\frac12\\left(\\frac{\\sin(x/2)}{x/2}\\right)^2\\)\n\\(\\displaystyle\\therefore \\frac12\\)"],
   ["\\(\\displaystyle\\lim_{x\\to0}\\frac{1-\\cos2x}{x^2}\\) を求めよ。", "\\(1-\\cos2x=2\\sin^2x\\) より\n\\(\\displaystyle\\frac{1-\\cos2x}{x^2}=2\\left(\\frac{\\sin x}x\\right)^2\\to2\\)"],
   ["\\(\\displaystyle\\lim_{x\\to0}\\frac{\\log(\\cos x)}{x^2}\\) を求めよ。", "\\(\\displaystyle\\frac{\\log(\\cos x)}{x^2}=\\frac{\\log(1+u)}u\\cdot\\frac{\\cos x-1}{x^2}\\), \\(u=\\cos x-1\\) とおく。\n前者は \\(1\\)、後者は \\(-1/2\\) に収束するので \\(-1/2\\)"],
+  ["\\displaystyle\\lim_{x\\to0}\\frac{\\log(\\cos x)}{x^2} =", "\\displaystyle\\lim_{x\\to0} \\dfrac{\\log(\\cos x)}{\\cos x - 1}\\cdot\\dfrac{\\cos x-1}{x^2}\n= 1 \\cdot \\dfrac{-1}2 = -\\dfrac12"],
   // 指数・対数を含む極限
   ["\\(\\displaystyle\\lim_{x\\to0}\\frac{e^x-1}x\\) を求めよ。", "\\(t=e^x-1\\) とおくと \\(x=\\log(1+t)\\)\n\\(t\\to0\\) のとき\n\\(\\displaystyle\\frac{e^x-1}x=\\frac t{\\log(1+t)}\\to1\\)"],
   ["\\(\\displaystyle\\lim_{x\\to0}\\frac{e^{2x}-1}x\\) を求めよ。", "\\(u=2x\\) とおくと\n\\(\\displaystyle\\frac{e^{2x}-1}x=2\\frac{e^u-1}u\\to2\\)"],
@@ -36,5 +37,6 @@ const qa_数学Ⅲ_極限 = [
   ["\\(|r|<1\\) のとき、無限等比級数 \\(\\displaystyle S = \\sum_{n=0}^{\\infty}r^n\\) の和を求めよ。", "\\(\\displaystyle S_N =\\frac{1-r^{N+1}}{1-r}\\)\n\\(r^{N+1}\\to0\\) より\n\\(\\displaystyle S=\\frac1{1-r}\\)"],
   ["\\(\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{n(n+1)}\\) の和を求めよ。", "\\(\\displaystyle\\frac1{n(n+1)}=\\frac1n-\\frac1{n+1}\\) より\n\\(\\displaystyle1-\\frac1{N+1}\\to1\\)"],
   ["無限級数 \\(\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{n(n+2)}\\) の和を求めよ。", "\\(\\dfrac1{n(n+2)}=\\dfrac12\\left(\\dfrac1n-\\dfrac1{n+2}\\right)\\)。\n部分和をとると途中が消え、極限は \\(\\dfrac12\\left(1+\\dfrac12\\right)=\\dfrac34\\)"],
-  ["\\(\\displaystyle\\lim_{n\\to\\infty}\\sum_{k=0}^n\\frac{n^k}{n^n}\\) を求めよ。", "等比数列の和より\n\\(\\displaystyle\\sum_{k=0}^n\\frac{n^k}{n^n}=\\frac{n^{n+1}-1}{n^n(n-1)}=\\frac{n-n^{-n}}{n-1}\\to1\\)"]
+  ["\\(\\displaystyle\\lim_{n\\to\\infty}\\sum_{k=0}^n\\frac{n^k}{n^n}\\) を求めよ。", "等比数列の和より\n\\(\\displaystyle\\sum_{k=0}^n\\frac{n^k}{n^n}=\\frac{n^{n+1}-1}{n^n(n-1)}=\\frac{n-n^{-n}}{n-1}\\to1\\)"],
+  ["\\displaystyle \\lim_{n\\to\\infty} \\sum_{k=0}^n \\frac{n^k}{n^n} =", "\\displaystyle \\lim_{n\\to\\infty}\\frac{1}{n^n}\\cdot\\frac{n^{n+1}-1}{n-1} = 1"],
 ];

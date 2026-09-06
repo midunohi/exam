@@ -25,10 +25,12 @@ const qa_数学Ⅲ_微分法 = [
   ["\\(\\displaystyle{d\\over dx}e^{x^2}\\)", "\\(2xe^{x^2}\\)"],
   // 対数微分法
   ["\\(x>0\\) のとき、\\(y=x^x\\) の導関数は？", "\\(\\log y=x\\log x\\) の両辺を微分すると\n\\(y'=x^x(\\log x+1)\\)"],
+  ["x>0\\text{ のとき}\ny=x^x\\text{ の導関数は}", "\\log y=x\\log x\\text{ の両辺を微分}\n\\therefore y'=x^x(\\log x+1)"],
   ["\\(\\displaystyle{d\\over dx}x^x\\quad(x>0)\\)", "\\(\\log y=x\\log x\\text{ とおく}\\)\n\\(\\therefore y'=x^x(\\log x+1)\\)"],
   ["\\(x>0\\) で \\(y=x^{\\sin x}\\) とするとき、\\(y'\\) を求めよ。", "\\(\\log y=\\sin x\\log x\\) を微分すると \\(y'/y=\\cos x\\log x+\\dfrac{\\sin x}x\\)。\nよって \\(y'=x^{\\sin x}\\left(\\cos x\\log x+\\dfrac{\\sin x}x\\right)\\)"],
   // 陰関数・媒介変数・高次導関数
   ["微分可能な関数 \\(f,g\\) が \\(g(a)\\ne0,\\ g'(a)\\ne0\\) を満たし、\n\\(f(x)/g(x)\\) が \\(x=a\\) で極値をとるとき、\\(f(a)/g(a)\\) を導関数で表せ。", "商の微分から \\(f'(a)g(a)-f(a)g'(a)=0\\)。\n\\(g(a)g'(a)\\ne0\\) なので \\(\\dfrac{f(a)}{g(a)}=\\dfrac{f'(a)}{g'(a)}\\)"],
+  ["g(a)\\neq0 \\text{ かつ}\\quad g'(a)\\neq0 \\text{ かつ}\n\n\\dfrac{f(a)}{g(a)}\\text{ が極値をとるとき}\n", "f'g-fg'=0 \\text{ より}\n\n\\dfrac{f(a)}{g(a)}=\\dfrac{f'(a)}{g'(a)}"],
   ["曲線 \\(x^2+xy+y^2=7\\) 上で \\(x+2y\\ne0\\) のとき、\\(dy/dx\\) を求めよ。", "両辺を \\(x\\) で微分すると \\(2x+y+xy'+2yy'=0\\)。\nよって \\(\\dfrac{dy}{dx}=-\\dfrac{2x+y}{x+2y}\\)"],
   ["曲線 x^3+y^3=2xy 上の点\n(1,1) における接線の傾きは", "3x^2+3y^2 y'=2y+2xy'\n\\therefore y' = -1\n"],
   ["媒介変数表示 \\(x=t^2+1,\\ y=t^3-3t\\) で表される曲線の\n\\(t=1\\) における接線の傾きを求めよ。", "\\(dx/dt=2t,\\ dy/dt=3t^2-3\\)。\n\\(t=1\\) では \\(dx/dt=2\\ne0,\\ dy/dt=0\\) だから \\(dy/dx=0\\)"],

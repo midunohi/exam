@@ -7,6 +7,7 @@ const qa_数学B_数学と社会生活 = [
   // 回帰
   ["観測されたデータに近い直線を用いて、\n一方の値から他方の値を推測する直線を何という？", "回帰直線"],
   ["データ \\((x_i,y_i)\\ (1\\le i\\le n)\\) の\n平均を \\(\\bar x,\\bar y\\)、分散を \\(s_x^2>0\\)、共分散を \\(s_{xy}\\) とする。\n\\(y\\) の \\(x\\) への回帰直線を表せ。", "傾きは \\(\\dfrac{s_{xy}}{s_x^2}\\) で、\n平均点 \\((\\bar x,\\bar y)\\) を通るから \\(y=\\dfrac{s_{xy}}{s_x^2}(x-\\bar x)+\\bar y\\)"],
+  ["\\text{データ }(x_i,y_i)\\ (1\\le i\\le n)\\text{ に対し}\n平均 \\bar{x} =\n\n平均 \\bar{y} =\n\n分散 s_x^2 =\n\n共分散 s_{xy} = \n\ns_x^2>0 のとき\\quad回帰直線 y =", "\\displaystyle \\dfrac1n\\sum_{i=1}^n x_i\n\\displaystyle \\dfrac1n\\sum_{i=1}^n y_i\n\\displaystyle \\dfrac1n\\sum_{i=1}^n(x_i-\\bar{x})^2\n\\displaystyle \\dfrac1n\\sum_{i=1}^n(x_i-\\bar{x})(y_i-\\bar{y})\n\\displaystyle \\frac{s_{xy}}{s_x^2}(x-\\bar{x})+\\bar{y}"],
   ["\\(\\bar x=4,\\bar y=10,s_x^2=9,s_{xy}=-6\\) のとき、\n\\(y\\) の \\(x\\) への回帰直線と \\(x=7\\) での予測値を求めよ。", "傾きは \\(-6/9=-2/3\\)。\nよって \\(y=-\\dfrac23(x-4)+10\\) で、\\(x=7\\) のとき \\(y=8\\)"],
   // 複利
   ["10万円を年利10\\%の複利で3年間預ける。3年後の金額を求めよ。", "毎年 \\(1.1\\) 倍になるので \\(100000\\times1.1^3=133100\\) 円"],

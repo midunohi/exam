@@ -25,6 +25,7 @@ const qa_数学Ⅰ_数と式 = [
   ["\\((x-a)(x-b)<0\\) \\((a<b)\\) の解は？", "\\(a<x<b\\)"],
   // 不等式の証明と最小値
   ["実数 \\(a,b,c\\) に対して \\((a+b+c)^2\\ge3(ab+bc+ca)\\) を示せ。", "左辺と右辺の差は \\(a^2+b^2+c^2-ab-bc-ca=\\dfrac{(a-b)^2+(b-c)^2+(c-a)^2}2\\ge0\\)"],
+  ["実数a,b,c\\text{ に対し}\n(a+b+c)^2\\geqq3(ab+bc+ca)\n\\text{を証明}", "\\displaystyle (a+b+c)^2-3(ab+bc+ca)\n=\\dfrac{(a-b)^2+(b-c)^2+(c-a)^2}2\n\\geqq0"],
   ["\\(x>0\\) のとき、\\(x+\\dfrac4x\\) の最小値を求めよ。", "\\(x+\\dfrac4x-4=\\dfrac{(x-2)^2}x\\ge0\\)。よって最小値は \\(x=2\\) のとき \\(4\\)"],
   ["正の実数a,b,c が\na+b+c=6\\spaceを満たすとき\n\\displaystyle \\frac{a^2}{b+c}+\\frac{b^2}{c+a}+\\frac{c^2}{a+b}\nの最小値は","\\displaystyle \\left(\\frac{a^2}{b+c}+\\frac{b^2}{c+a}+\\frac{c^2}{a+b}\\right)\n\\{(b+c)+(c+a)+(a+b)\\}\n\\geqq(a+b+c)^2\n答え\\space3 (a=b=c=2 で等号成立)"],
   // 集合と命題
