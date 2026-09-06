@@ -30,6 +30,8 @@ const qa_数学Ⅲ_極限 = [
   ["\\(\\displaystyle\\lim_{x\\to\\infty}\\frac{\\log x}x\\) を求めよ。", "\\(x=e^t\\) とおくと \\(t\\to\\infty\\) で、\\(\\displaystyle\\frac{\\log x}x=\\frac t{e^t}\\)\n\\(e^t\\ge t^2/2\\) より\n\\(0\\le t/e^t\\le2/t\\to0\\)"],
   // 数列の極限
   ["\\(a_1=\\sqrt2,\\ a_{n+1}=\\sqrt{2+a_n}\\) で定める数列の極限を求めよ。", "\\(0<a_n<2\\) では \\(a_{n+1}>a_n\\) で、上に \\(2\\) を上界にもつから収束する。\n極限を \\(L\\ge0\\) とすると \\(L=\\sqrt{2+L}\\)、よって \\(L=2\\)"],
+  ["a_1=0\na_{n+1}=\\sqrt{2+a_n}\nとする\n\\displaystyle \\lim_{n\\to\\infty}4^n(2-a_n)=", "a_1=2\\cos\\dfrac{\\pi}{2}\n\\sqrt{2+2\\cos\\theta}=2\\cos\\dfrac{\\theta}{2}\\space より\n\\displaystyle a_n=2\\cos\\frac{\\pi}{2^n}\n\\displaystyle \\lim_{x→0}\\frac{1-\\cos x}{x^2} = \\frac12\\space より\n答え\\space4^n\\cdot2\\left(1-\\cos\\dfrac{\\pi}{2^n}\\right) \\to \\pi^2"],
+  ["\\displaystyle \\lim_{n\\to\\infty}\\sum_{k=1}^{2n}\\frac{(-1)^{k-1}}k ", "\\displaystyle \\sum_{k=1}^{2n}\\frac1k-2\\sum_{k=1}^{n}\\frac1{2k}=\\sum_{k=n+1}^{2n}\\frac1k\n\\displaystyle \\to\\int_1^2\\frac{dx}x=\\log2"],
   // 無限級数
   ["\\(|r|<1\\) のとき、無限等比級数 \\(\\displaystyle S = \\sum_{n=0}^{\\infty}r^n\\) の和を求めよ。", "\\(\\displaystyle S_N =\\frac{1-r^{N+1}}{1-r}\\)\n\\(r^{N+1}\\to0\\) より\n\\(\\displaystyle S=\\frac1{1-r}\\)"],
   ["\\(\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{n(n+1)}\\) の和を求めよ。", "\\(\\displaystyle\\frac1{n(n+1)}=\\frac1n-\\frac1{n+1}\\) より\n\\(\\displaystyle1-\\frac1{N+1}\\to1\\)"],

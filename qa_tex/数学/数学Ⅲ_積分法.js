@@ -17,6 +17,7 @@ const qa_数学Ⅲ_積分法 = [
   ["\\(\\displaystyle\\int \\frac1{1+x^2}\\,dx\\) =", "\\(\\arctan x+C\\)"],
   ["\\(\\displaystyle\\int_0^1 \\dfrac1{1+x^2}\\,dx\\)", "\\(\\displaystyle=\\arctan1-\\arctan0=\\dfrac\\pi4\\)"],
   ["\\displaystyle\\int (1+x^2)^{-3/2} dx", "\\(x=\\tan\\theta\\ \\left(-\\dfrac{\\pi}{2}<\\theta<\\dfrac{\\pi}{2}\\right)\\) とおくと\n与式 = \\displaystyle\\int \\left(\\dfrac1{\\cos^2\\theta}\\right)^{-3/2} \\dfrac1{\\cos^2\\theta}d\\theta\n=\\sin\\theta+C\n= \\displaystyle\\frac{x}{\\sqrt{1+x^2}}+C"],
+  ["\\displaystyle\\int_0^1\\frac{dx}{(2+x^2)\\sqrt{1+x^2}}", "x=\\tan\\theta とおくと\n与式 = \\displaystyle\\int_0^{\\pi/4}\\frac{\\cos\\theta}{1+\\cos^2\\theta}d\\theta\nt=\\sin\\theta とおくと\n=\\displaystyle\\int_0^{1/\\sqrt2}\\frac{dt}{2-t^2}\n=\\frac1{2\\sqrt2}\\left[\\log\\frac{\\sqrt2+t}{\\sqrt2-t}\\right]_0^{1/\\sqrt2}=\\frac{\\log3}{2\\sqrt2}"],
   ["\\displaystyle \\int\\frac{dx}{\\sqrt{1-x^2}}","\\sin y=x\\space \\left(-\\dfrac{\\pi}{2}<y<\\dfrac{\\pi}{2}\\right)\\space を微分すると\n\\cos y\\,y'=1\\quad\\therefore y'=\\dfrac1{\\sqrt{1-x^2}}\\quadより\n答え\\space\\arcsin x+C"],
   ["\\(\\displaystyle\\int_0^1 xe^{x^2}\\,dx\\) =", "\\(\\displaystyle\\frac12\\int_0^1e^u\\,du=\\frac{e-1}2\\)"],
   ["\\(\\displaystyle\\int_0^1 2xe^{x^2}\\,dx\\)", "\\(\\displaystyle=\\int_0^1 e^u\\,du=e-1\\)"],

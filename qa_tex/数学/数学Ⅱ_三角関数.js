@@ -49,6 +49,7 @@ const qa_数学Ⅱ_三角関数 = [
   // 特別な角の値
   ["\\(\\displaystyle\\sin\\frac{\\pi}{12}\\) を求めよ。", "\\(\\displaystyle\\sin\\left(\\frac\\pi4-\\frac\\pi6\\right)=\\frac{\\sqrt2}2\\frac{\\sqrt3}2-\\frac{\\sqrt2}2\\frac12=\\frac{\\sqrt6-\\sqrt2}{4}\\)"],
   ["\\(\\displaystyle\\tan\\frac{\\pi}{12}\\) を求めよ。", "\\(\\displaystyle\\tan\\left(\\frac\\pi4-\\frac\\pi6\\right)=\\frac{1-1/\\sqrt3}{1+1/\\sqrt3}=2-\\sqrt3\\)"],
+  ["\\tan\\dfrac{\\pi}{12} =", "\\sqrt{\\frac{1-\\cos\\frac{\\pi}{6}}{1+\\cos\\frac{\\pi}{6}}}=\\sqrt{\\frac{2-\\sqrt3}{2+\\sqrt3}}=2-\\sqrt3"],
   ["\\(\\displaystyle\\sin\\frac{\\pi}{8}\\) を求めよ。", "\\(\\displaystyle\\cos\\frac\\pi4=1-2\\sin^2\\frac\\pi8\\) より\n\\(\\displaystyle\\sin\\frac\\pi8=\\sqrt{\\frac{1-1/\\sqrt2}{2}}=\\frac{\\sqrt{2-\\sqrt2}}2\\)"],
   ["\\(\\displaystyle\\cos\\frac{\\pi}{8}\\) を求めよ。", "半角公式より\n\\(\\displaystyle\\cos\\frac\\pi8=\\sqrt{\\frac{1+\\cos(\\pi/4)}2}=\\frac{\\sqrt{2+\\sqrt2}}2\\)"],
   ["\\(\\displaystyle\\tan\\frac{\\pi}{8}\\) を求めよ。", "\\(t=\\tan\\frac\\pi8\\) とおくと \\(\\displaystyle1=\\tan\\frac\\pi4=\\frac{2t}{1-t^2}\\)。\nよって \\(t^2+2t-1=0\\)。\\(t>0\\) より \\(\\displaystyle t=\\sqrt2-1\\)"],

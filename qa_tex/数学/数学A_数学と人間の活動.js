@@ -10,6 +10,7 @@ const qa_数学A_数学と人間の活動 = [
   ["\\(3x\\equiv1\\pmod7\\) を解くと", "\\(x\\equiv5\\pmod7\\)"],
   ["\\(x\\equiv2\\pmod3,\\ x\\equiv3\\pmod5\\) を同時に満たす整数 \\(x\\) を求めよ。", "\\(x=2+3k\\) とおくと \\(3k\\equiv1\\pmod5\\) より \\(k\\equiv2\\pmod5\\)。\nしたがって \\(x\\equiv8\\pmod{15}\\)"],
   ["整数 \\(a\\)、素数 \\(p\\) に対して \\(a^p\\equiv a\\pmod p\\) を証明せよ", "\\(a^p\\equiv(a-1)^p+1\\equiv\\cdots\\equiv a\\pmod p\\)"],
+  ["pを奇素数\naをpと互いに素な整数とする\nx^2\\equiv a\\pmod p\\space \nを満たす整数xが存在するとき\ny^2\\equiv a\\pmod{p^2}\\space\nを満たす整数yが存在する\nことを証明", "x^2=a+pr\ny=x+ps\\space とおく\np\\nmid2x\\spaceより\nr+2xs\\equiv0\\pmod p\\space\nを満たすsが存在し\ny^2 \\equiv x^2 + 2xps\n\\equiv a + p(r+2xs)\n\\equiv a \\pmod{p^2}"],
   ["正の整数nの約数の個数は\n3で割って1余るもの\n- 3で割って2余るもの ≧ 0\n以上を証明", "\\displaystyle n = 3^c\\prod_{i=1}^rp_i^{a_i}\\prod_{i=1}^sq_i^{b_i} と素因数分解する\nただし\\space p_i ≡ 1, q_i ≡ 2\\space(mod\\space 3)\n\\displaystyle 左辺 = \\prod_{i=1}^r(a_i + 1)\\prod_{i=1}^s (b_i+1\\space mod\\space 2) ≧ 0"],
   // 整数の性質
   ["\\(n\\ge1\\) とする。\nオイラーのトーシェント関数 \\(\\varphi(n)\\) は？", "\\(\\displaystyle\\left|\\left\\{k\\in\\mathbb Z\\mid 1\\le k\\le n,\\ \\gcd(k,n)=1\\right\\}\\right|\\)"],

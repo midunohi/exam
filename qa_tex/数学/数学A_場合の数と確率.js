@@ -10,6 +10,7 @@ const qa_数学A_場合の数と確率 = [
   // 組合せ
   ["異なる \\(n\\) 個から、順序を考えずに \\(r\\) 個を選ぶ方法は何通り?", "\\({}_nC_r=\\dfrac{n!}{r!(n-r)!}\\)"],
   ["\\displaystyle {}_nC_r+{}_nC_{r-1} =", "\\frac{n\\cdots(n-r+1)}{r\\cdots1}+\\frac{n\\cdots(n-r+2)}{(r-1)\\cdots1}\n=\\{(n-r+1)+r\\}\\frac{n\\cdots(n-r+2)}{r\\cdots1}\n={}_{n+1}C_r"],
+  ["{}_nS_k:n元集合のk分割の個数\n{}_{n+1}S_k =", "\n最後の1元が\n既存のk組へ + 単独で1組に\n= k{}_nS_k+{}_nS_{k-1}"],
   ["\\displaystyle \\sum_{k=1}^{n}k{}_nC_k", "\\displaystyle F(x) = \\sum_{k=0}^{n} {}_nC_k x^k=(1+x)^n\nF'(1) = \\displaystyle\\sum_{k=1}^{n}k{}_nC_k = n 2^{n-1}"],
   ["n枚の平面で\n空間を分割できる最大数は", "1 + 平面 + 2平面の交線 + 3平面の交点\n= \\displaystyle \\sum_{k=0}^3 {}_nC_k"],
   ["\\(n\\ge2,\\ 0\\le r\\le n\\) とする。\n円形に並んだ \\(n\\) 個のボールから、隣り合わない \\(r\\) 個を選ぶ方法は何通り？", "\\(\\displaystyle\\begin{cases}\\dfrac n{n-r}\\binom{n-r}r & \\left(0\\le r\\le\\left\\lfloor\\dfrac n2\\right\\rfloor\\right)\\\\0 & \\left(r>\\left\\lfloor\\dfrac n2\\right\\rfloor\\right)\\end{cases}\\)"],
@@ -20,6 +21,7 @@ const qa_数学A_場合の数と確率 = [
   ["事象 \\(A\\) または \\(B\\) が起こる確率は?", "\\(P(A\\cup B)=P(A)+P(B)-P(A\\cap B)\\)"],
   ["1回の試行で成功する確率が \\(p\\) の独立な試行を \\(n\\) 回行う\nちょうど \\(r\\) 回成功する確率は?", "\\({}_nC_r p^r(1-p)^{n-r}\\)"],
   ["\\(n\\ge1,\\ 0\\le r\\le n\\) とする。\nコインを \\(n\\) 回投げるとき、表がちょうど \\(r\\) 回、連続せずに出る確率は？", "\\(\\displaystyle\\begin{cases}\\dfrac{\\binom{n-r+1}r}{2^n} & (n\\ge2r-1)\\\\0 & (n<2r-1)\\end{cases}\\)"],
+  ["まず札1を\n場所2,\\dots,Nに無作為に置き\n札k(=2,\\dots,N)から順番に\n場所kが空いていれば場所kに\nそうでなければ\n場所1,\\dots,Nのうち\n空いている場所に無作為に置く\n札kを置くとき\n場所kが埋まっている確率P_kは", "P_2=\\dfrac1{N-1}\nP_k = P(札k-1で) + P(先に)\n=\\dfrac1{N-k+2}P_{k-1}+P_{k-1}\n=\\left(\\frac{N-k+3}{N-k+2}\\cdots\\frac N{N-1}\\right)\\frac1{N-1}\n=\\dfrac{N}{(N-1)(N-k+2)}"],
   // 条件付き確率
   ["\\(P(B)>0\\) のとき、条件付き確率 \\(P(A\\mid B)\\) は?", "\\(P(A\\mid B)=\\dfrac{P(A\\cap B)}{P(B)}\\)"],
   ["袋に赤玉2個、白玉8個がある。\n同時に5個取り出し、少なくとも1個が赤玉であったとき、\n赤玉を2個とも取り出している条件付き確率を求めよ。", "赤玉が0個の確率は \\(\\dfrac{\\binom85}{\\binom{10}5}=\\dfrac29\\)、\n2個の確率は \\(\\dfrac{\\binom83}{\\binom{10}5}=\\dfrac29\\)。\nしたがって \\(\\dfrac{2/9}{1-2/9}=\\dfrac27\\)"],

@@ -11,6 +11,7 @@ const qa_数学C_ベクトル = [
   ["平行四辺形ABCD\nAC^2+BD^2 =","|\\overrightarrow{AB}+\\overrightarrow{AD}|^2+|-\\overrightarrow{AB}+\\overrightarrow{AD}|^2\n=2AB^2+2AD^2"],
   ["\\overrightarrow{A}+\\overrightarrow{C}=\\overrightarrow{B}+\\overrightarrow{D}\\spaceのとき\n四角形ABCDは", "\\overrightarrow{AB}=\\overrightarrow{DC} より\n平行四辺形"],
   ["△ABC,BCの中点M\nAB^2+AC^2 =","|\\overrightarrow{AM}+\\overrightarrow{MB}|^2+|\\overrightarrow{AM}-\\overrightarrow{MB}|^2\n=2AM^2+2BM^2"],
+  ["平面上で\nOA=OB=OC=1\\space\nのとき\nAB^2+BC^2+CA^2\\leqq9\\space\nを証明", "|\\vec A+\\vec B+\\vec C|^2 \n= 3 + 2(\\vec A·\\vec B + \\vec B·\\vec C + \\vec C·\\vec A)\nより\n|\\vec A-\\vec B|^2+|\\vec B-\\vec C|^2+|\\vec C-\\vec A|^2\n= 9-|\\vec A+\\vec B+\\vec C|^2\\leqq9\n"],
   ["\\(\\text{コーシー・シュワルツの不等式}\\)", "\\(\\displaystyle(\\vec a\\cdot\\vec b)^2\\le |\\vec a|^2|\\vec b|^2\\)"],
   ["\\(\\left(\\sum a_ib_i\\right)^2\\le ? \\)", "\\(\\displaystyle\\left(\\sum a_ib_i\\right)^2\\le\\left(\\sum a_i^2\\right)\\left(\\sum b_i^2\\right)\\)"],
   // 内積の応用
