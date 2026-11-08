@@ -395,11 +395,8 @@ ExamViews.rpg_vocabulary = `<!DOCTYPE html>
   }
 </style>
 </head>
-<body class="world-app" data-app="hunt">
+<body class="world-app exam-embedded" data-app="hunt">
 <div id="wrap">
-  <header id="appTop">
-    <div id="pageTitle">モンスター狩り 英単語</div>
-  </header>
 
   <div id="topGrid">
     <div id="playerArea" aria-label="プレイヤー情報と問題">

@@ -307,13 +307,56 @@ ExamViews.rpg_status = `<!DOCTYPE html>
     .bagNote{margin-top:4px;line-height:1.2}
   }
 </style>
+<style>
+  html, body { overflow: auto; }
+  body { background-attachment: fixed; }
+  .page {
+    height: auto;
+    min-height: calc(100svh - 12px) !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding-top: 48px !important;
+  }
+  #panel {
+    height: max(320px, calc(100svh - 100px));
+    max-height: none;
+  }
+  .rateSettings {
+    width: min(100%, 960px);
+    padding: 0 12px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+  .rateSettings summary {
+    min-height: 34px;
+    padding-block: 7px;
+    cursor: pointer;
+  }
+  .rateSettings p { margin: 0 0 7px; color: var(--world-muted); }
+  #rates { display: grid; gap: 4px; padding-bottom: 10px; }
+  #rates label { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+  #rates select {
+    min-height: 34px;
+    border: 1px solid var(--world-line);
+    border-radius: 6px;
+    padding: 3px 6px;
+    background: rgba(3, 14, 30, .78);
+    color: var(--world-fg);
+    color-scheme: dark;
+    font: inherit;
+  }
+</style>
 </head>
 
 <body class="world-app" data-app="status">
 <div class="page">
-  <header>
-    <h1>キャラステータス</h1>
-  </header>
+  <details class="rateSettings world-glass-thin">
+    <summary>出題率</summary>
+    <p>0は出題なし。変更は次の抽選から反映します。</p>
+    <div id="rates"></div>
+  </details>
 
   <section id="panel" aria-label="キャラクター情報">
     <div class="statusLayout">
@@ -377,5 +420,6 @@ ExamViews.rpg_status = `<!DOCTYPE html>
 <script src="./lib/rpg_progression.js"></script>
 <script src="./lib/rpg_equipment.js"></script>
 <script src="../開発/views/rpg_status.js"></script>
+<script src="../開発/views/rate-settings.js"></script>
 </body>
 </html>`;

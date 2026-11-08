@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="apps/lib/app_world_ui.css">
   <link rel="stylesheet" href="開発/exam.css">
   <title>みづの 大学受験 問題集</title>
   <script defer src="開発/schedule.js"></script>
@@ -18,19 +19,17 @@
 <body>
   <header class="toolbar">
     <h1 id="heading">みづの 大学受験 問題集</h1>
-    <button id="ratesButton" type="button" aria-label="出題率" title="出題率" aria-expanded="false" aria-controls="ratesPanel">⚙</button>
-    <button id="characterButton" type="button" aria-label="キャラ画面" title="キャラ画面" aria-expanded="false" aria-controls="characterPanel">👤</button>
-    <a href="https://github.com/midunohi/exam" target="_blank" rel="noopener" aria-label="GitHub">GitHub ↗</a>
+    <button class="glass-icon world-glass-thin" id="questionsButton" type="button" aria-label="出題に戻る" title="出題に戻る" aria-controls="questions">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l-6 6 6 6M4 12h16"/></svg>
+    </button>
+    <button class="glass-icon world-glass-thin" id="characterButton" type="button" aria-label="キャラ画面" title="キャラ画面" aria-expanded="false" aria-controls="characterPanel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+    </button>
   </header>
   <main>
-    <section id="ratesPanel" hidden aria-labelledby="ratesHeading">
-      <h2 id="ratesHeading">出題率</h2>
-      <p>0は出題なし。倍率は各形式の出やすさの比です。</p>
-      <div id="rates"></div>
-    </section>
     <section id="characterPanel" hidden aria-label="キャラ画面"></section>
     <section id="questions" aria-label="出題">
-      <p id="empty" role="status" hidden>出題率を1以上にすると出題を開始します。</p>
+      <p id="empty" role="status" hidden>キャラステータスの出題率を1以上にすると、出題を開始できます。</p>
     </section>
   </main>
 </body>

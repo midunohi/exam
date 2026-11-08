@@ -311,12 +311,7 @@ ExamViews.speed_reading = `<!DOCTYPE html>
   <script src="./lib/rpg_study_rewards.js"></script>
   <script src="./lib/study_app_core.js"></script>
 </head>
-<body class="world-app" data-app="speed">
-  <div class="top-bar">
-    <div class="top-bar-inner">
-      <h1 class="title">英文速読4択</h1>
-    </div>
-  </div>
+<body class="world-app exam-embedded" data-app="speed">
 
   <main class="page">
     <div class="frame">

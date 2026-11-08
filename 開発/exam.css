@@ -5,18 +5,23 @@ body {
   margin: 0;
   height: 100vh;
   height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  color: #f8fafc;
+  color: #e8f2fb;
   background: #101d30 url('../img/bg/初期村_広場_昼.png') center / cover;
   font-family: system-ui, sans-serif;
 }
 .toolbar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 6px;
-  padding: 5px 8px;
-  background: #101d30;
+  gap: 4px;
+  height: 44px;
+  padding-inline: max(8px, calc((100vw - 960px) / 2));
+  border-bottom: 1px solid var(--world-glass-thin-line);
+  background: rgba(5, 18, 34, .24);
+  backdrop-filter: blur(7px) saturate(110%);
 }
 h1 {
   flex: 1;
@@ -25,32 +30,43 @@ h1 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: clamp(15px, 3vw, 20px);
+  font-size: clamp(13px, 2vw, 16px);
+  font-weight: 600;
+  text-shadow: 0 1px 5px #020617;
 }
-.toolbar button, .toolbar a, select {
-  min-height: 44px;
-  padding: 6px 9px;
-  border: 1px solid #8295ac;
+.glass-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  height: 38px;
   border-radius: 8px;
-  background: #20344c;
-  color: inherit;
-  font: inherit;
+  padding: 0;
+  box-shadow: none;
+  color: #c3d3e4;
+  cursor: pointer;
 }
-.toolbar button { min-width: 44px; cursor: pointer; }
-.toolbar button[aria-expanded="true"] { border-color: #7dd3fc; background: #315679; }
-.toolbar a { display: grid; place-items: center; text-decoration: none; font-size: 13px; }
-main { flex: 1; min-height: 0; }
-#questions, #characterPanel, iframe { width: 100%; height: 100%; }
+.glass-icon svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 2px #020617);
+}
+.glass-icon:hover, .glass-icon[aria-expanded="true"] { color: #f0f7ff; }
+.glass-icon:focus-visible { outline: 1px solid #a8bdcf; outline-offset: -5px; }
+main, #questions, #characterPanel, iframe { width: 100%; height: 100%; }
 iframe { display: block; border: 0; }
-#ratesPanel, #empty {
+#empty {
+  position: absolute;
+  inset: 54px 0 auto;
   width: min(100% - 24px, 520px);
-  margin: 12px auto;
+  margin: 0 auto;
   padding: 12px;
-  background: #101d30;
-  border: 1px solid #8295ac;
+  border: 1px solid rgba(148, 197, 221, .24);
   border-radius: 8px;
+  background: rgba(3, 14, 30, .62);
+  backdrop-filter: blur(8px);
 }
-#ratesPanel { max-height: calc(100% - 24px); overflow: auto; }
-h2 { margin: 0; font-size: 18px; }
-#rates { display: grid; gap: 6px; }
-#rates label { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; }

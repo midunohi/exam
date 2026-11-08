@@ -8,15 +8,7 @@ ExamViews.fc_enExamples = `<!DOCTYPE html>
   <link rel="stylesheet" href="./lib/app_world_ui.css" />
   <link rel="stylesheet" href="./lib/flashcard_shared.css" />
 </head>
-<body class="world-app" data-app="fc-en" data-flashcard-app>
-  <header class="topbar flashcard-topbar">
-    <div class="topbar-inner flashcard-topbar-inner">
-      <div class="flashcard-title">
-        英単語・例文 <span class="flashcard-title-accent">フラッシュカード</span>
-      </div>
-      <div class="spacer"></div>
-    </div>
-  </header>
+<body class="world-app exam-embedded" data-app="fc-en" data-flashcard-app>
 
   <main class="page flashcard-page">
     <section class="flashcard-shell" id="flashcard" role="button" tabindex="0"

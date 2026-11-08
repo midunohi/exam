@@ -18,15 +18,7 @@ ExamViews.fc_tex = `<!DOCTYPE html>
   <script src="../開発/views/fc_tex-config.js"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
-<body class="world-app" data-app="fc-tex" data-flashcard-app>
-  <header class="topbar flashcard-topbar">
-    <div class="topbar-inner flashcard-topbar-inner">
-      <div class="flashcard-title">
-        各科目 <span class="flashcard-title-accent">フラッシュカード</span>
-      </div>
-      <div class="spacer"></div>
-    </div>
-  </header>
+<body class="world-app exam-embedded" data-app="fc-tex" data-flashcard-app>
 
   <main class="page flashcard-page">
     <section class="flashcard-shell" id="flashcard" role="button" tabindex="0"

@@ -644,3 +644,6 @@ body.world-app :is(.back-link,.back,.back-btn,#backBtn){
   line-height:1.2;
   white-space:nowrap;
 }
+
+/* 統合版の共通メニューに合わせる。 */
+body.exam-embedded{--world-topbar-height:44px}

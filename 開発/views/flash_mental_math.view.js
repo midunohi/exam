@@ -48,11 +48,8 @@ ExamViews.flash_mental_math = `<!doctype html>
 <script src="./lib/study_app_core.js"></script>
 </head>
 
-<body class="world-app" data-app="mental">
+<body class="world-app exam-embedded" data-app="mental">
 <div class="page">
-  <div class="topbar">
-    <div id="title">フラッシュ暗算</div>
-  </div>
   <div class="center">
     <div class="frame">
       <div class="box" id="box">

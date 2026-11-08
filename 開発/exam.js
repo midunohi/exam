@@ -4,8 +4,7 @@
   const get = (id) => document.getElementById(id);
   const questions = get('questions');
   const characterPanel = get('characterPanel');
-  const ratesPanel = get('ratesPanel');
-  const ratesButton = get('ratesButton');
+  const questionsButton = get('questionsButton');
   const characterButton = get('characterButton');
   const frames = new Map();
   const base = new URL('apps/', location.href).href.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
@@ -13,7 +12,7 @@
   try { saved = JSON.parse(localStorage.getItem(storageKey)); } catch {}
   const rates = normalize(saved);
   let current = draw(rates);
-  let panel = null;
+  let characterOpen = false;
 
   function notify(frame, visible) {
     frame.contentWindow.postMessage({ type: 'exam-visibility', visible }, '*');
@@ -23,7 +22,12 @@
     const frame = document.createElement('iframe');
     frame.title = label;
     frame.hidden = true;
-    frame.addEventListener('load', () => notify(frame, !frame.hidden));
+    frame.addEventListener('load', () => {
+      notify(frame, !frame.hidden);
+      if (id === 'rpg_status') {
+        frame.contentWindow.postMessage({ type: 'exam-rate-options', sources, weights, rates }, '*');
+      }
+    });
     frame.srcdoc = ExamViews[id].replace('<head>', () => '<head><base href="' + base + '">');
     frames.set(id, frame);
     container.append(frame);
@@ -32,19 +36,17 @@
   function render() {
     const source = sources.find(({ id }) => id === current);
     if (source && !frames.has(current)) mount(current, source.label, questions);
-    if (panel === 'character' && !frames.has('rpg_status')) {
+    if (characterOpen && !frames.has('rpg_status')) {
       mount('rpg_status', 'キャラ画面', characterPanel);
     }
 
-    questions.hidden = panel !== null;
-    characterPanel.hidden = panel !== 'character';
-    ratesPanel.hidden = panel !== 'rates';
-    ratesButton.setAttribute('aria-expanded', String(panel === 'rates'));
-    characterButton.setAttribute('aria-expanded', String(panel === 'character'));
-    get('heading').textContent = source?.label ?? 'みづの 大学受験 問題集';
+    questions.hidden = characterOpen;
+    characterPanel.hidden = !characterOpen;
+    characterButton.setAttribute('aria-expanded', String(characterOpen));
+    get('heading').textContent = characterOpen ? 'キャラステータス' : source?.label ?? 'みづの 大学受験 問題集';
     get('empty').hidden = current !== null;
 
-    const active = panel === 'character' ? 'rpg_status' : panel === null ? current : null;
+    const active = characterOpen ? 'rpg_status' : current;
     for (const [id, frame] of frames) {
       const visible = id === active;
       if (frame.hidden === visible) {
@@ -54,46 +56,38 @@
     }
   }
 
-  function toggle(next) {
-    if (panel === next) {
-      panel = null;
-      if (current === null) current = draw(rates);
-    } else {
-      panel = next;
-    }
+  function showQuestions() {
+    characterOpen = false;
+    if (current === null) current = draw(rates);
     render();
   }
 
-  for (const { id, label } of sources) {
-    const row = document.createElement('label');
-    const select = document.createElement('select');
-    row.append(label, select);
-    weights.forEach((weight, level) => {
-      select.add(new Option(level === 0 ? '0（なし）' : level + '（' + weight + '倍）', level));
-    });
-    select.value = rates[id];
-    select.addEventListener('change', () => {
-      rates[id] = Number(select.value);
-      try { localStorage.setItem(storageKey, JSON.stringify(rates)); } catch {}
-    });
-    get('rates').append(row);
+  function closeCharacter() {
+    if (!characterOpen) return;
+    showQuestions();
+    characterButton.focus();
   }
 
-  function closePanel() {
-    if (!panel) return;
-    const button = panel === 'rates' ? ratesButton : characterButton;
-    toggle(panel);
-    button.focus();
-  }
-
-  ratesButton.addEventListener('click', () => toggle('rates'));
-  characterButton.addEventListener('click', () => toggle('character'));
+  questionsButton.addEventListener('click', showQuestions);
+  characterButton.addEventListener('click', () => {
+    if (characterOpen) closeCharacter();
+    else {
+      characterOpen = true;
+      render();
+    }
+  });
   window.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closePanel();
+    if (event.key === 'Escape') closeCharacter();
   });
   window.addEventListener('message', (event) => {
-    if (event.data?.type === 'exam-escape') {
-      if (event.source === frames.get('rpg_status')?.contentWindow) closePanel();
+    if (event.source === frames.get('rpg_status')?.contentWindow) {
+      const data = event.data;
+      if (data?.type === 'exam-escape') closeCharacter();
+      if (data?.type === 'exam-rate-change' && Object.hasOwn(rates, data.id)
+          && Number.isInteger(data.level) && data.level >= 0 && data.level < weights.length) {
+        rates[data.id] = data.level;
+        try { localStorage.setItem(storageKey, JSON.stringify(rates)); } catch {}
+      }
       return;
     }
     if (event.data?.type !== 'exam-complete' || event.source !== frames.get(current)?.contentWindow) return;
