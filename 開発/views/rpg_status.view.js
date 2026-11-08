@@ -325,14 +325,28 @@ ExamViews.rpg_status = `<!DOCTYPE html>
   }
   .rateSettings {
     width: min(100%, 960px);
-    padding: 0 12px;
+    padding: 8px 12px 0;
     border-radius: 10px;
     font-size: 13px;
   }
-  .rateSettings summary {
+  [hidden] { display: none !important; }
+  .statusTabs {
+    display: flex;
+    width: min(100%, 960px);
+    gap: 4px;
+  }
+  .statusTabs button {
     min-height: 34px;
-    padding-block: 7px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    color: var(--world-muted);
     cursor: pointer;
+    font-size: 13px;
+  }
+  .statusTabs button[aria-selected="true"] {
+    color: var(--world-fg);
+    border-color: var(--world-line);
+    background: rgba(8, 27, 45, .46);
   }
   .rateSettings p { margin: 0 0 7px; color: var(--world-muted); }
   #rates { display: grid; gap: 4px; padding-bottom: 10px; }
@@ -352,13 +366,16 @@ ExamViews.rpg_status = `<!DOCTYPE html>
 
 <body class="world-app" data-app="status">
 <div class="page">
-  <details class="rateSettings world-glass-thin">
-    <summary>出題率</summary>
+  <div class="statusTabs" role="tablist" aria-label="キャラ画面">
+    <button type="button" class="world-glass-thin" id="statusTab" role="tab" aria-selected="true" aria-controls="panel">ステータス</button>
+    <button type="button" class="world-glass-thin" id="ratesTab" role="tab" aria-selected="false" aria-controls="ratesPanel" tabindex="-1">出題率</button>
+  </div>
+  <section class="rateSettings world-glass-thin" id="ratesPanel" role="tabpanel" aria-labelledby="ratesTab" tabindex="0" hidden>
     <p>0は出題なし。変更は次の抽選から反映します。</p>
     <div id="rates"></div>
-  </details>
+  </section>
 
-  <section id="panel" aria-label="キャラクター情報">
+  <section id="panel" role="tabpanel" aria-labelledby="statusTab" tabindex="0">
     <div class="statusLayout">
       <section class="categorySection characterSection" aria-labelledby="characterTitle">
         <h2 id="characterTitle" class="sectionHeading">CHARACTER</h2>

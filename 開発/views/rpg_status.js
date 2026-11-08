@@ -77,3 +77,26 @@
   window.addEventListener('rpg-equipment-change', render);
   ExamView.onVisibility(visible=>{ if(visible){ load(); render(); } });
   init();
+
+const statusTabs = [...document.querySelectorAll('.statusTabs [role="tab"]')];
+
+function activateStatusTab(activeTab) {
+  for (const tab of statusTabs) {
+    const selected = tab === activeTab;
+    tab.setAttribute('aria-selected', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    document.getElementById(tab.getAttribute('aria-controls')).hidden = !selected;
+  }
+}
+
+for (const tab of statusTabs) {
+  tab.addEventListener('click', () => activateStatusTab(tab));
+  tab.addEventListener('keydown', (event) => {
+    const index = statusTabs.indexOf(tab);
+    const next = { ArrowLeft: 1 - index, ArrowRight: 1 - index, Home: 0, End: 1 }[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    activateStatusTab(statusTabs[next]);
+    statusTabs[next].focus();
+  });
+}
