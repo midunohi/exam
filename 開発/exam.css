@@ -1,0 +1,56 @@
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  color: #f8fafc;
+  background: #101d30 url('../img/bg/初期村_広場_昼.png') center / cover;
+  font-family: system-ui, sans-serif;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  background: #101d30;
+}
+h1 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(15px, 3vw, 20px);
+}
+.toolbar button, .toolbar a, select {
+  min-height: 44px;
+  padding: 6px 9px;
+  border: 1px solid #8295ac;
+  border-radius: 8px;
+  background: #20344c;
+  color: inherit;
+  font: inherit;
+}
+.toolbar button { min-width: 44px; cursor: pointer; }
+.toolbar button[aria-expanded="true"] { border-color: #7dd3fc; background: #315679; }
+.toolbar a { display: grid; place-items: center; text-decoration: none; font-size: 13px; }
+main { flex: 1; min-height: 0; }
+#questions, #characterPanel, iframe { width: 100%; height: 100%; }
+iframe { display: block; border: 0; }
+#ratesPanel, #empty {
+  width: min(100% - 24px, 520px);
+  margin: 12px auto;
+  padding: 12px;
+  background: #101d30;
+  border: 1px solid #8295ac;
+  border-radius: 8px;
+}
+#ratesPanel { max-height: calc(100% - 24px); overflow: auto; }
+h2 { margin: 0; font-size: 18px; }
+#rates { display: grid; gap: 6px; }
+#rates label { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; }

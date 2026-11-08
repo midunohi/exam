@@ -262,6 +262,11 @@
       await renderCurrent();
     }
 
+    async function finishCard() {
+      await nextCard();
+      config.onComplete?.();
+    }
+
     async function advance() {
       const item = state.items[state.itemIndex];
       if (!item) return;
@@ -274,7 +279,7 @@
           updateMeta();
           return;
         }
-        await nextCard();
+        await finishCard();
         return;
       }
 
@@ -288,7 +293,7 @@
         return;
       }
 
-      await nextCard();
+      await finishCard();
     }
 
     async function runBusy(action) {

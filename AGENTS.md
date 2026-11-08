@@ -4,7 +4,9 @@
 静的ファイルとして動作する現在の構成を優先し、必要性のないビルド環境やフレームワークを導入しない
 
 サイト入口: index.html
-学習画面: apps
+学習画面: 開発/views（index.html 内で表示）
+共通処理・スタイル: apps/lib
+出題と保存の仕様: 仕様/統合出題.md
 カード原稿: qa_tex, 新しいカードファイルを追加したら qa_tex/files.js に登録
 qa_speed_reading、qa_en_ja、qa_en_examples: 用途別の学習データ
 img: 画面で使用する画像
