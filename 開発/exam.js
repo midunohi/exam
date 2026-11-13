@@ -6,9 +6,8 @@
   const characterPanel = get('characterPanel');
   const questionsButton = get('questionsButton');
   const characterButton = get('characterButton');
-  // 起動時に一度だけ選び、全出題画面の背後に表示する。
+  // 起動時に一度だけ選び、英単語4択以外の出題画面で共用する。
   const backgrounds = [
-    'bg_rpg_field.png',
     'ダンジョン_洞窟_祭壇.png',
     'ダンジョン_洞窟.png',
     'フィールド_草原_夜.png',
@@ -17,7 +16,8 @@
     '廃墟_遺跡_川.png',
   ];
   const background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-  document.body.style.backgroundImage = `url("${new URL(`img/bg/${background}`, location.href).href}")`;
+  const backgroundUrl = new URL(`img/bg/${background}`, location.href).href;
+  document.body.style.backgroundImage = `url("${backgroundUrl}")`;
   const frames = new Map();
   const base = new URL('apps/', location.href).href.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
   let saved;
@@ -42,8 +42,12 @@
     });
     frame.srcdoc = ExamViews[id].replace('<head>', () => '<head><base href="' + base + '">');
     if (id !== 'rpg_status') {
-      frame.srcdoc = frame.srcdoc.replace('</head>',
-        '<style>html,body{background:transparent!important}</style></head>');
+      const imageUrl = id === 'rpg_vocabulary'
+        ? new URL('img/bg/bg_rpg_field.png', location.href).href
+        : backgroundUrl;
+      // iframe の透過に依存せず、各画面に同じ画像を直接指定する。
+      frame.srcdoc = frame.srcdoc.replace('</head>', () =>
+        `<style>html{background:#101d30!important}body{background:#101d30 url("${imageUrl}") center/cover no-repeat fixed!important}</style></head>`);
     }
     frames.set(id, frame);
     container.append(frame);
