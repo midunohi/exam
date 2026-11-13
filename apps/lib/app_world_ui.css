@@ -283,7 +283,7 @@ body[data-app="hunt"] #logWrap{
   backdrop-filter:blur(3px);
 }
 
-/* キャラステータス：一枚のグラス面を区切り線で分類 */
+/* ステータス·設定：一枚のグラス面を区切り線で分類 */
 body[data-app="status"] #panel{
   width:min(960px,calc(100vw - 16px));
   padding:0;

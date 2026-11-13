@@ -6,6 +6,18 @@
   const characterPanel = get('characterPanel');
   const questionsButton = get('questionsButton');
   const characterButton = get('characterButton');
+  // 起動時に一度だけ選び、全出題画面の背後に表示する。
+  const backgrounds = [
+    'bg_rpg_field.png',
+    'ダンジョン_洞窟_祭壇.png',
+    'ダンジョン_洞窟.png',
+    'フィールド_草原_夜.png',
+    '街_農場_夜.png',
+    '初期村_広場_昼.png',
+    '廃墟_遺跡_川.png',
+  ];
+  const background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+  document.body.style.backgroundImage = `url("${new URL(`img/bg/${background}`, location.href).href}")`;
   const frames = new Map();
   const base = new URL('apps/', location.href).href.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
   let saved;
@@ -29,6 +41,10 @@
       }
     });
     frame.srcdoc = ExamViews[id].replace('<head>', () => '<head><base href="' + base + '">');
+    if (id !== 'rpg_status') {
+      frame.srcdoc = frame.srcdoc.replace('</head>',
+        '<style>html,body{background:transparent!important}</style></head>');
+    }
     frames.set(id, frame);
     container.append(frame);
   }
@@ -43,7 +59,7 @@
     questions.hidden = characterOpen;
     characterPanel.hidden = !characterOpen;
     characterButton.setAttribute('aria-expanded', String(characterOpen));
-    get('heading').textContent = characterOpen ? 'キャラステータス' : source?.label ?? 'みづの 大学受験 問題集';
+    get('heading').textContent = characterOpen ? 'ステータス·設定' : source?.label ?? 'みづの 大学受験 問題集';
     get('empty').hidden = current !== null;
 
     const active = characterOpen ? 'rpg_status' : current;

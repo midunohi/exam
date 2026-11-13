@@ -7,7 +7,7 @@ const ExamSchedule = (() => {
     { id: 'fc_enExamples', label: '英単語・例文' },
     { id: 'speed_reading', label: '英文速読4択' },
     { id: 'flash_mental_math', label: 'フラッシュ暗算' },
-    { id: 'rpg_vocabulary', label: '英単語バトル' },
+    { id: 'rpg_vocabulary', label: '英単語4択' },
   ]);
 
   function normalize(saved) {

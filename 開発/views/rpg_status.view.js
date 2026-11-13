@@ -4,7 +4,7 @@ ExamViews.rpg_status = `<!DOCTYPE html>
 <script src="../開発/view-bridge.js"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>キャラステータス</title>
+<title>ステータス·設定</title>
 <style>
   :root{
     --fg:#e5e7eb;

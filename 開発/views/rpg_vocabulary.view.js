@@ -4,7 +4,7 @@ ExamViews.rpg_vocabulary = `<!DOCTYPE html>
 <script src="../開発/view-bridge.js"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>モンスター狩り 英単語</title>
+<title>英単語4択</title>
 <style>
   :root{
   --bg:#020617;
