@@ -7,6 +7,7 @@ ExamViews.fc_enExamples = `<!DOCTYPE html>
   <title>英単語・例文 フラッシュカード</title>
   <link rel="stylesheet" href="./lib/app_world_ui.css" />
   <link rel="stylesheet" href="./lib/flashcard_shared.css" />
+  <link rel="stylesheet" href="./lib/question_layout.css" />
 </head>
 <body class="world-app exam-embedded" data-app="fc-en" data-flashcard-app>
 

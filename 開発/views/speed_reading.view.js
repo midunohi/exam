@@ -310,6 +310,7 @@ ExamViews.speed_reading = `<!DOCTYPE html>
 <script src="./lib/rpg_equipment.js"></script>
   <script src="./lib/rpg_study_rewards.js"></script>
   <script src="./lib/study_app_core.js"></script>
+  <link rel="stylesheet" href="./lib/question_layout.css" />
 </head>
 <body class="world-app exam-embedded" data-app="speed">
 
@@ -354,7 +355,7 @@ ExamViews.speed_reading = `<!DOCTYPE html>
         </div>
 
         <div id="quizArea" class="quiz-area" aria-live="polite">
-          <p class="quiz-title">本文の内容に合うものを選んでください。</p>
+          <p id="quizPrompt" class="quiz-title"></p>
           <div id="choices" class="choices"></div>
           <div id="feedback" class="feedback"></div>
         </div>

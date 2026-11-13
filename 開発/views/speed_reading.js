@@ -217,7 +217,13 @@ const fallbackPassages = [
     const randomBtn = document.getElementById('randomBtn');
     const wordBox = document.querySelector('.word-box');
     const wordArea = document.querySelector('.word-area');
+    // この英文の全単語を重ねて測り、単語切替中の枠サイズを保つ。
+    const wordSizer = document.createElement('div');
+    wordSizer.className = 'word reading-word-sizer';
+    wordSizer.setAttribute('aria-hidden', 'true');
+    wordArea.appendChild(wordSizer);
     const quizArea = document.getElementById('quizArea');
+    const quizPrompt = document.getElementById('quizPrompt');
     const choicesEl = document.getElementById('choices');
     const feedbackEl = document.getElementById('feedback');
     const rewards = window.RPGStudyRewards.create({
@@ -300,6 +306,11 @@ const fallbackPassages = [
       if (!words.length) {
         wordDisplay.textContent = "開始";
         progressLabel.textContent = "0 / 0";
+        return;
+      }
+      if (!running && !answered && !isQuizVisible() && index === 0) {
+        wordDisplay.textContent = "開始";
+        progressLabel.textContent = "0 / " + words.length;
         return;
       }
       const current = Math.min(index + 1, words.length);
@@ -416,7 +427,10 @@ const fallbackPassages = [
         ready = questionGroups.length > 0;
         loadError = ready ? "" : String(error?.message || error);
       }
-      if (ready) selectRandomCategory(-1);
+      if (ready) {
+        selectRandomCategory(-1);
+        resetToStart();
+      }
       updateDisplay();
       updateCategoryMeta();
       updateStartable();
@@ -425,24 +439,18 @@ const fallbackPassages = [
     function hideQuiz() {
       answered = false;
       if (quizArea) quizArea.classList.remove("is-visible");
-      if (wordArea) wordArea.style.display = "flex";
+      if (wordArea) wordArea.style.display = "grid";
       if (choicesEl) choicesEl.innerHTML = "";
       if (feedbackEl) feedbackEl.textContent = "";
       updateStartable();
     }
 
-    function showQuiz() {
-      if (!currentPassage || !currentPassage.choices.length) return;
+    function prepareQuiz() {
+      if (!currentPassage || !choicesEl) return;
+      quizPrompt.textContent = currentPassage.text;
       const correct = currentPassage.choices[0];
       const choices = window.StudyAppCore.shuffle(currentPassage.choices.slice(0, 4));
-
-      if (wordArea) wordArea.style.display = "none";
-      if (quizArea) quizArea.classList.add("is-visible");
-      if (feedbackEl) feedbackEl.textContent = "";
-      updateStartable();
-      if (!choicesEl) return;
-
-      choicesEl.innerHTML = "";
+      choicesEl.replaceChildren();
       choices.forEach((choice) => {
         const btn = document.createElement("button");
         btn.type = "button";
@@ -451,6 +459,14 @@ const fallbackPassages = [
         btn.addEventListener("click", () => answerChoice(btn, choice === correct));
         choicesEl.appendChild(btn);
       });
+    }
+
+    function showQuiz() {
+      if (!currentPassage || !currentPassage.choices.length) return;
+      if (wordArea) wordArea.style.display = "none";
+      if (quizArea) quizArea.classList.add("is-visible");
+      if (feedbackEl) feedbackEl.textContent = "";
+      updateStartable();
     }
 
     function answerChoice(selectedBtn, isCorrect) {
@@ -506,7 +522,9 @@ const fallbackPassages = [
       words = [];
       index = 0;
       currentPassage = null;
+      wordSizer.replaceChildren();
       hideQuiz();
+      if (ready) setWordsFromPassage(pickRandomPassage());
       updateDisplay();
       updateStartable();
     }
@@ -514,9 +532,15 @@ const fallbackPassages = [
     function setWordsFromPassage(passage) {
       currentPassage = passage;
       words = (passage.text || "").split(/\s+/).filter(Boolean);
+      wordSizer.replaceChildren(...Array.from(new Set(["開始", ...words]), (word) => {
+        const span = document.createElement('span');
+        span.textContent = word;
+        return span;
+      }));
       index = 0;
       expAwarded = false;
       hideQuiz();
+      prepareQuiz();
       updateDisplay();
     }
 
@@ -536,8 +560,8 @@ const fallbackPassages = [
 
     function switchCategory() {
       if (!ready || !questionGroups.length) return;
-      resetToStart();
       selectRandomCategory(currentCategoryIndex);
+      resetToStart();
     }
 
     function advance() {
@@ -575,7 +599,6 @@ const fallbackPassages = [
         clearTimeout(resetTimerId);
         resetTimerId = null;
       }
-      setWordsFromPassage(pickRandomPassage());
       if (!words.length) return;
 
       running = true;

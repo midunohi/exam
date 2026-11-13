@@ -46,6 +46,7 @@ ExamViews.flash_mental_math = `<!doctype html>
 <script src="./lib/rpg_equipment.js"></script>
 <script src="./lib/rpg_study_rewards.js"></script>
 <script src="./lib/study_app_core.js"></script>
+  <link rel="stylesheet" href="./lib/question_layout.css" />
 </head>
 
 <body class="world-app exam-embedded" data-app="mental">

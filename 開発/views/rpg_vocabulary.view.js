@@ -280,31 +280,9 @@ ExamViews.rpg_vocabulary = `<!DOCTYPE html>
   }
   #question{min-height:clamp(38px,8dvh,62px)!important;padding:clamp(5px,1.5dvh,10px) 10px!important}
   #choices{overflow:hidden}
-  body[data-app="hunt"] #qaBox.game-over{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:clamp(14px,3dvh,28px);
-    padding:clamp(16px,4vmin,40px);
-    cursor:pointer;
-    transition:filter .15s,background-color .15s;
-  }
+  body[data-app="hunt"] #qaBox.game-over{cursor:pointer}
   body[data-app="hunt"] #qaBox.game-over:hover{filter:brightness(1.08)}
   body[data-app="hunt"] #qaBox.game-over:active{filter:brightness(1.18)}
-  body[data-app="hunt"] #qaBox.game-over #question{
-    flex:0 0 auto;
-    min-height:0!important;
-    margin:0;
-    padding:0!important;
-    border:0;
-    font-size:clamp(24px,5vmin,44px);
-    line-height:1.1;
-  }
-  body[data-app="hunt"] #qaBox.game-over #choices{
-    width:auto;
-    overflow:visible;
-  }
   button.choice{min-height:0;padding:clamp(2px,.8dvh,6px) 6px}
   #logWrap{
     width:100%;
@@ -394,6 +372,7 @@ ExamViews.rpg_vocabulary = `<!DOCTYPE html>
     :root{--log-height:98px}
   }
 </style>
+  <link rel="stylesheet" href="./lib/question_layout.css" />
 </head>
 <body class="world-app exam-embedded" data-app="hunt">
 <div id="wrap">

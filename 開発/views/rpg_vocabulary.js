@@ -227,7 +227,6 @@ function syncChoiceColumns(){
 }
 
 function showGameOver(){
-  $('question').textContent='☠️ GAME OVER';
   const qaBox=$('qaBox');
   qaBox.classList.add('game-over');
   qaBox.onclick=null;
@@ -236,15 +235,14 @@ function showGameOver(){
       qaBox.onclick=restartGame;
     }
   });
-  const box=$('choices');
-  box.innerHTML='';
-  box.classList.add('game-over');
+  // 元の問題・選択肢は領域を保ったまま隠し、再開操作を重ねる。
+  $('restartBtn')?.remove();
 
   const restart=document.createElement('button');
   restart.id='restartBtn';
   restart.type='button';
-  restart.textContent='タップして再開';
-  box.appendChild(restart);
+  restart.textContent='☠️ GAME OVER\nタップして再開';
+  qaBox.appendChild(restart);
 }
 
 function restartGame(){
@@ -263,6 +261,7 @@ function nextQuestion(){
   if(state.hp<=0){ showGameOver(); return; }
   const qaBox=$('qaBox');
   qaBox.classList.remove('game-over');
+  $('restartBtn')?.remove();
   qaBox.onclick=null;
   const box=$('choices');
   box.classList.remove('game-over');

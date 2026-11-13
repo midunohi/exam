@@ -17,6 +17,7 @@ ExamViews.fc_tex = `<!DOCTYPE html>
   </style>
   <script src="../開発/views/fc_tex-config.js"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <link rel="stylesheet" href="./lib/question_layout.css" />
 </head>
 <body class="world-app exam-embedded" data-app="fc-tex" data-flashcard-app>
 

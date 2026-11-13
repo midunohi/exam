@@ -1,0 +1,151 @@
+/* 問題・解答は内容で寸法を決め、画面幅だけを上限にする。 */
+body.exam-embedded :is(.flashcard-shell, .frame) {
+  width: fit-content;
+  max-width: min(960px, calc(100vw - 32px));
+  min-width: 0;
+}
+body.exam-embedded :is(.tex-card-body, .tex-card-section, .word-box,
+  .reading-body, .word-area, .quiz-area, .displayArea, #qaBox) {
+  height: auto;
+  min-height: 0;
+  flex: 0 0 auto;
+}
+body.exam-embedded :is(.tex-card-section, .english-term-meaning, .english-phrase-line) {
+  padding: 16px clamp(14px, 3vw, 28px);
+}
+body.exam-embedded .tex-card-section { padding-top: 32px; }
+body.exam-embedded .tex-card-content { width: auto; max-width: 100%; }
+body.exam-embedded .english-phrase-line { grid-template-rows: auto auto; }
+body.exam-embedded :is(.english-question, .english-answer) { min-height: 0; }
+body.exam-embedded :is(.tex-card-answer, .english-answer).is-hidden { visibility: hidden; }
+body.exam-embedded :is(.word, .quiz-title, .choice-btn, #question) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+body.exam-embedded .reading-controls {
+  position: static;
+  padding: 12px 16px 0;
+}
+body.exam-embedded .word-area { padding: 20px; }
+body.exam-embedded :is(.choice-btn, button.choice) {
+  height: auto;
+  min-height: 44px;
+  padding: 12px 16px;
+  flex: 0 0 auto;
+}
+body[data-app="mental"] .displayArea { padding: 16px; }
+body[data-app="mental"] #n { height: auto; overflow-wrap: anywhere; }
+body[data-app="mental"] #choices {
+  position: static;
+  grid-template-rows: auto auto;
+}
+body[data-app="mental"] #hint { height: auto; overflow: visible; }
+body[data-app="hunt"] #wrap {
+  grid-template-rows: auto auto;
+  align-content: start;
+}
+body[data-app="hunt"] #topGrid {
+  grid-template-rows: auto auto;
+  align-content: start;
+}
+body[data-app="hunt"] #qaBox {
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  justify-self: center;
+  align-self: start;
+}
+body[data-app="hunt"] #question { min-height: 0; }
+body[data-app="hunt"] #choices { flex: 0 0 auto; }
+
+/* 速読は英文全体の単語に必要な寸法を先に確保する。 */
+body[data-app="speed"] .word-area { display: grid; }
+body[data-app="speed"] :is(#wordDisplay, .reading-word-sizer) {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+body[data-app="speed"] .reading-word-sizer {
+  display: grid;
+  visibility: hidden;
+  pointer-events: none;
+}
+body[data-app="speed"] .reading-word-sizer > span {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+body[data-app="speed"] #progressLabel {
+  min-width: 12ch;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 1問内の表示切替では、隠した問題・解答も寸法計算に含める。 */
+body[data-app="speed"] .reading-body { display: grid; }
+body[data-app="speed"] .reading-controls { grid-area: 1 / 1; }
+body[data-app="speed"] .word-area {
+  display: grid !important;
+  grid-area: 2 / 1;
+}
+body[data-app="speed"] .quiz-area {
+  display: flex;
+  grid-area: 2 / 1;
+  visibility: hidden;
+  pointer-events: none;
+}
+body[data-app="speed"] .quiz-area.is-visible { visibility: visible; pointer-events: auto; }
+body[data-app="speed"] .reading-body:has(.quiz-area.is-visible) .word-area { visibility: hidden; }
+body[data-app="speed"] #feedback { min-height: 1.5em; }
+body[data-app="mental"] .displayArea { display: grid; }
+body[data-app="mental"] :is(#n, #choices, .mental-number-sizer) { grid-area: 1 / 1; min-width: 0; }
+body[data-app="mental"] #n { font-variant-numeric: tabular-nums; }
+body[data-app="mental"] #n.is-hidden { display: flex; visibility: hidden; pointer-events: none; }
+body[data-app="mental"] #choices.is-hidden { display: grid; visibility: hidden; pointer-events: none; }
+body[data-app="mental"] .mental-number-sizer {
+  display: grid;
+  visibility: hidden;
+  pointer-events: none;
+  font-size: 72px;
+  font-weight: 900;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+body[data-app="mental"] .mental-number-sizer > span { grid-area: 1 / 1; min-width: 0; }
+
+/* 履歴は採点時にも枠を押し広げず、領域内でスクロールする。 */
+body[data-app="mental"] #hint {
+  height: 58px;
+  min-height: 58px;
+  max-height: 58px;
+  overflow: auto;
+}
+
+/* 戦闘不能も同じ問題の結果。元の領域を残して再開操作を重ねる。 */
+body[data-app="hunt"] #qaBox { position: relative; }
+body[data-app="hunt"] #qaBox.game-over :is(#question, #choices, #choices *) {
+  visibility: hidden;
+  pointer-events: none;
+}
+body[data-app="hunt"] #restartBtn {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  white-space: pre-line;
+}
+
+body[data-app="mental"] #hint,
+body[data-app="speed"] :is(.result-history, #feedback) { contain: inline-size; }
+body[data-app="speed"] #speedLabel {
+  display: inline-block;
+  min-width: 8ch;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 正誤で枠線の色だけを変え、線の追加で寸法を変えない。 */
+body[data-app="mental"] .choice,
+body[data-app="speed"] .choice-btn {
+  border: 1px solid transparent;
+  border-top-color: var(--world-line-soft);
+}
+
+body[data-app="speed"] #quizPrompt { white-space: pre-wrap; text-align: left; }

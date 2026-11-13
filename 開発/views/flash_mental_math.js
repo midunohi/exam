@@ -31,6 +31,10 @@ const MENTAL_MATH_CONFIG = Object.freeze({
   const nEl=$('n'), msgEl=$('msg');
   const choicesEl=$('choices');
   const choiceBtns=Array.from(choicesEl.querySelectorAll('.choice'));
+  const numberSizer=document.createElement('div');
+  numberSizer.className='mental-number-sizer';
+  numberSizer.setAttribute('aria-hidden','true');
+  nEl.parentElement.appendChild(numberSizer);
   const rewards = window.RPGStudyRewards.create({
     slot:'#rewardSlot',
     icon:'🧮',
@@ -105,17 +109,12 @@ const MENTAL_MATH_CONFIG = Object.freeze({
   function reset(){
     clearTimer();
     rewards.hide();
-    seq=[]; sum=0; i=0;
-    nEl.textContent='';
+    applyDifficulty(difficultyLevel);
+    prepareQuestion();
     msgEl.textContent='';
     readyForChoice=false;
-    showStart();
-    choiceBtns.forEach(b=>{
-      b.textContent='';
-      b.disabled=true;
-      b.classList.remove('correct','wrong');
-    });
     setRunning(false);
+    showStart();
   }
 
   function showNext(){
@@ -145,7 +144,7 @@ const MENTAL_MATH_CONFIG = Object.freeze({
     return window.StudyAppCore.shuffle(Array.from(picks));
   }
 
-  function showChoices(){
+  function prepareChoices(){
     const choices=makeChoices(sum);
     choiceBtns.forEach((b,idx)=>{
       b.textContent=String(choices[idx]);
@@ -153,6 +152,8 @@ const MENTAL_MATH_CONFIG = Object.freeze({
       b.disabled=false;
       b.classList.remove('correct','wrong');
     });
+  }
+  function showChoices(){
     nEl.classList.add('is-hidden');
     choicesEl.classList.remove('is-hidden');
     readyForChoice=true;
@@ -181,7 +182,8 @@ const MENTAL_MATH_CONFIG = Object.freeze({
     if(chosen && !ok){
       chosen.classList.add('wrong');
     }
-    applyDifficulty(activeDifficultyLevel+(ok ? 1 : -1));
+    // 次問の設定表示は次問の準備時に更新し、採点中の枠を動かさない。
+    difficultyLevel=Math.round(clamp(activeDifficultyLevel+(ok ? 1 : -1),difficultyConfig.minLevel,maxDifficultyLevel));
     results.add(ok, ok ? `🎉 正解 +${gain} EXP` : `✖ 不正解 +0 EXP`);
     choiceBtns.forEach(b=>b.disabled=true);
     setTimeout(() => {
@@ -190,9 +192,7 @@ const MENTAL_MATH_CONFIG = Object.freeze({
     }, 1400);
   }
 
-  function start(){
-    reset();
-    window.StudyAppCore.blurActiveElement();
+  function prepareQuestion(){
     activeDifficultyLevel=difficultyLevel;
     const k=Math.max(2, Math.min(200, Number(kEl.textContent)||10));
     const [lo,hi]=rangeForDigits(dEl.textContent);
@@ -207,9 +207,15 @@ const MENTAL_MATH_CONFIG = Object.freeze({
     sum=seq.reduce((a,b)=>a+b,0);
     i=0;
     msgEl.textContent='';
-    choiceBtns.forEach(b=>{ b.disabled=true; b.textContent=''; b.classList.remove('correct','wrong'); });
-    choicesEl.classList.add('is-hidden');
-    nEl.classList.remove('is-hidden');
+    prepareChoices();
+    numberSizer.replaceChildren(...Array.from(new Set(['開始', ...seq]), number=>{
+      const span=document.createElement('span');
+      span.textContent=String(number);
+      return span;
+    }));
+  }
+  function start(){
+    window.StudyAppCore.blurActiveElement();
     setRunning(true);
     showNext();
   }
