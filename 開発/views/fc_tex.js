@@ -23,31 +23,31 @@
         ].some((pattern) => pattern.test(source));
       }
 
-      function toMathJaxSource(value) {
+      function toMathJaxSource(value, implicitMath) {
         const source = normalizeNewlines(value);
         if (!source.trim()) return "\\(\\vphantom{x}\\)";
-        return hasDelimitedMath(source) ? source : `\\(${source}\\)`;
+        return !implicitMath || hasDelimitedMath(source) ? source : `\\(${source}\\)`;
       }
 
-      function setMathJaxContent(element, value) {
+      function setMathJaxContent(element, value, implicitMath) {
         element.replaceChildren();
         normalizeNewlines(value).split("\n").forEach((sourceLine) => {
           const line = document.createElement("div");
           line.className = "tex-card-line";
           line.textContent = sourceLine
-            ? toMathJaxSource(sourceLine)
+            ? toMathJaxSource(sourceLine, implicitMath)
             : "\\(\\vphantom{x}\\)";
           element.append(line);
         });
       }
 
-      function setCardText(questionValue, answerValue, typesetMath = false) {
+      function setCardText(questionValue, answerValue, typesetMath = false, implicitMath = true) {
         if (window.MathJax?.typesetClear) {
           window.MathJax.typesetClear([question, answer]);
         }
         if (typesetMath) {
-          setMathJaxContent(question, questionValue);
-          setMathJaxContent(answer, answerValue);
+          setMathJaxContent(question, questionValue, implicitMath);
+          setMathJaxContent(answer, answerValue, implicitMath);
           return;
         }
         question.textContent = normalizeNewlines(questionValue);
@@ -116,8 +116,9 @@
           setCardText("…", "");
           answer.classList.add("is-hidden");
         },
-        async renderItem({ item, revealStep }) {
-          setCardText(item?.[0], item?.[1], true);
+        async renderItem({ item, revealStep, state }) {
+          // 英文は通常の文章として扱い、区切りのある数式だけを描画する。
+          setCardText(item?.[0], item?.[1], true, !String(state.category).startsWith("英語/"));
           answer.classList.toggle("is-hidden", revealStep < 1);
           await typeset([question, answer]);
         },

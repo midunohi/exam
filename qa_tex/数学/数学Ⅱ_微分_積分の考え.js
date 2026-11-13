@@ -18,7 +18,7 @@ const qa_数学Ⅱ_微分_積分の考え = [
   ["\\(F'(x)=f(x)\\) のとき、\\(\\displaystyle\\int_a^b f(x)\\,dx=\\)", "\\(F(b)-F(a)\\)"],
   ["\\(\\displaystyle\\int_a^b f'(x)\\,dx=\\)", "\\(f(b)-f(a)\\)"],
   ["\\(\\displaystyle\\frac d{dx}\\int_a^x f(t)\\,dt=\\)", "\\(f(x)\\)"],
-  ["\\(\\displaystyle\\int_0^2 x\\,dx\\) を求めよ。", "\\(2\\)"],
+  ["\\displaystyle\\int_0^2 x\\,dx =", "\\left[\\dfrac{x^2}2\\right]_0^2 = 2"],
   ["\\(\\displaystyle\\int_{-1}^1x^2\\,dx\\) を求めよ。", "\\(\\displaystyle\\frac23\\)"],
   ["\\(\\displaystyle\\int_{-2}^2(x^3+3x)\\,dx\\) を求めよ。", "被積分関数は奇関数で、積分区間は原点対称だから積分値は \\(0\\)"],
   ["曲線 \\(y=f(x)\\) と \\(x\\) 軸で囲まれた面積を求める基本は？", "\\(\\displaystyle\\int_a^b |f(x)|\\,dx\\)"],
