@@ -6,18 +6,19 @@
   const characterPanel = get('characterPanel');
   const questionsButton = get('questionsButton');
   const characterButton = get('characterButton');
-  // 起動時に一度だけ選び、英単語4択以外の出題画面で共用する。
+  // 起動時に一度だけ選び、すべての出題画面で共用する。
   const backgrounds = [
     'ダンジョン_洞窟_祭壇.png',
     'ダンジョン_洞窟.png',
     'フィールド_草原_夜.png',
-    '街_農場_夜.png',
-    '初期村_広場_昼.png',
+    'bg_rpg_field.png',
     '廃墟_遺跡_川.png',
   ];
   const background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
   const backgroundUrl = new URL(`img/bg/${background}`, location.href).href;
-  document.body.style.backgroundImage = `url("${backgroundUrl}")`;
+  const statusBackgrounds = ['初期村_広場_昼.png', '街_農場_夜.png'];
+  const statusBackground = statusBackgrounds[Math.floor(Math.random() * statusBackgrounds.length)];
+  const statusBackgroundUrl = new URL(`img/bg/${statusBackground}`, location.href).href;
   const frames = new Map();
   const base = new URL('apps/', location.href).href.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
   let saved;
@@ -41,14 +42,10 @@
       }
     });
     frame.srcdoc = ExamViews[id].replace('<head>', () => '<head><base href="' + base + '">');
-    if (id !== 'rpg_status') {
-      const imageUrl = id === 'rpg_vocabulary'
-        ? new URL('img/bg/bg_rpg_field.png', location.href).href
-        : backgroundUrl;
-      // iframe の透過に依存せず、各画面に同じ画像を直接指定する。
-      frame.srcdoc = frame.srcdoc.replace('</head>', () =>
-        `<style>html{background:#101d30!important}body{background:#101d30 url("${imageUrl}") center/cover no-repeat fixed!important}</style></head>`);
-    }
+    const imageUrl = id === 'rpg_status' ? statusBackgroundUrl : backgroundUrl;
+    // iframe の透過に依存せず、起動時に選んだ画像を直接指定する。
+    frame.srcdoc = frame.srcdoc.replace('</head>', () =>
+      `<style>html{background:#101d30!important}body{background:#101d30 url("${imageUrl}") center/cover no-repeat fixed!important}</style></head>`);
     frames.set(id, frame);
     container.append(frame);
   }
@@ -60,10 +57,11 @@
       mount('rpg_status', 'キャラ画面', characterPanel);
     }
 
+    document.body.style.backgroundImage = `url("${characterOpen ? statusBackgroundUrl : backgroundUrl}")`;
     questions.hidden = characterOpen;
     characterPanel.hidden = !characterOpen;
     characterButton.setAttribute('aria-expanded', String(characterOpen));
-    get('heading').textContent = characterOpen ? 'ステータス·設定' : source?.label ?? 'みづの 大学受験 問題集';
+    get('heading').textContent = characterOpen ? 'ステータス·設定' : '大学受験 問題集';
     get('empty').hidden = current !== null;
 
     const active = characterOpen ? 'rpg_status' : current;

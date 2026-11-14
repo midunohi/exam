@@ -65,7 +65,7 @@
       progressFill: resolveElement(config.progressFill || "#progressFill"),
     });
 
-    if (!elements.card || !elements.randomButton || !elements.categoryLabel) {
+    if (!elements.card || !elements.categoryLabel) {
       throw new Error("FlashcardCore: required card controls are missing");
     }
     if (typeof config.getFiles !== "function" || typeof config.loadCategory !== "function"
@@ -157,7 +157,7 @@
     function setBusy(nextBusy) {
       state.busy = Boolean(nextBusy);
       elements.card.setAttribute("aria-busy", String(state.busy));
-      elements.randomButton.disabled = state.busy;
+      if (elements.randomButton) elements.randomButton.disabled = state.busy;
     }
 
     function updateMeta() {
@@ -309,7 +309,7 @@
     }
 
     elements.card.addEventListener("click", () => runBusy(advance));
-    elements.randomButton.addEventListener("click", (event) => {
+    elements.randomButton?.addEventListener("click", (event) => {
       event.stopPropagation();
       runBusy(() => loadRandomCategory());
     });

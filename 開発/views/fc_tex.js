@@ -75,6 +75,7 @@
       }
 
       FlashcardCore.create({
+        questionsPerCategory: 1,
         onComplete: ExamView.complete,
         rewardIcon: "📖",
         reward: {

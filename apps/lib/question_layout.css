@@ -149,3 +149,50 @@ body[data-app="speed"] .choice-btn {
 }
 
 body[data-app="speed"] #quizPrompt { white-space: pre-wrap; text-align: left; }
+
+/* 出題枠の左上を共通メニュー直下に揃え、内容で寸法が変わっても動かさない。 */
+body.exam-embedded .page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 56px 16px 16px !important;
+}
+body.exam-embedded :is(.flashcard-shell, .frame) {
+  margin: 0;
+  align-self: flex-start;
+}
+body.exam-embedded[data-app="hunt"] #wrap {
+  margin: 0;
+  padding: 56px 16px 16px;
+}
+body.exam-embedded[data-app="hunt"] #qaBox { justify-self: start; }
+
+/* 各科目のカテゴリ名は省略せず、狭い画面では折り返す。 */
+body[data-app="fc-tex"] .flashcard-category-row { display: block; }
+body[data-app="fc-tex"] .flashcard-category-main {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: visible;
+  white-space: normal;
+  container-type: normal;
+}
+body[data-app="fc-tex"] .flashcard-category-name {
+  flex: 1 1 20ch;
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+body[data-app="fc-tex"] :is(.flashcard-category-label, .flashcard-category-count) {
+  display: block;
+}
+
+body.exam-embedded[data-app="mental"] .center {
+  flex: 0 0 auto;
+  align-items: flex-start;
+  justify-content: flex-start;
+}

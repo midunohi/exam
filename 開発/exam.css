@@ -18,7 +18,7 @@ body {
   align-items: center;
   gap: 4px;
   height: 44px;
-  padding-inline: max(8px, calc((100vw - 960px) / 2));
+  padding-inline: 12px;
   border-bottom: 1px solid var(--world-glass-thin-line);
   background: rgba(5, 18, 34, .24);
   backdrop-filter: blur(7px) saturate(110%);
