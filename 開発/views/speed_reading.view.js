@@ -21,7 +21,7 @@ ExamViews.speed_reading = `<!DOCTYPE html>
       min-height: 100%;
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      background: url("../img/bg/廃墟_遺跡_川.png");
+      background: url("../img/フラッシュカード背景/廃墟_遺跡_川.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -317,26 +317,11 @@ ExamViews.speed_reading = `<!DOCTYPE html>
   <main class="page">
     <div class="frame">
       <section class="word-box" aria-live="polite">
-      <div class="category-row flashcard-category-row" aria-label="カテゴリと進捗">
+      <div class="category-row flashcard-category-row" aria-label="出題アプリとカテゴリ">
         <div class="flashcard-category-main">
-          <div class="flashcard-category-label">カテゴリ</div>
+          <div class="exam-app-name">英語スピードリーディング</div>
           <div id="totalCount" class="flashcard-category-count">全0問</div>
           <div id="categoryLabel" class="flashcard-category-name">--</div>
-        </div>
-        <div class="flashcard-category-actions">
-          <div class="flashcard-meta-pill">
-            <span class="flashcard-meta-label">QUEST</span>
-            <span id="countLabel">0 / 3</span>
-            <div id="progressTrack" class="flashcard-progress-track" role="progressbar"
-              aria-label="解答済みの進捗" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0">
-              <div id="progressFill" class="flashcard-progress-fill"></div>
-            </div>
-          </div>
-          <button id="randomBtn" class="flashcard-switch" type="button"
-            aria-label="別のカテゴリへランダムに切り替える">
-            <span class="flashcard-switch-icon" aria-hidden="true">🎲</span>
-            <span class="flashcard-switch-label">切り替え</span>
-          </button>
         </div>
       </div>
 

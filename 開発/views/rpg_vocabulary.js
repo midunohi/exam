@@ -116,18 +116,13 @@ function gainExp(x){
 }
 
 async function loadMonsters(){
-  try{
-    await injectScript('../img/monsters/monsters.js');
-    const arr=window.MONSTER_DATA;
-    if(!Array.isArray(arr) || !arr[0]?.id || !arr[0]?.ja) throw 0;
-    MONSTERS=arr;
-  }catch(e){ MONSTERS=FALLBACK_MONSTERS; }
+  MONSTERS=FALLBACK_MONSTERS;
 }
 
 function setEnemyImage(mon){
   const img=$('enemyImg');
   img.style.display='block';
-  img.src=`../img/monsters/${mon.id}.png`;
+  img.src=`../img/モンスター/${mon.id}.png`;
   img.alt=mon.ja;
   img.onerror=()=>img.style.display='none';
 }
@@ -299,7 +294,7 @@ function nextQuestion(){
     b.onclick=()=>answer(w);
     box.appendChild(b);
   });
-  requestAnimationFrame(syncChoiceColumns);
+  ExamView.fitQuestion(qaBox, Q, '#question, .choice-word, .choice-meaning', { beforeFit: syncChoiceColumns });
 }
 
 function playerDmg(){
@@ -395,8 +390,6 @@ function init(){
   });
 }
 
-ExamView.onVisibility(visible=>{ if(visible) syncChoiceColumns(); });
-window.addEventListener('resize', syncChoiceColumns);
 window.addEventListener('storage', ()=>{ recalcFromTotal(); render(); });
 window.addEventListener('rpg-equipment-change', ()=>{ recalcFromTotal(); render(); });
 

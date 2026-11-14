@@ -213,6 +213,7 @@ const MENTAL_MATH_CONFIG = Object.freeze({
       span.textContent=String(number);
       return span;
     }));
+    ExamView.fitQuestion(boxEl, {}, '#n, .mental-number-sizer, button.choice');
   }
   function start(){
     window.StudyAppCore.blurActiveElement();

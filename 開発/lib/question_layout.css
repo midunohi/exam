@@ -150,15 +150,15 @@ body[data-app="speed"] .choice-btn {
 
 body[data-app="speed"] #quizPrompt { white-space: pre-wrap; text-align: left; }
 
-/* 出題枠の左上を共通メニュー直下に揃え、内容で寸法が変わっても動かさない。 */
+/* 中央寄りの共通領域内に出題枠を揃え、内容で寸法が変わっても左上を動かさない。 */
 body.exam-embedded .page {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
-  max-width: none;
-  margin: 0;
+  max-width: 992px;
+  margin: 0 auto;
   padding: 56px 16px 16px !important;
 }
 body.exam-embedded :is(.flashcard-shell, .frame) {
@@ -166,7 +166,9 @@ body.exam-embedded :is(.flashcard-shell, .frame) {
   align-self: flex-start;
 }
 body.exam-embedded[data-app="hunt"] #wrap {
-  margin: 0;
+  width: 100%;
+  max-width: 992px;
+  margin: 0 auto;
   padding: 56px 16px 16px;
 }
 body.exam-embedded[data-app="hunt"] #qaBox { justify-self: start; }
@@ -195,4 +197,71 @@ body.exam-embedded[data-app="mental"] .center {
   flex: 0 0 auto;
   align-items: flex-start;
   justify-content: flex-start;
+}
+
+/* 出題枠の先頭に形式名とカテゴリをコンパクトに表示する。 */
+body.exam-embedded .flashcard-category-row {
+  display: block;
+  padding: 8px 12px;
+}
+body.exam-embedded .flashcard-category-main {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 10px;
+  overflow: visible;
+  white-space: normal;
+  container-type: normal;
+}
+body.exam-embedded .exam-app-name {
+  color: var(--world-muted, #a9b7cc);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+body.exam-embedded .flashcard-category-name {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.4;
+}
+body.exam-embedded .flashcard-category-count {
+  display: block;
+  grid-column: 3;
+  grid-row: 1;
+  font-size: 11px;
+  line-height: 1.35;
+}
+body.exam-embedded .exam-question-heading {
+  align-self: stretch;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--world-line-soft);
+  line-height: 1.35;
+}
+body.exam-embedded[data-app="mental"] .settings-row {
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  overflow: visible;
+}
+@media (max-width: 600px) {
+  body.exam-embedded .flashcard-category-main {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2px 8px;
+  }
+  body.exam-embedded .flashcard-category-name {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  body.exam-embedded .flashcard-category-count { grid-column: 2; }
+  body.exam-embedded[data-app="mental"] .settings-row { gap: 4px 8px; }
+  body.exam-embedded[data-app="mental"] .setting-chip { gap: 4px; font-size: 10px; }
+  body.exam-embedded[data-app="mental"] .setting-value { min-width: 0; font-size: 12px; }
 }

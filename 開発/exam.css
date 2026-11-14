@@ -6,7 +6,7 @@ body {
   height: 100vh;
   height: 100dvh;
   color: #e8f2fb;
-  background: #101d30 url('../img/bg/初期村_広場_昼.png') center / cover;
+  background: #101d30 url('../img/フラッシュカード背景/フィールド_草原_夜.png') center / cover;
   font-family: system-ui, sans-serif;
 }
 .toolbar {

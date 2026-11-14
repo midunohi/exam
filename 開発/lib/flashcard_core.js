@@ -54,15 +54,10 @@
 
   function create(options) {
     const config = options || {};
-    const questionsPerCategory = Math.max(1, Math.floor(Number(config.questionsPerCategory) || 3));
     const elements = Object.freeze({
       card: resolveElement(config.card || "#flashcard"),
-      randomButton: resolveElement(config.randomButton || "#randomBtn"),
       categoryLabel: resolveElement(config.categoryLabel || "#categoryLabel"),
-      countLabel: resolveElement(config.countLabel || "#countLabel"),
       totalCount: resolveElement(config.totalCount || "#totalCount"),
-      progressTrack: resolveElement(config.progressTrack || "#progressTrack"),
-      progressFill: resolveElement(config.progressFill || "#progressFill"),
     });
 
     if (!elements.card || !elements.categoryLabel) {
@@ -94,9 +89,7 @@
       category: "--",
       currentFileIndex: -1,
       categoryPool: [],
-      remainingItemIndices: [],
       itemIndex: -1,
-      cycleCount: 0,
       revealStep: 0,
       rewarded: false,
       busy: false,
@@ -114,17 +107,6 @@
         ? Number(config.getRevealTotal(item))
         : 1;
       return Number.isFinite(total) && total > 0 ? Math.floor(total) : 0;
-    }
-
-    function resetItemQueue() {
-      state.remainingItemIndices = state.items.map((_item, index) => index);
-    }
-
-    function takeRandomItemIndex() {
-      if (!state.remainingItemIndices.length) return -1;
-      const queueIndex = Math.floor(Math.random() * state.remainingItemIndices.length);
-      const result = state.remainingItemIndices.splice(queueIndex, 1);
-      return result[0];
     }
 
     function pickWeightedFileIndex(files, exceptIndex) {
@@ -157,26 +139,11 @@
     function setBusy(nextBusy) {
       state.busy = Boolean(nextBusy);
       elements.card.setAttribute("aria-busy", String(state.busy));
-      if (elements.randomButton) elements.randomButton.disabled = state.busy;
     }
 
     function updateMeta() {
-      const current = Math.min(state.cycleCount, questionsPerCategory);
-      const item = state.items[state.itemIndex];
-      const total = item ? revealTotal(item) : 0;
-      const isComplete = Boolean(item) && (total === 0 ? state.rewarded : state.revealStep >= total);
-      const completed = isComplete ? current : Math.max(0, current - 1);
-      const percent = (completed / questionsPerCategory) * 100;
-
       elements.categoryLabel.textContent = state.category;
       if (elements.totalCount) elements.totalCount.textContent = `全${state.items.length}問`;
-      if (elements.countLabel) elements.countLabel.textContent = `${current} / ${questionsPerCategory}`;
-      if (elements.progressFill) elements.progressFill.style.width = `${percent}%`;
-      if (elements.progressTrack) {
-        elements.progressTrack.setAttribute("aria-valuemax", String(questionsPerCategory));
-        elements.progressTrack.setAttribute("aria-valuenow", String(completed));
-        elements.progressTrack.setAttribute("aria-valuetext", `${completed}問解答済み`);
-      }
     }
 
     async function renderCurrent() {
@@ -233,37 +200,14 @@
       state.items = result.items;
       state.category = result.category;
       state.currentFileIndex = selectedIndex;
-      state.cycleCount = 1;
       state.revealStep = 0;
       state.rewarded = false;
-      resetItemQueue();
-      state.itemIndex = takeRandomItemIndex();
-      await renderCurrent();
-    }
-
-    function reachedCategoryLimit() {
-      return state.cycleCount >= questionsPerCategory || !state.remainingItemIndices.length;
-    }
-
-    async function nextCard() {
-      rewards.hide();
-      if (reachedCategoryLimit()) {
-        await loadRandomCategory();
-        return;
-      }
-      state.itemIndex = takeRandomItemIndex();
-      if (state.itemIndex < 0) {
-        await loadRandomCategory();
-        return;
-      }
-      state.cycleCount += 1;
-      state.revealStep = 0;
-      state.rewarded = false;
+      state.itemIndex = Math.floor(Math.random() * state.items.length);
       await renderCurrent();
     }
 
     async function finishCard() {
-      await nextCard();
+      await loadRandomCategory();
       config.onComplete?.();
     }
 
@@ -309,10 +253,6 @@
     }
 
     elements.card.addEventListener("click", () => runBusy(advance));
-    elements.randomButton?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      runBusy(() => loadRandomCategory());
-    });
     global.addEventListener("keydown", (event) => {
       if (event.code !== "Space" && event.code !== "Enter") return;
       if (event.target instanceof Element
@@ -324,7 +264,6 @@
     const controller = Object.freeze({
       start: () => runBusy(() => loadRandomCategory(-1)),
       advance: () => runBusy(advance),
-      switchCategory: () => runBusy(() => loadRandomCategory()),
       getState: () => ({ ...state, items: state.items.slice() }),
     });
 

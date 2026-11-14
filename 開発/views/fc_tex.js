@@ -74,9 +74,8 @@
         await mathJax.typesetPromise(elements);
       }
 
-      FlashcardCore.create({
-        questionsPerCategory: 1,
-        onComplete: ExamView.complete,
+      let questionLayoutKey;
+      FlashcardCore.create({        onComplete: ExamView.complete,
         rewardIcon: "📖",
         reward: {
           exp: 1,
@@ -122,6 +121,8 @@
           setCardText(item?.[0], item?.[1], true, !String(state.category).startsWith("英語/"));
           answer.classList.toggle("is-hidden", revealStep < 1);
           await typeset([question, answer]);
+          if (revealStep === 0) questionLayoutKey = {};
+          ExamView.fitQuestion(document.getElementById("flashcard"), questionLayoutKey, ".tex-card-content");
         },
       });
     })();

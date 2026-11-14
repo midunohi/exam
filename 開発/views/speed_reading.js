@@ -211,10 +211,6 @@ const fallbackPassages = [
     const progressLabel = document.getElementById('progressLabel');
     const categoryLabel = document.getElementById('categoryLabel');
     const totalCount = document.getElementById('totalCount');
-    const countLabel = document.getElementById('countLabel');
-    const progressTrack = document.getElementById('progressTrack');
-    const progressFill = document.getElementById('progressFill');
-    const randomBtn = document.getElementById('randomBtn');
     const wordBox = document.querySelector('.word-box');
     const wordArea = document.querySelector('.word-area');
     // この英文の全単語を重ねて測り、単語切替中の枠サイズを保つ。
@@ -247,9 +243,6 @@ const fallbackPassages = [
     let loadError = "";
     let currentCategoryIndex = -1;
     let categoryPool = [];
-    let remainingItemIndices = [];
-    let cycleCount = 0;
-    let completedInCategory = 0;
 
     function wpmToIntervalMs(wpm) {
       return 60000 / Math.max(1, wpm);
@@ -320,16 +313,8 @@ const fallbackPassages = [
 
     function updateCategoryMeta() {
       const group = questionGroups[currentCategoryIndex];
-      const completed = Math.min(completedInCategory, 3);
       if (categoryLabel) categoryLabel.textContent = group?.subject || "--";
       if (totalCount) totalCount.textContent = `全${group?.items?.length || 0}問`;
-      if (countLabel) countLabel.textContent = `${Math.min(cycleCount, 3)} / 3`;
-      if (progressFill) progressFill.style.width = `${(completed / 3) * 100}%`;
-      if (progressTrack) {
-        progressTrack.setAttribute("aria-valuenow", String(completed));
-        progressTrack.setAttribute("aria-valuetext", `${completed}問解答済み`);
-      }
-      if (randomBtn) randomBtn.disabled = !ready;
     }
 
     function selectRandomCategory(exceptIndex = currentCategoryIndex) {
@@ -345,9 +330,6 @@ const fallbackPassages = [
       const selected = candidates[Math.floor(Math.random() * candidates.length)] ?? 0;
       categoryPool = categoryPool.filter((value) => value !== selected);
       currentCategoryIndex = selected;
-      remainingItemIndices = questionGroups[selected].items.map((_item, index) => index);
-      cycleCount = 0;
-      completedInCategory = 0;
       updateCategoryMeta();
     }
 
@@ -428,7 +410,6 @@ const fallbackPassages = [
         loadError = ready ? "" : String(error?.message || error);
       }
       if (ready) {
-        selectRandomCategory(-1);
         resetToStart();
       }
       updateDisplay();
@@ -472,7 +453,6 @@ const fallbackPassages = [
     function answerChoice(selectedBtn, isCorrect) {
       if (answered) return;
       answered = true;
-      completedInCategory = Math.min(cycleCount, 3);
       updateCategoryMeta();
       selectedBtn.blur();
       updateStartable();
@@ -542,26 +522,17 @@ const fallbackPassages = [
       hideQuiz();
       prepareQuiz();
       updateDisplay();
+      ExamView.fitQuestion(wordBox, {}, "#wordDisplay, .reading-word-sizer, #quizPrompt, .choice-btn");
     }
 
     function pickRandomPassage() {
       if (!questionGroups.length) return { text: "", choices: [], subject: "" };
-      if (currentCategoryIndex < 0 || cycleCount >= 3 || !remainingItemIndices.length) {
-        selectRandomCategory(currentCategoryIndex);
-      }
+      selectRandomCategory(currentCategoryIndex);
       const group = questionGroups[currentCategoryIndex];
-      if (!group || !remainingItemIndices.length) return { text: "", choices: [], subject: "" };
-      const queueIndex = Math.floor(Math.random() * remainingItemIndices.length);
-      const itemIndex = remainingItemIndices.splice(queueIndex, 1)[0];
-      cycleCount += 1;
+      if (!group?.items.length) return { text: "", choices: [], subject: "" };
+      const itemIndex = Math.floor(Math.random() * group.items.length);
       updateCategoryMeta();
       return group.items[itemIndex];
-    }
-
-    function switchCategory() {
-      if (!ready || !questionGroups.length) return;
-      selectRandomCategory(currentCategoryIndex);
-      resetToStart();
     }
 
     function advance() {
@@ -636,10 +607,6 @@ const fallbackPassages = [
     });
 
     speedSlider.addEventListener("input", updateSpeedLabel);
-    randomBtn.addEventListener("click", (event) => {
-      event.stopPropagation();
-      switchCategory();
-    });
 
     // Key controls
     document.addEventListener("keydown", (e) => {

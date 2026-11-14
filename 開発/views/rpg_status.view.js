@@ -27,7 +27,7 @@ ExamViews.rpg_status = `<!DOCTYPE html>
     min-height:100vh;
     min-height:100dvh;
     padding:8px;
-    background-image:url('../img/bg/街_農場_夜.png');
+    background-image:url('../img/ステータス·設定背景/街_農場_夜.png');
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;

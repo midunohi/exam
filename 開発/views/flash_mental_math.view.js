@@ -6,7 +6,7 @@ ExamViews.flash_mental_math = `<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>フラッシュ暗算</title>
 <style>
-  body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:url("../img/bg/ダンジョン_洞窟_祭壇.png");background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;color:#eef2ff;text-shadow:0 2px 5px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.65)}
+  body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:url("../img/フラッシュカード背景/ダンジョン_洞窟_祭壇.png");background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;color:#eef2ff;text-shadow:0 2px 5px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.65)}
   .page{position:relative;width:100%;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;padding-top:4px}
   .topbar{width:min(500px,90vw);display:flex;align-items:center;justify-content:space-between}
   .center{flex:1;width:100%;display:flex;align-items:center;justify-content:center}
@@ -54,7 +54,8 @@ ExamViews.flash_mental_math = `<!doctype html>
   <div class="center">
     <div class="frame">
       <div class="box" id="box">
-        <div class="row settings-row" aria-label="現在の難易度設定">
+        <div class="row settings-row" aria-label="出題アプリと現在の難易度設定">
+          <span class="exam-app-name">フラッシュ暗算</span>
           <div class="setting-chip setting-level">難易度 <strong>Lv.<output id="difficultyLevel" class="setting-value">11</output></strong></div>
           <div class="setting-chip">個数 <output id="k" class="setting-value">5</output></div>
           <div class="setting-chip">桁 <output id="d" class="setting-value">1</output></div>

@@ -5,11 +5,11 @@
 
 サイト入口: index.html
 学習画面: 開発/views（index.html 内で表示）
-共通処理・スタイル: apps/lib
+共通処理・スタイル: 開発/lib
 出題と保存の仕様: 仕様/統合出題.md
 カード原稿: qa_tex, 新しいカードファイルを追加したら qa_tex/files.js に登録
 qa_speed_reading、qa_en_ja、qa_en_examples: 用途別の学習データ
-img: 画面で使用する画像
+img: 用途別の背景（フラッシュカード背景・ステータス·設定背景・RPG戦闘背景）とモンスター、キャラクター、favicon。RPG戦闘背景は英単語4択専用
 
 # 画面を変更した場合の確認
 数式や長い文章が画面外へ大きくはみ出さない

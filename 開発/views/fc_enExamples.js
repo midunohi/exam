@@ -66,6 +66,7 @@
         return total;
       }
 
+      let questionLayoutKey;
       FlashcardCore.create({
         onComplete: ExamView.complete,
         rewardIcon: "📚",
@@ -138,6 +139,8 @@
             questionElements.push(english);
           });
 
+          if (revealStep === 0) questionLayoutKey = {};
+          ExamView.fitQuestion(document.getElementById("flashcard"), questionLayoutKey, ".english-question, .english-answer");
           const total = getRevealTotal(item);
           if (total === 0 || revealStep >= total) {
             questionElements.forEach((element) => element.classList.add("is-active"));

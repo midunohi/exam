@@ -38,7 +38,7 @@ ExamViews.rpg_vocabulary = `<!DOCTYPE html>
   html,body{
     margin:0;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
-    background:#0b1a33 url('../img/bg/bg_rpg_field.png') no-repeat center top/cover;
+    background:#0b1a33 url('../img/RPG戦闘背景/bg_rpg_field.png') no-repeat center top/cover;
     color:#fff;
     text-shadow:0 2px 5px rgba(0,0,0,.9), 0 0 12px rgba(0,0,0,.65);
   }
@@ -386,6 +386,7 @@ ExamViews.rpg_vocabulary = `<!DOCTYPE html>
       </section>
 
       <section id="qaBox" class="panel">
+        <div class="exam-question-heading"><span class="exam-app-name">英単語4択</span></div>
         <p id="question">—</p>
         <div id="choices"></div>
       </section>

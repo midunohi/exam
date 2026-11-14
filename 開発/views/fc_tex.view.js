@@ -24,9 +24,9 @@ ExamViews.fc_tex = `<!DOCTYPE html>
   <main class="page flashcard-page">
     <section class="flashcard-shell" id="flashcard" role="button" tabindex="0"
       aria-live="polite" aria-busy="false" aria-label="問題カード。押すと答えを表示します">
-      <div class="category-row flashcard-category-row" aria-label="出題カテゴリ">
+      <div class="category-row flashcard-category-row" aria-label="出題アプリとカテゴリ">
         <div class="flashcard-category-main">
-          <div class="flashcard-category-label">カテゴリ</div>
+          <div class="exam-app-name">各科目フラッシュカード</div>
           <div id="totalCount" class="flashcard-category-count">全0問</div>
           <div id="categoryLabel" class="flashcard-category-name">--</div>
         </div>
