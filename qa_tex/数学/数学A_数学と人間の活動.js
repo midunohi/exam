@@ -5,23 +5,23 @@ const qa_数学A_数学と人間の活動 = [
   ["整数a,b,q,r が\na = bq + r を満たすとき\ngcd(a,b) = gcd(b,r) を証明", "a = bq + r より\nd | b, r ⇒ d | a ⇒ d | a, b\nr = a - bq より\nd | a, b ⇒ d | r ⇒ d | b, r\n∴ d | a, b ⇔ d | b, r\n\n"],
   ["整数a,b,q,r が\na = bq + r を満たすとき\ngcd(a,b) = gcd(b,r) を証明", "a = bq + r より\\quad d | b, r ⇒ d | a ⇒ d | a, b\nr = a - bq より\\quad d | a, b ⇒ d | r ⇒ d | b, r\n∴ d | a, b ⇔ d | b, r\n\n"],
   ["ユークリッドの互除法を用いて \\(252\\) と \\(198\\) の最大公約数を求めよ。", "\\(252=198+54,\\ 198=3\\cdot54+36,\\ 54=36+18\\) より、最大公約数は \\(18\\)"],
-  ["\\(2x+3y=1\\) の整数解は", "\\(x=-1,\\ y=1\\)"],
+  ["\\(2x+3y=1\\) の整数解は", "x=-1,\\ y=1"],
   ["一次不定方程式 \\(35x+22y=1\\) の整数解を1組求めよ。", "互除法を逆にたどると \\(1=8\\cdot22-5\\cdot35\\)。\nしたがって \\((x,y)=(-5,8)\\)"],
   // 合同式
-  ["\\(3x\\equiv1\\pmod7\\) を解くと", "\\(x\\equiv5\\pmod7\\)"],
+  ["\\(3x\\equiv1\\pmod7\\) を解くと", "x\\equiv5\\pmod7"],
   ["\\(x\\equiv2\\pmod3,\\ x\\equiv3\\pmod5\\) を同時に満たす整数 \\(x\\) を求めよ。", "\\(x=2+3k\\) とおくと \\(3k\\equiv1\\pmod5\\) より \\(k\\equiv2\\pmod5\\)。\nしたがって \\(x\\equiv8\\pmod{15}\\)"],
-  ["整数 \\(a\\)、素数 \\(p\\) に対して \\(a^p\\equiv a\\pmod p\\) を証明せよ", "\\(a^p\\equiv(a-1)^p+1\\equiv\\cdots\\equiv a\\pmod p\\)"],
+  ["整数 \\(a\\)、素数 \\(p\\) に対して \\(a^p\\equiv a\\pmod p\\) を証明せよ", "a^p\\equiv(a-1)^p+1\\equiv\\cdots\\equiv a\\pmod p"],
   ["整数a^{素数p}\\equiv a\\pmod p\n\\text{を証明}", "a^p\\equiv (a-1)^p + 1 \\equiv \\cdots \\equiv a"],
   ["pを奇素数\naをpと互いに素な整数とする\nx^2\\equiv a\\pmod p\\space \nを満たす整数xが存在するとき\ny^2\\equiv a\\pmod{p^2}\\space\nを満たす整数yが存在する\nことを証明", "x^2=a+pr\ny=x+ps\\space とおく\np\\nmid2x\\spaceより\nr+2xs\\equiv0\\pmod p\\space\nを満たすsが存在し\ny^2 \\equiv x^2 + 2xps\n\\equiv a + p(r+2xs)\n\\equiv a \\pmod{p^2}"],
   ["正の整数nの約数の個数は\n3で割って1余るもの\n- 3で割って2余るもの ≧ 0\n以上を証明", "\\displaystyle n = 3^c\\prod_{i=1}^rp_i^{a_i}\\prod_{i=1}^sq_i^{b_i} と素因数分解する\nただし\\space p_i ≡ 1, q_i ≡ 2\\space(mod\\space 3)\n\\displaystyle 左辺 = \\prod_{i=1}^r(a_i + 1)\\prod_{i=1}^s (b_i+1\\space mod\\space 2) ≧ 0"],
   ["正の整数nの約数の個数は\n(3で割って1余るもの)\n-\\space(3で割って2余るもの) ≧ 0\nを証明", "\\displaystyle n = 3^c\\prod_{i=1}^rp_i^{a_i}\\prod_{i=1}^sq_i^{b_i} と素因数分解する\nただし\\space p_i ≡ 1, q_i ≡ 2\\space(mod\\space 3)\n\\displaystyle 左辺 = \\prod_{i=1}^r(a_i + 1)\\prod_{i=1}^s (b_i+1\\space mod\\space 2) ≧ 0"],
   // 整数の性質
-  ["\\(n\\ge1\\) とする。\nオイラーのトーシェント関数 \\(\\varphi(n)\\) は？", "\\(\\displaystyle\\left|\\left\\{k\\in\\mathbb Z\\mid 1\\le k\\le n,\\ \\gcd(k,n)=1\\right\\}\\right|\\)"],
+  ["\\(n\\ge1\\) とする。\nオイラーのトーシェント関数 \\(\\varphi(n)\\) は？", "\\displaystyle\\left|\\left\\{k\\in\\mathbb Z\\mid 1\\le k\\le n,\\ \\gcd(k,n)=1\\right\\}\\right|"],
   ["整数 \\(m\\ge2\\) に対し、\\((m-1)!\\) が \\(m\\) で割り切れるのはどのような \\(m\\) か。", "\\(m=ab\\ (2\\le a\\le b)\\) とする。\n\\(a<b\\) なら \\(a,b\\le m-1\\)、\\(a=b\\ge3\\) なら \\(a,2a\\le m-1\\) なので合成数では割り切れる。\nただし \\(m=4\\) は例外。\nまた素数 \\(m\\) は \\(1,2,\\ldots,m-1\\) の積を割り切らない。\nよって \\(4\\) 以外の合成数のとき"],
   ["m\\ge2\\text{ のとき}\n(m-1)!\\text{ が }m\\text{ で割り切れるのは}", "m=ab\\space(2\\le a\\le b)\\text{ とする}\na<b ⇒ a,b\\le m-1 \n\\therefore 割り切れる\na=b\\ge3 ⇒ a,2a\\le m-1\n\\therefore 割り切れる\na=b=2 ⇒ 割り切れない\n\\text{よって } m\\text{ が }4\\text{ 以外の合成数のとき}"],
-  ["\\(v_a(m)=\\max\\{k\\in\\mathbb Z_{\\ge0}\\mid a^k\\mid m\\}\\) とする。\n\\(a\\ge2,\\ r\\ge1,\\ 0<n<a^r\\) のとき、\\(v_a(a^r-n)\\) は？", "\\(v_a(n)\\)"],
+  ["\\(v_a(m)=\\max\\{k\\in\\mathbb Z_{\\ge0}\\mid a^k\\mid m\\}\\) とする。\n\\(a\\ge2,\\ r\\ge1,\\ 0<n<a^r\\) のとき、\\(v_a(a^r-n)\\) は？", "v_a(n)"],
   ["a\\geqq2,\\quad r\\geqq1,\\quad 0<n<a^r \\text{ のとき}\na^r-n \\text{ と } n \\text{ が }\na \\text{ で割り切れる回数が等しいことの証明}", "n=a^s m\\quad(a\\nmid m)\\text{ とおくと}\na^r-n=a^s\\left(a^{r-s}-m\\right),\na\\nmid\\left(a^{r-s}-m\\right)"],
   ["v_3: 3で割り切れる回数\nm\\geq1\nv_3(4^m-1)=", "4^2 ≡ 7 \\space (mod\\space 9)\n4^3 ≡ 1 \\space (mod\\space 9)\n\nv_3(4^{3m}-1)\n= v_3(4^m-1) + v_3(4^{2m}+4^m+1)\n= v_3(4^m-1) + 1\n\n答え: v_3(m)+1"],
   // 記数法
-  ["10進法の数 \\(2026\\) を5進法で表せ。", "\\(2026=3\\cdot5^4+1\\cdot5^3+1\\cdot5^2+0\\cdot5+1\\) だから\n\\(2026=31101_{(5)}\\)"]
+  ["10進法の数 \\(2026\\) を5進法で表せ。", "\\(2026=3\\cdot5^4+1\\cdot5^3+1\\cdot5^2+0\\cdot5+1\\) だから\n2026=31101_{(5)}"]
 ];

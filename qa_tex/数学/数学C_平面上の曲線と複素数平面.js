@@ -10,15 +10,15 @@ const qa_数学C_平面上の曲線と複素数平面 = [
   ["楕円 \\(\\dfrac{x^2}9+\\dfrac{y^2}4=1\\) 上の点 \\((3\\cos\\theta,2\\sin\\theta)\\) における\n接線を求めよ。", "楕円の接線公式より \\(\\dfrac{x(3\\cos\\theta)}9+\\dfrac{y(2\\sin\\theta)}4=1\\)。\nすなわち \\(\\dfrac{x\\cos\\theta}3+\\dfrac{y\\sin\\theta}2=1\\)"],
   ["双曲線 \\(\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=1\\) の焦点, 漸近線, 離心率は？", "焦点 \\((\\pm\\sqrt{a^2+b^2},0)\\)\n漸近線 \\(y=\\pm\\frac bax\\)\n離心率 \\(\\frac{\\sqrt{a^2+b^2}}a\\)"],
   // 極座標と極方程式
-  ["直交座標から極座標への関係式は？", "\\(r^2=x^2+y^2,\\ \\tan\\theta=\\frac yx\\)"],
-  ["直線 \\(x=a\\) の極方程式は？", "\\(r\\cos\\theta=a\\)"],
+  ["直交座標から極座標への関係式は？", "r^2=x^2+y^2,\\ \\tan\\theta=\\frac yx"],
+  ["直線 \\(x=a\\) の極方程式は？", "r\\cos\\theta=a"],
   ["極方程式 \\(r=2a\\sin\\theta\\) が表す図形は？", "中心 \\((0,a)\\)、半径 \\(a\\) の円"],
   ["極方程式\\space \\displaystyle r=\\frac{1}{1-\\sin\\theta}\n\\text{を }x,y\\text{ で表すと}","r-r\\sin\\theta=1\\quad \\therefore r=y+1\n\\therefore x^2+y^2=(y+1)^2\\quad\\therefore y=\\dfrac{x^2-1}2"],
   ["極方程式 \\(r=2a(1+\\cos\\theta)\\ (a>0)\\) について、\n原点を通るときの \\(\\theta\\) と、\\(r\\) の最大値を求めよ。", "\\(r=0\\) は \\(1+\\cos\\theta=0\\) より \\(\\theta=\\pi\\)。\nまた \\(\\cos\\theta\\le1\\) より最大値は \\(\\theta=0\\) のとき \\(4a\\)"],
   // 複素数の極形式と方程式
-  ["ド・モアブルの定理は？", "\\((\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta\\)"],
-  ["方程式 \\(z^n=1\\) の解は？", "\\(z=\\cos\\frac{2k\\pi}n+i\\sin\\frac{2k\\pi}n\\)\n\\(k=0,1,\\dots,n-1\\)"],
-  ["複素数の方程式 \\(z^4=-16\\) の解を極形式で求めよ。", "絶対値は \\(2\\)、偏角は \\(\\dfrac{\\pi+2k\\pi}4\\) だから、\n\\(z=2\\left\\{\\cos\\left(\\dfrac\\pi4+\\dfrac{k\\pi}2\\right)+i\\sin\\left(\\dfrac\\pi4+\\dfrac{k\\pi}2\\right)\\right\\}\\ (k=0,1,2,3)\\)"],
+  ["ド・モアブルの定理は？", "(\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta"],
+  ["方程式 \\(z^n=1\\) の解は？", "z=\\cos\\frac{2k\\pi}n+i\\sin\\frac{2k\\pi}n\nk=0,1,\\dots,n-1"],
+  ["複素数の方程式 \\(z^4=-16\\) の解を極形式で求めよ。", "絶対値は \\(2\\)、偏角は \\(\\dfrac{\\pi+2k\\pi}4\\) だから、\nz=2\\left\\{\\cos\\left(\\dfrac\\pi4+\\dfrac{k\\pi}2\\right)+i\\sin\\left(\\dfrac\\pi4+\\dfrac{k\\pi}2\\right)\\right\\}\\ (k=0,1,2,3)"],
   ["z≠0\nz^3=z+\\overline z\nの複素数解は", "r^3e^{3i\\theta}=2r\\cos\\theta\\quad\\therefore \\theta=\\dfrac{k\\pi}{3}\nr^2(-1)^k=2\\cos\\dfrac{k\\pi}{3}\\quad\\therefore k=0,3\\space\n\\therefore z=\\pm\\sqrt2"],
   // 複素数平面上の軌跡
   ["\\(|z-a|=r\\) が表す図形は？", "中心 \\(a\\)、半径 \\(r\\) の円"],
@@ -26,8 +26,8 @@ const qa_数学C_平面上の曲線と複素数平面 = [
   ["\\(\\left|\\frac{z-a}{z-b}\\right|=k\\ (k>0,\\ k\\neq1)\\) が表す図形は？", "アポロニウスの円"],
   ["複素数 \\(z=x+iy\\) が \\(|z-1|=2|z+1|\\) を満たすとき、\nその軌跡を求めよ。", "2乗して \\((x-1)^2+y^2=4\\{(x+1)^2+y^2\\}\\)。\n整理すると \\(\\left(x+\\dfrac53\\right)^2+y^2=\\left(\\dfrac43\\right)^2\\)"],
   // 複素数平面上の変換と図形
-  ["点 \\(z\\) を原点のまわりに角 \\(\\theta\\) だけ回転した点は？", "\\((\\cos\\theta+i\\sin\\theta)z\\)"],
-  ["点 \\(z\\) を点 \\(a\\) のまわりに角 \\(\\theta\\) だけ回転した点 \\(w\\) は？", "\\(w-a=(\\cos\\theta+i\\sin\\theta)(z-a)\\)"],
+  ["点 \\(z\\) を原点のまわりに角 \\(\\theta\\) だけ回転した点は？", "(\\cos\\theta+i\\sin\\theta)z"],
+  ["点 \\(z\\) を点 \\(a\\) のまわりに角 \\(\\theta\\) だけ回転した点 \\(w\\) は？", "w-a=(\\cos\\theta+i\\sin\\theta)(z-a)"],
   ["複素数平面上にO(0),\\ A(\\alpha),\\ B(\\beta)\\text{ があるとき}\n\\overrightarrow{OA}\\cdot\\overrightarrow{OB} =\n\\triangle OAB\\text{ の面積}=","\n\\operatorname{Re}(\\alpha\\overline{\\beta})\n\\dfrac12\\left|\\operatorname{Im}(\\alpha\\overline{\\beta})\\right|"],
   ["相異なる複素数 \\(\\alpha,\\beta,\\gamma\\) が正三角形の頂点を表すことと、\n\\(\\alpha^2+\\beta^2+\\gamma^2=\\alpha\\beta+\\beta\\gamma+\\gamma\\alpha\\) が\n同値であることを示せ。", "相似変換で \\(\\alpha=-1,\\beta=1\\) としてよい。\n条件式は \\(2+\\gamma^2=-1\\) となるから\n\\(\\gamma=\\pm\\sqrt3i\\)。これは辺長2の正三角形の第3頂点であり、\n逆も同じ計算で成り立つ。"],
   ["相異なる複素数α,β,γが\n正三角形をなす \n⇔ α^2 + β^2 + γ^2 = αβ + βγ + γα\nを証明", "α=-1, β=1 となるように\n相似変換\\space z → uz + v (u \\neq 0)\nしたとき、元の条件は保存される\n2 + γ^2 = -1 ∴ γ = ±√3 i"],
