@@ -20,6 +20,7 @@ const qa_数学Ⅲ_積分法 = [
   ["\\displaystyle\\int (1+x^2)^{-3/2} dx", "\\(x=\\tan\\theta\\ \\left(-\\dfrac{\\pi}{2}<\\theta<\\dfrac{\\pi}{2}\\right)\\) とおくと\n与式 = \\displaystyle\\int \\left(\\dfrac1{\\cos^2\\theta}\\right)^{-3/2} \\dfrac1{\\cos^2\\theta}d\\theta\n=\\sin\\theta+C\n= \\displaystyle\\frac{x}{\\sqrt{1+x^2}}+C"],
   ["\\displaystyle\\int_0^1\\frac{dx}{(2+x^2)\\sqrt{1+x^2}}", "x=\\tan\\theta とおくと\n与式 = \\displaystyle\\int_0^{\\pi/4}\\frac{\\cos\\theta}{1+\\cos^2\\theta}d\\theta\nt=\\sin\\theta とおくと\n=\\displaystyle\\int_0^{1/\\sqrt2}\\frac{dt}{2-t^2}\n=\\frac1{2\\sqrt2}\\left[\\log\\frac{\\sqrt2+t}{\\sqrt2-t}\\right]_0^{1/\\sqrt2}=\\frac{\\log3}{2\\sqrt2}"],
   ["\\displaystyle \\int\\frac{dx}{\\sqrt{1-x^2}}","\\sin y=x\\space \\left(-\\dfrac{\\pi}{2}<y<\\dfrac{\\pi}{2}\\right)\\space を微分すると\n\\cos y\\,y'=1\\quad\\therefore y'=\\dfrac1{\\sqrt{1-x^2}}\\quadより\n答え\\space\\arcsin x+C"],
+  ["\n\\displaystyle \\int_{-1}^{1}\\sqrt{2-x^2}\\,dx =", "x=\\sqrt2\\sin\\theta\\quad とおくと\n\\displaystyle \\int_{-\\frac{\\pi}4}^{\\frac{\\pi}4}2\\cos^2\\theta\\ d\\theta=\\left[\\theta+\\dfrac{\\sin2\\theta}{2}\\right]=1+\\dfrac\\pi2"],
   ["\\(\\displaystyle\\int_0^1 xe^{x^2}\\,dx\\) =", "\\displaystyle\\frac12\\int_0^1e^u\\,du=\\frac{e-1}2"],
   ["\\displaystyle\\int_0^1 xe^{x^2}\\,dx", "\\displaystyle = \\dfrac12\\int_0^1e^u\\,du = \\dfrac{e-1}{2}"],
   ["\\displaystyle\\int_0^1 2xe^{x^2}\\,dx", "\\displaystyle=\\int_0^1 e^u\\,du=e-1"],
@@ -39,6 +40,7 @@ const qa_数学Ⅲ_積分法 = [
   ["\\displaystyle\\int_0^1 x^2e^x\\,dx =", "\\displaystyle\\left[e^x(x^2-2x+2)\\right]_0^1\n=e-2"],
   // 面積・体積・重心
   ["\\(\\displaystyle\\int_0^1\\sqrt{1-x^2}\\,dx\\) を求めよ。", "\\(y=\\sqrt{1-x^2}\\) は単位円の第1象限の弧である。\n積分はその面積だから \\(\\dfrac\\pi4\\)"],
+  ["x=e^t+e^{-t}\ny=e^t-e^{-t}\n0\\leqq t\\leqq a\\space の範囲で動くときの\nOP(x,y)の通過領域の面積は", "xy'-yx'=x^2-y^2=4\nより\n\\displaystyle \\dfrac12\\int_0^a(xy'-yx')\\,dt=2a"],
   ["曲線 \\(y=\\sqrt x\\ (0\\le x\\le1)\\) と \\(x\\) 軸で囲まれる部分を\n\\(x\\) 軸のまわりに回転してできる立体の体積を求めよ。", "円板の半径は \\(\\sqrt x\\) なので、\n体積は \\(\\displaystyle\\pi\\int_0^1(\\sqrt x)^2\\,dx=\\pi\\int_0^1x\\,dx=\\frac\\pi2\\)"],
   ["線分 \\(P=(1,t,t)\\ (-1\\le t\\le1)\\) を \\(z\\) 軸のまわりに回転してできる曲面と、\n平面 \\(z=-1,z=1\\) で囲まれる立体の体積を求めよ。", "高さ \\(z=t\\) で回転半径の2乗は \\(1+t^2\\)。\nしたがって体積は \\(\\displaystyle\\pi\\int_{-1}^1(1+t^2)\\,dt=\\frac{8\\pi}3\\)"],
   ["\\text{線分 }A(1,1,1)B(1,-1,-1) \\text{ を }\nz\\text{ 軸のまわりに回転してできる曲面と}\nz=-1, z=1\n\\text{で囲まれる立体の体積は}", "P=(1,t,t)\\quad(-1\\leqq t\\leqq1)\\text{ とおく}\n\\displaystyle \\pi\\int_{-1}^{1}(1+t^2)\\,dt=\\dfrac{8\\pi}{3}"],

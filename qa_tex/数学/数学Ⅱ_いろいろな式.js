@@ -9,6 +9,7 @@ const qa_数学Ⅱ_いろいろな式 = [
   ["剰余の定理とは?", "P(x) を x-a で割った余りは P(a)"],
   ["因数定理とは?", "P(a)=0 なら P(x) は x-a を因数にもつ"],
   ["P(x)=x^4+2x^3-x+3 を\nx^2-1 で割った余りは?", "x^2\\equiv1\\pmod{x^2-1}\nP(x)\\equiv1+2x-x+3=x+4"],
+  ["ax+by=p\ncx+dy=q\nx,y\\spaceの解は", "ad-bc\\ne0\\space\\Rightarrow\n\\quad x=\\dfrac{dp-bq}{ad-bc},\\quad y=\\dfrac{aq-cp}{ad-bc}\nad-bc=0\\space\\Rightarrow\n\\quad (a,b,c,d)=(0,0,0,0)\\space\\Rightarrow\n\\qquad (p,q)=(0,0)\\Rightarrow 解は無数にある\n\\qquad (p,q)\\ne(0,0)\\Rightarrow 解なし\n\\quad (a,b,c,d)\\ne(0,0,0,0)\\space\\Rightarrow\n\\qquad (dp-bq,aq-cp)=(0,0)\\Rightarrow 解は無数\n\\qquad (dp-bq,aq-cp)\\ne(0,0)\\Rightarrow 解なし"],
   ["x^3-6x^2+11x-6=0", "x=1 が解なので\n因数定理より (x-1)(x^2-5x+6)=0\n\\therefore (x-1)(x-2)(x-3)=0\n\\therefore x=1,2,3"],
   ["x^3-2x^2-5x+6=0 の3解を \\alpha,\\beta,\\gamma とする\n\\alpha^2+\\beta^2+\\gamma^2=", "解と係数の関係より\n\\alpha+\\beta+\\gamma=2\n\\alpha\\beta+\\beta\\gamma+\\gamma\\alpha=-5\n答え 2^2-2(-5)=14"],
   ["(a+bi)(a-bi) =", "a^2+b^2"],

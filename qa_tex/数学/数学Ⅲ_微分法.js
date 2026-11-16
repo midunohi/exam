@@ -37,4 +37,5 @@ const qa_数学Ⅲ_微分法 = [
   ["P(1,0,0)\nまず原点Oを中心に\nxy平面上で\nPを角t回転する\n次にOを中心に\nxy平面に鉛直方向に\nPを角t回転する\nPの速さv(t)は", "\\boldsymbol u=(\\cos t,\\sin t,0)\n\\boldsymbol k=(0,0,1)\n\\overrightarrow{OP}=\\cos t\\,\\boldsymbol u+\\sin t\\,\\boldsymbol k\n\\overrightarrow{OP}'=-\\sin t\\,\\boldsymbol u+\\cos t\\,\\boldsymbol u'+\\cos t\\,\\boldsymbol k\n\\boldsymbol u,\\boldsymbol u',\\boldsymbol k\\text{ は正規直交するので}\nv(t)=\\sqrt{\\sin^2t+\\cos^2t+\\cos^2t}\n=\\sqrt{1+\\cos^2t}"],
   ["\\(y=e^x\\sin x\\) の第2次導関数を求めよ。", "\\(y'=e^x(\\sin x+\\cos x)\\)。\nさらに微分して \\(y''=e^x(\\sin x+\\cos x)+e^x(\\cos x-\\sin x)=2e^x\\cos x\\)"],
   ["f''(x)>0,\\quad h>0,\\quad a<b\\spaceのとき\nf(a+h)-f(a)<f(b+h)-f(b)\nを証明", "f'(x+h) > f'(x) より\n\\left(f(x+h)-f(x)\\right)'> 0"],
+  ["0< a,b<\\dfrac{\\pi}{4}\\space のとき\n\\sqrt{\\tan a\\tan b}\\leqq\\tan\\dfrac{a+b}{2}\\space\nを証明", "f(x) = \\log\\tan x\\quad とおく\n= \\log\\sin x - \\log\\cos x\nf'(x) = \\tan x + \\dfrac1{\\tan x}\nf''(x) = \\dfrac1{\\cos^2 x} - \\dfrac1{\\sin^2x} < 0\n\\frac{\\log\\tan a+\\log\\tan b}{2} \\leqq \\log\\tan\\frac{a+b}{2}\n\\therefore 示された\\quad(a=bで等号成立)"],
 ];

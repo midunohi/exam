@@ -7,6 +7,7 @@ const qa_数学B_統計的な推測 = [
   ["確率変数X,Yに対して\n\\operatorname{Cov}(X,Y)=", "\\displaystyle \\operatorname{Cov}(X,Y)\n=E[(X-E[X])(Y-E[Y])]\n=E[XY]-E[X]E[Y]\n-E[X]E[Y]+E[X]E[Y]\n=E[XY]-E[X]E[Y]"],
   ["確率変数X,Y\n\\operatorname{Cov}(X,Y)=", "E[(X-E[X])(Y-E[Y])]\n=E[XY]-E[X]E[Y]-E[X]E[Y]+E[X]E[Y]\n=E[XY]-E[X]E[Y]"],
   ["確率変数X,Yに対して\n分散 V(X+Y)=", "\\displaystyle V(X+Y) = E[(X+Y)^2] - E[X+Y]^2\n= E[X^2] + 2E[XY] + E[Y^2] \n- E[X]^2 - 2E[X]E[Y] - E[Y]^2\n=V(X)+V(Y)+2\\operatorname{Cov}(X,Y)"],
+  ["原点Oから\n無作為な方向に距離1\nだけ移動することを\nn回繰り返した点P\nE[OP^2]=", "X_kをk回目の移動ベクトルとする\nE[|\\sum_{k=1}^n X_k|^2]\n=\\sum_{k=1}^n\\sum_{l=1}^n E[X_k\\cdot X_l]\n= \\sum_{k=1}^n E[|X_k|^2]\n= n"],
   ["分散 \\(V(X)\\) のとき、\n標準偏差 \\(\\sigma(X) =\\) ", "\\sqrt{V(X)}"],
   // 二項分布
   ["二項分布 \\(B(n,p)\\) に従う確率変数 \\(X\\) の期待値と分散は？", "期待値 \\(E(X)=np\\)\n分散 \\(V(X)=np(1-p)\\)"],

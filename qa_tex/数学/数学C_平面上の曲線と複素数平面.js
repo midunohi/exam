@@ -23,6 +23,7 @@ const qa_数学C_平面上の曲線と複素数平面 = [
   // 複素数平面上の軌跡
   ["\\(|z-a|=r\\) が表す図形は？", "中心 \\(a\\)、半径 \\(r\\) の円"],
   ["\\(|z-a|=|z-b|\\) が表す図形は？", "点 \\(a,b\\) を結ぶ線分の垂直二等分線"],
+  ["複素数平面上の3点\nO(0), A(\\alpha), B(\\beta) は\n同一直線上にない\nOA, OBの垂直二等分線\nの交点zは", "|z|^2=|z-\\alpha|^2=(z-\\alpha)(\\bar z-\\bar\\alpha)\n\\therefore\\space\\bar\\alpha z+\\alpha\\bar z=|\\alpha|^2\n同様に\\space\\bar\\beta z+\\beta\\bar z=|\\beta|^2\n\\therefore\\space(\\beta\\bar\\alpha-\\alpha\\bar\\beta)z=\\alpha\\beta(\\bar\\alpha-\\bar\\beta)\n\\therefore\\space z=\\dfrac{\\alpha\\beta(\\bar\\alpha-\\bar\\beta)}{\\beta\\bar\\alpha-\\alpha\\bar\\beta}"],
   ["\\(\\left|\\frac{z-a}{z-b}\\right|=k\\ (k>0,\\ k\\neq1)\\) が表す図形は？", "アポロニウスの円"],
   ["複素数 \\(z=x+iy\\) が \\(|z-1|=2|z+1|\\) を満たすとき、\nその軌跡を求めよ。", "2乗して \\((x-1)^2+y^2=4\\{(x+1)^2+y^2\\}\\)。\n整理すると \\(\\left(x+\\dfrac53\\right)^2+y^2=\\left(\\dfrac43\\right)^2\\)"],
   // 複素数平面上の変換と図形

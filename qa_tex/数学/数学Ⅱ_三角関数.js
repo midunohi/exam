@@ -5,6 +5,7 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\tan\\frac{\\pi}3 =", "\\dfrac{\\sin\\frac{\\pi}3}{\\cos\\frac{\\pi}3}=\\dfrac{\\frac{\\sqrt3}2}{\\frac12}=\\sqrt3"],
   ["1+\\tan^2 x =", "\\frac{\\cos^2 x+\\sin^2 x}{\\cos^2 x}=\\frac1{\\cos^2 x}"],
   ["\\tan(\\alpha+\\beta)=", "\\dfrac{\\sin\\alpha\\cos\\beta+\\cos\\alpha\\sin\\beta}{\\cos\\alpha\\cos\\beta-\\sin\\alpha\\sin\\beta}=\\dfrac{\\tan\\alpha+\\tan\\beta}{1-\\tan\\alpha\\tan\\beta}"],
+  ["\\tan(\\alpha+\\beta)=", "\\dfrac{\\tan\\alpha+\\tan\\beta}{1-\\tan\\alpha\\tan\\beta}"],
   ["\\(\\sin2x\\) =", "2\\sin x\\cos x"],
   ["\\(\\cos2x\\) =", "\\cos^2 x-\\sin^2 x\n=2\\cos^2\\theta-1\n=1-2\\sin^2\\theta"],
   ["\\displaystyle\\tan2\\theta", "\\displaystyle=\\dfrac{2\\tan\\theta}{1-\\tan^2\\theta}"],
@@ -18,6 +19,7 @@ const qa_数学Ⅱ_三角関数 = [
   ["\\sin A \\sin B =", "\\dfrac{\\cos(A-B) - \\cos(A+B)}2"],
   ["\\(\\displaystyle\\sin\\frac{\\pi}{12}\\) を求めよ。", "\\displaystyle\\sin\\left(\\frac\\pi4-\\frac\\pi6\\right)=\\frac{\\sqrt2}2\\frac{\\sqrt3}2-\\frac{\\sqrt2}2\\frac12=\\frac{\\sqrt6-\\sqrt2}{4}"],
   ["\\displaystyle\\tan\\frac{\\pi}{12}=", "\\displaystyle\\tan\\left(\\frac\\pi4-\\frac\\pi6\\right)=\\frac{1-1/\\sqrt3}{1+1/\\sqrt3}=2-\\sqrt3\nまたは\n\\sqrt{\\frac{1-\\cos\\frac{\\pi}{6}}{1+\\cos\\frac{\\pi}{6}}}=\\sqrt{\\frac{2-\\sqrt3}{2+\\sqrt3}}=2-\\sqrt3"],
+  ["\\tan\\dfrac{\\pi}{12} =", "\\sqrt{\\frac{1-\\cos\\frac{\\pi}{6}}{1+\\cos\\frac{\\pi}{6}}}=\\sqrt{\\frac{2-\\sqrt3}{2+\\sqrt3}}=2-\\sqrt3"],
   ["\\(\\displaystyle\\sin\\frac{\\pi}{8}\\) を求めよ。", "\\(\\displaystyle\\cos\\frac\\pi4=1-2\\sin^2\\frac\\pi8\\) より\n\\displaystyle\\sin\\frac\\pi8=\\sqrt{\\frac{1-1/\\sqrt2}{2}}=\\frac{\\sqrt{2-\\sqrt2}}2"],
   ["\\displaystyle\\cos\\frac{\\pi}{8}=", "\\displaystyle\\sqrt{\\frac{1+\\cos(\\pi/4)}2}=\\frac{\\sqrt{2+\\sqrt2}}2"],
   ["\\(\\displaystyle\\cos\\frac{\\pi}{5}\\) を求めよ。", "\\(\\theta=\\frac\\pi5,\\ x=\\cos\\theta\\) とおく。\\(3\\theta=\\pi-2\\theta\\) より \\(\\cos3\\theta=-\\cos2\\theta\\)。\nしたがって \\(4x^3-3x=-(2x^2-1)\\)、すなわち \\((x+1)(4x^2-2x-1)=0\\)。\n\\(0<x<1\\) より \\(\\displaystyle x=\\frac{1+\\sqrt5}{4}\\)"],
@@ -33,4 +35,5 @@ const qa_数学Ⅱ_三角関数 = [
   ["実数a,bに対し\n\\displaystyle 1-\\cos(a+b)\n\\leqq2(1-\\cos a\\space+\\space1-\\cos b)\n\\text{を証明}", "\\displaystyle \\left|\\sin\\frac{a+b}{2}\\right|\\leqq\\left|\\sin\\frac a2\\right|+\\left|\\sin\\frac b2\\right|\n\\therefore \\displaystyle \\sin^2\\frac{a+b}{2} \\leqq 2\\left(\\sin^2\\frac a2+\\sin^2\\frac b2\\right)"],
   ["三角形の角をA,B,Cとする\n\\cos A+\\cos B+\\cos C>0\n\\text{を証明}", "A,B<\\dfrac{\\pi}{2}\\space で一般性を失わない\n\\cos A+\\cos B >\\cos(A+B)\n\\qquad\\qquad\\qquad= -\\cos C"],
   ["\\displaystyle 0\\leqq\\theta_k\\leqq\\frac{\\pi}{2},\n\\displaystyle \\sum_{k=1}^{n}\\cos\\theta_k=1\\text{ のとき}\n\\displaystyle \\sum_{k=1}^{n} \\sin\\theta_k の範囲は", "\\sin\\theta\\geqq1-\\cos\\theta\\quad\n\\therefore \\displaystyle n-1 \\leqq \\sum\\sin\\theta\n(\\{\\theta\\}= \\{0,\\frac{\\pi}{2},\\ldots,\\frac{\\pi}{2}\\} で等号成立)\n\n\\left(\\sum\\sin\\theta\\right)^2 +\\left(\\sum\\cos\\theta\\right)^2≦n^2\\space\n\\therefore \\sum\\sin\\theta\\leqq \\sqrt{n^2-1}\n(cos\\theta_1=\\cdots=\\cos\\theta_n=\\frac1n で等号成立)"],
+  ["\\displaystyle 0\\leqq\\theta_k\\leqq\\frac{\\pi}{2},\n\\displaystyle \\sum_{k=1}^{n}\\cos\\theta_k=1\\text{ のとき}\n\\displaystyle \\sum_{k=1}^{n} \\sin\\theta_k の範囲は", "\\sin\\theta\\geqq1-\\cos\\theta\\quadより\n\\displaystyle n-1 \\leqq \\sum\\sin\\theta\n\\theta_k\\text{ のうち1つが }0,\\text{ 残りが }\\frac{\\pi}{2}\\text{ で等号成立}\n\n\\left(\\sum\\sin\\theta\\right)^2 +\\left(\\sum\\cos\\theta\\right)^2≦n^2\\space より\n\\sum\\sin\\theta\\leqq \\sqrt{n^2-1}\n\\space\\cos\\theta_1=\\cdots=\\cos\\theta_n=\\frac1n で等号成立"],
 ];

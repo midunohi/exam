@@ -3,7 +3,6 @@ const qa_数学A_数学と人間の活動 = [
   // 最大公約数と整数方程式
   ["\\(a=bq+r\\) のとき、\\(a\\) と \\(b\\) の最大公約数は何と等しい？", "\\(b\\) と \\(r\\) の最大公約数"],
   ["整数a,b,q,r が\na = bq + r を満たすとき\ngcd(a,b) = gcd(b,r) を証明", "a = bq + r より\nd | b, r ⇒ d | a ⇒ d | a, b\nr = a - bq より\nd | a, b ⇒ d | r ⇒ d | b, r\n∴ d | a, b ⇔ d | b, r\n\n"],
-  ["整数a,b,q,r が\na = bq + r を満たすとき\ngcd(a,b) = gcd(b,r) を証明", "a = bq + r より\\quad d | b, r ⇒ d | a ⇒ d | a, b\nr = a - bq より\\quad d | a, b ⇒ d | r ⇒ d | b, r\n∴ d | a, b ⇔ d | b, r\n\n"],
   ["ユークリッドの互除法を用いて \\(252\\) と \\(198\\) の最大公約数を求めよ。", "\\(252=198+54,\\ 198=3\\cdot54+36,\\ 54=36+18\\) より、最大公約数は \\(18\\)"],
   ["\\(2x+3y=1\\) の整数解は", "x=-1,\\ y=1"],
   ["一次不定方程式 \\(35x+22y=1\\) の整数解を1組求めよ。", "互除法を逆にたどると \\(1=8\\cdot22-5\\cdot35\\)。\nしたがって \\((x,y)=(-5,8)\\)"],
@@ -18,6 +17,7 @@ const qa_数学A_数学と人間の活動 = [
   // 整数の性質
   ["\\(n\\ge1\\) とする。\nオイラーのトーシェント関数 \\(\\varphi(n)\\) は？", "\\displaystyle\\left|\\left\\{k\\in\\mathbb Z\\mid 1\\le k\\le n,\\ \\gcd(k,n)=1\\right\\}\\right|"],
   ["整数 \\(m\\ge2\\) に対し、\\((m-1)!\\) が \\(m\\) で割り切れるのはどのような \\(m\\) か。", "\\(m=ab\\ (2\\le a\\le b)\\) とする。\n\\(a<b\\) なら \\(a,b\\le m-1\\)、\\(a=b\\ge3\\) なら \\(a,2a\\le m-1\\) なので合成数では割り切れる。\nただし \\(m=4\\) は例外。\nまた素数 \\(m\\) は \\(1,2,\\ldots,m-1\\) の積を割り切らない。\nよって \\(4\\) 以外の合成数のとき"],
+  ["n\\geqq2\n\\displaystyle \\prod_{k=1}^n(a+k)=m^n\nを満たす\n非負整数a,m,n\nは存在する?", "\\displaystyle a^n<m^n<(a+n)^n\n\\therefore\\space a<m<a+n\n\\therefore\\space m+1\\space は\\space a+1,\\dots,a+n\\space のいずれか\n\\therefore\\space m+1\\mid m^n\n\\therefore\\space m\\spaceと\\space m+1\\spaceは互いに素なので矛盾\n\\therefore\\space 存在しない"],
   ["m\\ge2\\text{ のとき}\n(m-1)!\\text{ が }m\\text{ で割り切れるのは}", "m=ab\\space(2\\le a\\le b)\\text{ とする}\na<b ⇒ a,b\\le m-1 \n\\therefore 割り切れる\na=b\\ge3 ⇒ a,2a\\le m-1\n\\therefore 割り切れる\na=b=2 ⇒ 割り切れない\n\\text{よって } m\\text{ が }4\\text{ 以外の合成数のとき}"],
   ["\\(v_a(m)=\\max\\{k\\in\\mathbb Z_{\\ge0}\\mid a^k\\mid m\\}\\) とする。\n\\(a\\ge2,\\ r\\ge1,\\ 0<n<a^r\\) のとき、\\(v_a(a^r-n)\\) は？", "v_a(n)"],
   ["a\\geqq2,\\quad r\\geqq1,\\quad 0<n<a^r \\text{ のとき}\na^r-n \\text{ と } n \\text{ が }\na \\text{ で割り切れる回数が等しいことの証明}", "n=a^s m\\quad(a\\nmid m)\\text{ とおくと}\na^r-n=a^s\\left(a^{r-s}-m\\right),\na\\nmid\\left(a^{r-s}-m\\right)"],
